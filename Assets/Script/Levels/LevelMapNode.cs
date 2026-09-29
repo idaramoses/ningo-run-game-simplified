@@ -23,7 +23,7 @@ public class LevelMapNode : MonoBehaviour
         get { return transform as RectTransform; }
     }
 
-    public void Configure(LevelMapCanvas canvas, int level, bool unlocked, bool completed, int starsEarned)
+    public void Configure(LevelMapCanvas canvas, int level, bool unlocked, bool completed, int starsEarned, bool isCurrent)
     {
         owner = canvas;
         levelNumber = level;
@@ -39,17 +39,17 @@ public class LevelMapNode : MonoBehaviour
         if (numberText != null)
         {
             numberText.text = level.ToString();
-            numberText.gameObject.SetActive(unlocked);
+            numberText.gameObject.SetActive(true);
         }
 
         if (background != null)
         {
             if (!unlocked && canvas.lockedLevelSprite != null)
                 background.sprite = canvas.lockedLevelSprite;
-            else if (completed && canvas.unlockedLevelSprite != null)
-                background.sprite = canvas.unlockedLevelSprite;
-            else if (canvas.currentLevelSprite != null)
+            else if (isCurrent && canvas.currentLevelSprite != null)
                 background.sprite = canvas.currentLevelSprite;
+            else if (canvas.unlockedLevelSprite != null)
+                background.sprite = canvas.unlockedLevelSprite;
         }
 
         if (padlockIcon != null)
@@ -64,6 +64,8 @@ public class LevelMapNode : MonoBehaviour
             for (int i = 0; i < stars.Length; i++)
             {
                 if (stars[i] == null) continue;
+
+                stars[i].gameObject.SetActive(unlocked);
 
                 bool filled = unlocked && completed && i < starsEarned;
                 if (filled && canvas.fullStarSprite != null)

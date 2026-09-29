@@ -626,6 +626,7 @@ public class LoginForm : MonoBehaviour
             PlayerPrefs.SetString("dictionary_language", language);
             PlayerPrefs.SetString("dictionary_fetch_time", System.DateTime.UtcNow.ToString("o"));
             PlayerPrefs.Save();
+            DictionaryManager.InvalidateMemoryCache();
 
             Debug.Log($"[LoginForm] Dictionary data stored successfully for language: {language}");
         }

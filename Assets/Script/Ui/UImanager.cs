@@ -108,6 +108,8 @@ public class UImanager : MonoBehaviour
     [SerializeField] private TMP_Text highScoreText;
     [SerializeField] private TMP_Text tapToPlayText;
     [SerializeField] private string tapToPlayLabel = "TAP TO PLAY";
+    [SerializeField] private TMP_Text learnToPlayText;
+    [SerializeField] private Color learnToPlayColor = new Color(1f, 0.84f, 0f);
     [SerializeField] private TMP_Text coinText;
     [SerializeField] private TMP_Text langText;
     [SerializeField] private TMP_Text localCoinsText;
@@ -1494,6 +1496,17 @@ public class UImanager : MonoBehaviour
         {
             if (langText != null)
                 langText.text = "guest";
+        }
+
+        if (learnToPlayText != null)
+        {
+            string learnLang = PlayerPrefs.GetString("user_selected_language", "");
+            if (!string.IsNullOrEmpty(learnLang))
+            {
+                learnToPlayText.richText = true;
+                string hex = ColorUtility.ToHtmlStringRGB(learnToPlayColor);
+                learnToPlayText.text = "Learn <color=#" + hex + ">" + char.ToUpperInvariant(learnLang[0]) + learnLang.Substring(1) + "</color> as you run";
+            }
         }
 
         // Update badge visibility

@@ -877,6 +877,7 @@ public class UserInfoController : MonoBehaviour
             PlayerPrefs.SetString("dictionary_language", language);
             PlayerPrefs.SetString("dictionary_fetch_time", System.DateTime.UtcNow.ToString("o"));
             PlayerPrefs.Save();
+            DictionaryManager.InvalidateMemoryCache();
 
             Debug.Log($"[UserInfoController] Dictionary stored for language: {language}");
         }
