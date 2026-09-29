@@ -17,6 +17,7 @@ public class GameFlowController : MonoBehaviour
     public RunnerSelectionPanel runnerSelectionPanel;
     public GameObject settingsPanel;
     public GameObject infoPanel;
+    public HomeLanguageModal languageModal;
 
     [Header("Home Canvas")]
     public GameObject canvasHome;
@@ -411,6 +412,22 @@ public class GameFlowController : MonoBehaviour
                 infoPanel.SetActive(false);
             }
             Debug.Log("[GameFlowController] Info panel closed");
+        }
+    }
+
+    // -------------------------
+    // LANGUAGE MODAL (Home Scene)
+    // -------------------------
+    public void ShowLanguageModal()
+    {
+        if (languageModal != null)
+        {
+            languageModal.Open();
+            Debug.Log("[GameFlowController] Language modal opened");
+        }
+        else
+        {
+            Debug.LogWarning("[GameFlowController] languageModal is not assigned!");
         }
     }
 }

@@ -77,6 +77,7 @@ public class UImanager : MonoBehaviour
     public GameObject canvasShop;
     public GameObject canvasLeaderboard;
     public GameObject canvasCharacters;
+    public GameObject canvasLevel;
 
     [Header("Gameplay Panels")]
     public GameObject pausePanel;
@@ -1349,6 +1350,12 @@ public class UImanager : MonoBehaviour
         }
         if (shopController == null && canvasShop != null)
             shopController = canvasShop.GetComponent<ShopController>();
+
+        if (canvasLevel == null)
+        {
+            GameObject go = GameObject.Find("Canvas_Level");
+            if (go != null) canvasLevel = go;
+        }
     }
 
     private void HandleBackButton()
@@ -1363,6 +1370,11 @@ public class UImanager : MonoBehaviour
         }
 
         // Close any open sub-menu and return to Canvas_Home.
+        if (canvasLevel != null && canvasLevel.activeInHierarchy)
+        {
+            HideLevelCanvas();
+            return;
+        }
         if ((dailyGiftController != null && dailyGiftController.gameObject.activeInHierarchy) ||
             (canvasDailyGift != null && canvasDailyGift.activeInHierarchy))
         {
@@ -1522,10 +1534,65 @@ public class UImanager : MonoBehaviour
     public void OnTapToPlay()
     {
         if (isTransitioning) return;
+
+        // Show the level-select canvas first. The run only starts after a level is picked.
+        if (canvasLevel != null)
+        {
+            if (canvasLevel.activeInHierarchy || AnySubMenuOpen()) return;
+
+            ShowLevelSelect();
+            return;
+        }
+
+        StartRunTransition();
+    }
+
+    private void StartRunTransition()
+    {
+        if (isTransitioning) return;
         isTransitioning = true;
 
-        Debug.Log("[HomeUI] Tap to Play pressed -> Transitioning seamlessly in the SAME scene!");
+        Debug.Log("[HomeUI] Transitioning seamlessly in the SAME scene!");
         StartCoroutine(SeamlessInSceneTransitionCoroutine());
+    }
+
+    public void ShowLevelSelect()
+    {
+        if (canvasLevel == null) return;
+
+        canvasLevel.SetActive(true);
+        Debug.Log("[HomeUI] Level select canvas shown");
+    }
+
+    public void HideLevelCanvas()
+    {
+        if (canvasLevel != null) canvasLevel.SetActive(false);
+        Debug.Log("[HomeUI] Level select canvas closed");
+    }
+
+    /// <summary>Called by a level node on Canvas_Level - selects the level and starts the run.</summary>
+    public void StartLevelAndRun(int levelNumber)
+    {
+        if (LevelManager.Instance != null)
+            LevelManager.Instance.SetSelectedLevel(levelNumber);
+
+        if (canvasLevel != null) canvasLevel.SetActive(false);
+
+        Debug.Log($"[HomeUI] Level {levelNumber} selected -> starting run");
+        StartRunTransition();
+    }
+
+    private bool AnySubMenuOpen()
+    {
+        return (canvasDailyGift != null && canvasDailyGift.activeInHierarchy) ||
+               (canvasMissions != null && canvasMissions.activeInHierarchy) ||
+               (canvasShop != null && canvasShop.activeInHierarchy) ||
+               (canvasSettings != null && canvasSettings.activeInHierarchy) ||
+               (canvasLeaderboard != null && canvasLeaderboard.activeInHierarchy) ||
+               (canvasCharacters != null && canvasCharacters.activeInHierarchy) ||
+               (canvasCoins != null && canvasCoins.activeInHierarchy) ||
+               (canvasPowerUps != null && canvasPowerUps.activeInHierarchy) ||
+               (canvasBoards != null && canvasBoards.activeInHierarchy);
     }
 
     private IEnumerator SeamlessInSceneTransitionCoroutine()
@@ -1550,6 +1617,7 @@ public class UImanager : MonoBehaviour
         if (canvasSettings != null) canvasSettings.SetActive(false);
         if (canvasLeaderboard != null) canvasLeaderboard.SetActive(false);
         if (canvasCharacters != null) canvasCharacters.SetActive(false);
+        if (canvasLevel != null) canvasLevel.SetActive(false);
 
         // Hide currency panels
         if (canvasCoins != null) canvasCoins.SetActive(false);

@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class SplashController : MonoBehaviour
 {
+    public static SplashController Instance { get; private set; }
+
     [Header("UI Elements")]
     [SerializeField] private GameObject canvasSplash;
     [SerializeField] private GameObject canvasWelcome;
@@ -28,6 +30,17 @@ public class SplashController : MonoBehaviour
     [SerializeField] private float logoDisplayTime = 2f;
     [SerializeField] private float logoFadeOutDuration = 1f;
 
+    private void Awake()
+    {
+        Instance = this;
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+            Instance = null;
+    }
+
     private void Start()
     {
         if (canvasSplash != null)
@@ -37,6 +50,28 @@ public class SplashController : MonoBehaviour
             canvasWelcome.SetActive(false);
 
         StartCoroutine(SplashToWelcomeFlow());
+    }
+
+    // Stubs for compatibility with the standalone LoginForm / LanguageSelectionUI scripts.
+    // The integrated onboarding flow now lives in UserInfoController.
+    public void ShowLoading(bool show, string message = null)
+    {
+        Debug.LogWarning($"[SplashController] ShowLoading stub called (show={show}, message={message}). Use UserInfoController instead.");
+    }
+
+    public void ShowLogin()
+    {
+        Debug.LogWarning("[SplashController] ShowLogin stub called. Use UserInfoController instead.");
+    }
+
+    public void ShowLanguage()
+    {
+        Debug.LogWarning("[SplashController] ShowLanguage stub called. Use UserInfoController instead.");
+    }
+
+    public void ShowWelcome()
+    {
+        Debug.LogWarning("[SplashController] ShowWelcome stub called. Use UserInfoController instead.");
     }
 
     private IEnumerator SplashToWelcomeFlow()

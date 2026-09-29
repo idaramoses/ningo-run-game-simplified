@@ -273,6 +273,15 @@ public class RunnerManager : MonoBehaviour
         return currentRunnerInstance;
     }
 
+    public PlayerRunnerController GetCurrentRunner()
+    {
+        if (currentRunnerInstance == null) return null;
+        var runner = currentRunnerInstance.GetComponent<PlayerRunnerController>();
+        if (runner == null)
+            runner = currentRunnerInstance.AddComponent<PlayerRunnerController>();
+        return runner;
+    }
+
     public string GetSelectedRunner()
     {
         return selectedRunner;

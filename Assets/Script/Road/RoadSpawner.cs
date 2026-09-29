@@ -17,6 +17,7 @@ public class RoadSpawner : MonoBehaviour
 
     [Tooltip("Road tile prefabs that will be spawned ahead of the player.")]
     public GameObject[] roadTilePrefabs;
+    public GameObject[] roadPrefabs => roadTilePrefabs;
 
     [Tooltip("Length of one road tile along Z.")]
     public float tileLength = 40f;
