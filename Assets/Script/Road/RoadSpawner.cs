@@ -65,6 +65,16 @@ public class RoadSpawner : MonoBehaviour
     float nextSpawnZ;
     Queue<GameObject> activeRoads = new Queue<GameObject>();
 
+    /// <summary>
+    /// Swap the road tiles used for future spawns (called by CityManager when
+    /// the player changes city). Empty/null arrays keep the current tiles.
+    /// </summary>
+    public void SetRoadTiles(GameObject[] tiles)
+    {
+        if (tiles == null || tiles.Length == 0) return;
+        roadTilePrefabs = tiles;
+    }
+
     void Start()
     {
         if (player == null)
