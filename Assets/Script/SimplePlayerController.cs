@@ -787,6 +787,20 @@ public class SimplePlayerController : MonoBehaviour
                 continue;
             }
 
+            // Word letter pickup - feed it to WordManager so the HUD slots fill
+            LetterPickup letterPickup = col.GetComponentInParent<LetterPickup>();
+            if (letterPickup != null)
+            {
+                if (WordManager.Instance != null)
+                    WordManager.Instance.CollectLetter(letterPickup.letter);
+
+                if (SoundEffectsManager.Instance != null)
+                    SoundEffectsManager.Instance.PlayLetterCollect();
+
+                Destroy(letterPickup.gameObject);
+                continue;
+            }
+
             // Hang Glider powerup - collect it
             HangGliderPowerup gliderPickup = col.GetComponentInParent<HangGliderPowerup>();
             if (gliderPickup != null)

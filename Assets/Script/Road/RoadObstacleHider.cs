@@ -6,6 +6,9 @@ public class RoadObstacleHider : MonoBehaviour
     public int minToHide = 3;
     public int maxToHide = 5;
 
+    [Tooltip("TEST: hide every obstacle except one (kept = furthest ahead) per road tile.")]
+    public bool keepOnlyOne = false;
+
     private bool hasHiddenThisEnable = true;
 
     void OnEnable()
@@ -37,12 +40,37 @@ public class RoadObstacleHider : MonoBehaviour
             }
         }
 
-        int hideCount = Mathf.Clamp(Random.Range(minToHide, maxToHide + 1), 0, obstacles.Count);
+        int hideCount;
+        int keepIndex = -1;
+
+        if (keepOnlyOne && obstacles.Count > 1)
+        {
+            hideCount = obstacles.Count - 1;
+            // Keep the obstacle furthest ahead so the player gets runway to dodge it
+            float bestZ = float.MinValue;
+            for (int i = 0; i < obstacles.Count; i++)
+            {
+                float z = obstacles[i].transform.position.z - transform.position.z;
+                if (z > bestZ) { bestZ = z; keepIndex = i; }
+            }
+        }
+        else
+        {
+            hideCount = Mathf.Clamp(Random.Range(minToHide, maxToHide + 1), 0, obstacles.Count);
+        }
 
         HashSet<int> hiddenIndices = new HashSet<int>();
-        while (hiddenIndices.Count < hideCount)
+        if (keepOnlyOne)
         {
-            hiddenIndices.Add(Random.Range(0, obstacles.Count));
+            for (int i = 0; i < obstacles.Count; i++)
+                if (i != keepIndex) hiddenIndices.Add(i);
+        }
+        else
+        {
+            while (hiddenIndices.Count < hideCount)
+            {
+                hiddenIndices.Add(Random.Range(0, obstacles.Count));
+            }
         }
 
         for (int i = 0; i < obstacles.Count; i++)

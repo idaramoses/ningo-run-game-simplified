@@ -1729,6 +1729,15 @@ public class UImanager : MonoBehaviour
         // Also run the legacy play() flow for backward compatibility with any
         // remaining Playermuving-based systems still active in the scene.
         if (canvasHUD != null) canvasHUD.SetActive(true);
+
+        // Start the word-collection round for the selected level (GameSceneController
+        // does this in the full build; this scene is driven by UImanager instead).
+        if (WordManager.Instance != null)
+        {
+            WordManager.Instance.ResetForNewLevel();
+            WordManager.Instance.StartRound();
+        }
+
         play();
         isTransitioning = false;
     }

@@ -34,10 +34,18 @@ public class WordManager : MonoBehaviour
     private int targetWordsForLevel = 0;
     private int currentWordIndexInLevel = 0;
 
+    public static WordManager Instance { get; private set; }
+
     // Events (WordUIBinder uses these)
     public event Action OnStartedRound;
     public event Action OnCompletedRound;
     public event Action OnFailedRound;
+    /// <summary>Fired every time a new word is picked (round start and between words).</summary>
+    public event Action OnWordChanged;
+
+    // Level progress for HUD display
+    public int WordIndexInLevel => currentWordIndexInLevel;
+    public int TargetWordsForLevel => targetWordsForLevel;
 
     // Current picked word from dictionary
     private DictionaryManager.DictionaryWord currentWord;
@@ -65,6 +73,7 @@ public class WordManager : MonoBehaviour
 
     private void Awake()
     {
+        Instance = this;
         if (letterSpawner == null) letterSpawner = FindObjectOfType<LetterSpawner>();
         if (letterSpawner == null) Debug.LogError("[WordManager] LetterSpawner not found in scene.");
     }
@@ -220,6 +229,7 @@ public class WordManager : MonoBehaviour
         // Update UI with new English prompt
         UpdateEnglishPromptUI();
         UpdateCollectedLettersUI();
+        OnWordChanged?.Invoke();
 
         // Spawn letters far ahead. Pass the toned word; LetterSpawner splits it into
         // the same grapheme clusters so spawned letters carry their tone marks.

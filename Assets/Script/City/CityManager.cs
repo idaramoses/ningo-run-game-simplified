@@ -6,6 +6,8 @@ public class CityDefinition
     public string cityName;
     [Tooltip("Plaque sprite shown on the Home location panel.")]
     public Sprite plaqueSprite;
+    [Tooltip("Badge sprite shown as the city header on the level map.")]
+    public Sprite headerSprite;
     [Tooltip("Starter road group activated for this city.")]
     public GameObject starterRoadGroup;
     [Tooltip("Road tiles spawned for this city. Leave empty to reuse the spawner's current tiles.")]

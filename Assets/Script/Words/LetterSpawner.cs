@@ -24,6 +24,10 @@ public class LetterSpawner : MonoBehaviour
     [Tooltip("Max total letters (correct + wrong) per road segment")]
     public int maxLettersPerRoadSegment = 5; // Multiple letters per road
 
+    [Header("Letter Prefab")]
+    [Tooltip("Fallback prefab (LetterPickup + LetterVisual + TMP text) used when road tiles have no RoadSegment.")]
+    public GameObject letterPrefab;
+
     [Header("Wrong Letters")]
     [Range(0f, 1f)]
     public float wrongLetterChance = 0.7f; // Default, overridden by level
@@ -375,9 +379,30 @@ public class LetterSpawner : MonoBehaviour
             // Track letter lane for this segment (for obstacle avoidance)
             TrackLetterLane(worldZ, laneIndex);
         }
+        else if (letterPrefab != null)
+        {
+            // Direct fallback: spawn the letter pickup at the world position.
+            float laneX = (laneIndex - 1) * laneDistance;
+            Vector3 pos = new Vector3(laneX, spawnHeightOffset, worldZ);
+            GameObject obj = Instantiate(letterPrefab, pos, Quaternion.Euler(0f, 180f, 0f), lettersParent);
+
+            var visual = obj.GetComponent<LetterVisual>();
+            if (visual != null)
+            {
+                visual.SetLetter(c);
+                visual.SetCorrect(isCorrect);
+            }
+
+            spawned.Add(obj);
+            TrackLetterLane(worldZ, laneIndex);
+
+#if UNITY_EDITOR
+            Debug.Log($"[LetterSpawner] Spawned letter '{c}' (correct={isCorrect}) at {pos} via fallback prefab");
+#endif
+        }
         else
         {
-            Debug.LogWarning($"[LetterSpawner] No RoadSegment found at Z={worldZ} or letterPrefab not assigned");
+            Debug.LogWarning($"[LetterSpawner] No RoadSegment found at Z={worldZ} and no letterPrefab fallback assigned");
         }
     }
 
