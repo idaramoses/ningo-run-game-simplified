@@ -27,6 +27,21 @@ public class WordFailHandler : MonoBehaviour
     {
         Debug.Log("WordFailHandler: FAIL -> stop game");
 
+        if (SoundEffectsManager.Instance != null)
+            SoundEffectsManager.Instance.PlayObstacleHit();
+
+        // Same behavior as hitting an obstacle: knock the runner down first
+        var simpleRunner = FindObjectOfType<SimplePlayerController>();
+        if (simpleRunner != null)
+            simpleRunner.TriggerFall();
+
+        // Single-scene flow uses UImanager.Fail() (FailPanel + freeze + state)
+        if (UImanager.uimanager != null)
+        {
+            UImanager.uimanager.Fail();
+            return;
+        }
+
         // Prefer unified fail flow (fall anim + FailPanel + stop gameplay)
         if (GameSceneController.Instance != null)
         {

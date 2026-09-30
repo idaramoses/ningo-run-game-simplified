@@ -126,6 +126,9 @@ public class WordTranslationPanelUI : MonoBehaviour
     {
         if (slotsContainer == null || slotTemplate == null || count <= 0) return;
 
+        // The template must never render itself - only its clones
+        slotTemplate.SetActive(false);
+
         for (int i = slotsContainer.childCount - 1; i >= 0; i--)
         {
             Transform child = slotsContainer.GetChild(i);
@@ -134,15 +137,6 @@ public class WordTranslationPanelUI : MonoBehaviour
 
         for (int i = 0; i < count; i++)
         {
-            if (i > 0 && connectorSprite != null)
-            {
-                var conn = new GameObject("Connector", typeof(RectTransform), typeof(Image));
-                conn.transform.SetParent(slotsContainer, false);
-                conn.GetComponent<Image>().sprite = connectorSprite;
-                conn.GetComponent<Image>().raycastTarget = false;
-                conn.GetComponent<RectTransform>().sizeDelta = new Vector2(connectorSize, connectorSize);
-            }
-
             GameObject slot = Instantiate(slotTemplate, slotsContainer);
             slot.name = $"Slot_{i}";
             slot.SetActive(true);

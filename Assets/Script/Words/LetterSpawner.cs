@@ -11,18 +11,18 @@ public class LetterSpawner : MonoBehaviour
     [Header("Lane (match PlayerRunnerController.laneDistance)")]
     public float laneDistance = 2.5f;
     public float laneJitter = 0.8f; // Increased for more scattered placement
-    public float spawnHeightOffset = 1.5f;
+    [Tooltip("Matches CoinSpawner/RoadSpawner coinYOffset so letters float at coin height.")]
+    public float spawnHeightOffset = 0.2f;
 
     [Header("Scatter / Long Run Feel")]
-    public int maxLettersPerSegment = 5; // More letters per segment
     public float segmentLength = 40f; // 1 road = 40 units (spawn more frequently)
     public float segmentGap = 0f;
     public float wordGap = 0f; // No gap between words - endless letters
     public float initialSpawnDelay = 40f; // Delay before first letters (1 road length)
 
     [Header("Letters Per Road Segment")]
-    [Tooltip("Max total letters (correct + wrong) per road segment")]
-    public int maxLettersPerRoadSegment = 5; // Multiple letters per road
+    [Tooltip("Max total letters (correct + wrong) per road segment. Spawn count is random 0..max.")]
+    public int maxLettersPerRoadSegment = 2;
 
     [Header("Letter Prefab")]
     [Tooltip("Fallback prefab (LetterPickup + LetterVisual + TMP text) used when road tiles have no RoadSegment.")]
@@ -195,7 +195,7 @@ public class LetterSpawner : MonoBehaviour
             float segStart = baseZ + (seg * segmentLength);
             float segEnd = segStart + segmentLength;
 
-            int lettersThisSegment = Random.Range(2, maxLettersPerRoadSegment + 1);
+            int lettersThisSegment = Random.Range(0, maxLettersPerRoadSegment + 1); // 0, 1 or 2 per tile
             
             for (int i = 0; i < lettersThisSegment; i++)
             {
@@ -275,10 +275,10 @@ public class LetterSpawner : MonoBehaviour
 
     private float GetWrongLetterChanceForLevel(int level)
     {
-        // Level 1-2: No wrong letters
+        // Level 1-2: Small chance of wrong letters (intro)
         if (level <= 2)
         {
-            return 0f;
+            return 0.2f;
         }
         // Level 3: Start with very few wrong letters (10-15% chance)
         else if (level == 3)
@@ -384,7 +384,7 @@ public class LetterSpawner : MonoBehaviour
             // Direct fallback: spawn the letter pickup at the world position.
             float laneX = (laneIndex - 1) * laneDistance;
             Vector3 pos = new Vector3(laneX, spawnHeightOffset, worldZ);
-            GameObject obj = Instantiate(letterPrefab, pos, Quaternion.Euler(0f, 180f, 0f), lettersParent);
+            GameObject obj = Instantiate(letterPrefab, pos, Quaternion.identity, lettersParent);
 
             var visual = obj.GetComponent<LetterVisual>();
             if (visual != null)

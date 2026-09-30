@@ -13,7 +13,11 @@ public class LetterVisual : MonoBehaviour
     void Awake()
     {
         pickup = GetComponent<LetterPickup>();
-        
+
+        // Bounce/bob animation (self-attach so the prefab doesn't need it pre-added)
+        if (GetComponent<LetterBounce>() == null)
+            gameObject.AddComponent<LetterBounce>();
+
         // Auto-find TMP_Text if not assigned
         if (tmp == null)
         {

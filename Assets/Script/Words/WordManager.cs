@@ -68,6 +68,9 @@ public class WordManager : MonoBehaviour
     // Track collected letters for UI display (position-based, one grapheme per slot)
     private string[] collectedLettersArray;
 
+    // English->translation pairs completed this level (for the completion panel)
+    private readonly List<LevelCompleteCanvas.WordPair> completedPairs = new List<LevelCompleteCanvas.WordPair>();
+
     private bool startedOnce = false;
     private bool isFailed = false;
 
@@ -80,11 +83,34 @@ public class WordManager : MonoBehaviour
 
     private IEnumerator Start()
     {
-        // Wait until dictionary is loaded
-        yield return new WaitUntil(() =>
-            letterSpawner != null &&
-            DictionaryManager.HasDictionary()
-        );
+        // Wait for the spawner
+        yield return new WaitUntil(() => letterSpawner != null);
+
+        // The dictionary is fetched from the API during onboarding. Wait for
+        // onboarding to finish first (returning users go straight to Welcome).
+        var ui = FindObjectOfType<UserInfoController>();
+        if (ui != null)
+            yield return new WaitUntil(() => ui.IsOnboardingComplete);
+
+        // Short grace window in case the fetch is still in flight.
+        float grace = 10f;
+        while (!DictionaryManager.HasDictionary() && grace > 0f)
+        {
+            grace -= Time.deltaTime;
+            yield return null;
+        }
+
+        // Words MUST come from the API dictionary. If it isn't there, the
+        // session is unusable for gameplay -> log the user out.
+        if (!DictionaryManager.HasDictionary())
+        {
+            Debug.LogError("[WordManager] API dictionary missing/unparseable -> logging user out.");
+            if (ui != null)
+                ui.ForceLogoutToLogin("Couldn't load your words. Please log in again.");
+            else
+                UserSession.Clear();
+            yield break;
+        }
 
         if (autoStartOnReady)
             StartRound();
@@ -108,6 +134,7 @@ public class WordManager : MonoBehaviour
         wordGraphemes.Clear();
         currentWord = null;
         collectedLettersArray = null;
+        completedPairs.Clear();
 
         // Clear any spawned letters from the previous level
         if (letterSpawner != null)
@@ -340,6 +367,16 @@ public class WordManager : MonoBehaviour
 
     private void OnWordCompleted()
     {
+        // Record the completed pair for the level-complete panel
+        if (currentWord != null)
+        {
+            completedPairs.Add(new LevelCompleteCanvas.WordPair
+            {
+                english = currentWord.word,
+                translation = spawnWord
+            });
+        }
+
         if (useLevelSystem && LevelManager.Instance != null)
         {
             wordsSpawnedThisLevel++;
@@ -374,7 +411,27 @@ public class WordManager : MonoBehaviour
         LevelManager.Instance.CompleteLevel(currentLevel.levelNumber, wordsSpawnedThisLevel);
         
         Debug.Log($"[WordManager] Level {currentLevel.levelNumber} completed with {stars} stars!");
-        
+
+        // Single-scene flow: Canvas_CompleteLevel (may be inactive -> find it directly)
+        var completeCanvas = LevelCompleteCanvas.Instance;
+        if (completeCanvas == null)
+            completeCanvas = FindObjectOfType<LevelCompleteCanvas>(true);
+
+        if (completeCanvas != null)
+        {
+            var pairs = new List<LevelCompleteCanvas.WordPair>(completedPairs);
+            if (UImanager.uimanager != null)
+            {
+                if (UImanager.uimanager.canvasHUD != null) UImanager.uimanager.canvasHUD.SetActive(false);
+                if (UImanager.uimanager.canvasGame != null) UImanager.uimanager.canvasGame.SetActive(false);
+            }
+            if (GameStateController.Instance != null)
+                GameStateController.Instance.SetPlaying(false);
+            Time.timeScale = 0f;
+            completeCanvas.Show(currentLevel.levelNumber, wordsSpawnedThisLevel, targetWordsForLevel, stars, pairs);
+            return;
+        }
+
         // Show completion panel through GameSceneController (primary) or GameFlowController (fallback)
         if (GameSceneController.Instance != null)
         {

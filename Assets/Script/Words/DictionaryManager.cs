@@ -34,16 +34,31 @@ public static class DictionaryManager
     }
 
     [Serializable]
+    private class NestedDataWrapper
+    {
+        public bool success;
+        public NestedWordsData data;
+    }
+
+    [Serializable]
+    private class NestedWordsData
+    {
+        public List<DictionaryWord> words;
+    }
+
+    [Serializable]
     private class DirectArrayWrapper
     {
         public List<DictionaryWord> items;
     }
 
     private static List<DictionaryWord> cachedWords = null;
+    private static bool cacheLoadAttempted = false;
 
     public static void InvalidateMemoryCache()
     {
         cachedWords = null;
+        cacheLoadAttempted = false;
         Debug.Log("[DictionaryManager] Memory cache invalidated.");
     }
 
@@ -86,15 +101,21 @@ public static class DictionaryManager
 
     private static void EnsureCacheLoaded()
     {
-        if (cachedWords != null) return;
+        if (cachedWords != null || cacheLoadAttempted) return;
+        cacheLoadAttempted = true;
 
         string json = PlayerPrefs.GetString("dictionary_data", "");
         if (!string.IsNullOrEmpty(json))
         {
             try
             {
+                // Try API format: {"success":true,"data":{"words":[...]}}
+                NestedDataWrapper nested = JsonUtility.FromJson<NestedDataWrapper>(json);
+                if (nested != null && nested.data != null && nested.data.words != null && nested.data.words.Count > 0)
+                    cachedWords = nested.data.words;
+
                 // Try wrapped format
-                DictionaryResponseWrapper wrapper = JsonUtility.FromJson<DictionaryResponseWrapper>(json);
+                DictionaryResponseWrapper wrapper = cachedWords == null ? JsonUtility.FromJson<DictionaryResponseWrapper>(json) : null;
                 if (wrapper != null)
                 {
                     if (wrapper.words != null && wrapper.words.Count > 0)
@@ -122,72 +143,11 @@ public static class DictionaryManager
             }
         }
 
-        // Fallback default word bank if empty
+        // No local fallback word bank — dictionary MUST come from the API.
         if (cachedWords == null || cachedWords.Count == 0)
         {
-            cachedWords = GetFallbackWords();
+            Debug.LogError("[DictionaryManager] API dictionary not available (missing or unparseable 'dictionary_data').");
+            cachedWords = null;
         }
-    }
-
-    private static List<DictionaryWord> GetFallbackWords()
-    {
-        string currentLang = PlayerPrefs.GetString("user_selected_language", "yoruba").ToLowerInvariant();
-
-        List<DictionaryWord> list = new List<DictionaryWord>();
-
-        if (currentLang == "hausa")
-        {
-            list.Add(new DictionaryWord("Head", "Kai", "body", "hausa"));
-            list.Add(new DictionaryWord("Eye", "Ido", "body", "hausa"));
-            list.Add(new DictionaryWord("Hand", "Hannu", "body", "hausa"));
-            list.Add(new DictionaryWord("Leg", "Ƙafa", "body", "hausa"));
-            list.Add(new DictionaryWord("Mouth", "Baki", "body", "hausa"));
-            list.Add(new DictionaryWord("Ear", "Kunne", "body", "hausa"));
-            list.Add(new DictionaryWord("Water", "Ruwa", "general", "hausa"));
-            list.Add(new DictionaryWord("Food", "Abinci", "general", "hausa"));
-            list.Add(new DictionaryWord("Run", "Gudu", "actions", "hausa"));
-            list.Add(new DictionaryWord("Come", "Zo", "actions", "hausa"));
-        }
-        else if (currentLang == "igbo")
-        {
-            list.Add(new DictionaryWord("Head", "Isi", "body", "igbo"));
-            list.Add(new DictionaryWord("Eye", "Anya", "body", "igbo"));
-            list.Add(new DictionaryWord("Hand", "Aka", "body", "igbo"));
-            list.Add(new DictionaryWord("Leg", "Ụkwụ", "body", "igbo"));
-            list.Add(new DictionaryWord("Mouth", "Ọnụ", "body", "igbo"));
-            list.Add(new DictionaryWord("Ear", "Ntị", "body", "igbo"));
-            list.Add(new DictionaryWord("Water", "Mmiri", "general", "igbo"));
-            list.Add(new DictionaryWord("Food", "Nri", "general", "igbo"));
-            list.Add(new DictionaryWord("Run", "Gbaa", "actions", "igbo"));
-            list.Add(new DictionaryWord("Come", "Bịa", "actions", "igbo"));
-        }
-        else if (currentLang == "ibibio")
-        {
-            list.Add(new DictionaryWord("Head", "Ibuot", "body", "ibibio"));
-            list.Add(new DictionaryWord("Eye", "Enyin", "body", "ibibio"));
-            list.Add(new DictionaryWord("Hand", "Ubok", "body", "ibibio"));
-            list.Add(new DictionaryWord("Leg", "Ukod", "body", "ibibio"));
-            list.Add(new DictionaryWord("Mouth", "Inua", "body", "ibibio"));
-            list.Add(new DictionaryWord("Ear", "Utong", "body", "ibibio"));
-            list.Add(new DictionaryWord("Water", "Mmọñ", "general", "ibibio"));
-            list.Add(new DictionaryWord("Food", "Udia", "general", "ibibio"));
-            list.Add(new DictionaryWord("Run", "Feñe", "actions", "ibibio"));
-            list.Add(new DictionaryWord("Come", "Di", "actions", "ibibio"));
-        }
-        else // default Yoruba
-        {
-            list.Add(new DictionaryWord("Head", "Orí", "body", "yoruba"));
-            list.Add(new DictionaryWord("Eye", "Ojú", "body", "yoruba"));
-            list.Add(new DictionaryWord("Hand", "Ọwọ́", "body", "yoruba"));
-            list.Add(new DictionaryWord("Leg", "Ẹsẹ̀", "body", "yoruba"));
-            list.Add(new DictionaryWord("Mouth", "Ẹnu", "body", "yoruba"));
-            list.Add(new DictionaryWord("Ear", "Etí", "body", "yoruba"));
-            list.Add(new DictionaryWord("Water", "Omi", "general", "yoruba"));
-            list.Add(new DictionaryWord("Food", "Oúnjẹ", "general", "yoruba"));
-            list.Add(new DictionaryWord("Run", "Sáré", "actions", "yoruba"));
-            list.Add(new DictionaryWord("Come", "Wá", "actions", "yoruba"));
-        }
-
-        return list;
     }
 }

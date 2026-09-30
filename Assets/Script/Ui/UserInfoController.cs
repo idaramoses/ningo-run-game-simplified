@@ -322,6 +322,31 @@ public class UserInfoController : MonoBehaviour
         Debug.Log("[UserInfoController] Showing login step");
     }
 
+    /// <summary>
+    /// Clears the session and returns to the login step. Called when required
+    /// server data (e.g. the API dictionary) is missing so the user can't play.
+    /// </summary>
+    public void ForceLogoutToLogin(string reason = "")
+    {
+        Debug.LogWarning($"[UserInfoController] Force logout to login: {reason}");
+
+        UserSession.Clear();
+        StopAllCoroutines();
+
+        isAuthenticating = false;
+        isGuestMode = false;
+        authToken = "";
+        refreshToken = "";
+        selectedLanguageCode = "";
+
+        SetLoginButtonLoading(false);
+        SetGuestButtonLoading(false);
+        SetLanguageNextButtonLoading(false);
+
+        ShowLoginStep();
+        if (!string.IsNullOrEmpty(reason)) SetLoginStatus(reason);
+    }
+
     private void OnClickLogin()
     {
         if (isAuthenticating) return;
@@ -888,6 +913,9 @@ public class UserInfoController : MonoBehaviour
     // -------------------------------------------------------------------------
     // WELCOME STEP
     // -------------------------------------------------------------------------
+    /// <summary>True once the welcome step is shown (onboarding/login finished).</summary>
+    public bool IsOnboardingComplete => welcomePanel != null && welcomePanel.activeSelf;
+
     private void ShowWelcomeStep()
     {
         isAuthenticating = false;
