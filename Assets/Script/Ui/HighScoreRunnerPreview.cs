@@ -22,6 +22,19 @@ public class HighScoreRunnerPreview : MonoBehaviour
 
     private GameObject instance;
     private Animator anim;
+    private bool isPlayingCelebrate = false;
+
+    private void Update()
+    {
+        // If the animator drifts out of the celebrate state, force it back
+        // (also covers a non-looping clip ending mid-pose)
+        if (isPlayingCelebrate && anim != null)
+        {
+            AnimatorStateInfo info = anim.GetCurrentAnimatorStateInfo(0);
+            if (!info.IsName(celebrateStateName))
+                anim.Play(celebrateStateName, 0, 0f);
+        }
+    }
 
     private void OnEnable()
     {
@@ -65,6 +78,7 @@ public class HighScoreRunnerPreview : MonoBehaviour
         if (instance != null) Destroy(instance);
         instance = null;
         anim = null;
+        isPlayingCelebrate = false;
     }
 
     private void SpawnFresh()
@@ -86,10 +100,16 @@ public class HighScoreRunnerPreview : MonoBehaviour
         // Restore source state
         if (wasActive) runnerPrefabOrModel.SetActive(true);
 
-        // Disable components on the inactive clone so they never run when activated
+        // Disable ALL scripts on the clone so they can't fight the preview
+        // animation (e.g. SimplePlayerController forcing "idle" every frame)
+        foreach (var mb in instance.GetComponentsInChildren<MonoBehaviour>(true))
+        {
+            mb.enabled = false;
+        }
+
         var charController = instance.GetComponent<CharacterController>();
         if (charController != null) charController.enabled = false;
-        
+
         // Position and layer the inactive clone
         instance.transform.localPosition = localSpawnPos;
         instance.transform.localRotation = Quaternion.Euler(localSpawnEuler);
@@ -134,6 +154,8 @@ public class HighScoreRunnerPreview : MonoBehaviour
                 stateToPlay = "dance 3";
             }
         }
+        celebrateStateName = stateToPlay; // keep the resolved name for Update()
+        isPlayingCelebrate = true;
         anim.Play(stateToPlay, 0, 0f);
         anim.Update(0f);
     }
