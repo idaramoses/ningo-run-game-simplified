@@ -34,6 +34,9 @@ public class CameraFollowRunner : MonoBehaviour
         rotationVelocity = Vector3.zero;
     }
 
+    public Vector3 HomePosition => initialPosition;
+    public Quaternion HomeRotation => initialRotation;
+
     void LateUpdate()
     {
         if (!target) return;

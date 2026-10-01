@@ -1601,10 +1601,14 @@ public class UImanager : MonoBehaviour
         if (GameStateController.Instance != null)
             GameStateController.Instance.SetPlaying(false);
 
-        // Reset camera
+        // Reset camera - glide back to the home framing instead of snapping
         CameraFollowRunner camFollow = Object.FindFirstObjectByType<CameraFollowRunner>();
         if (camFollow != null)
-            camFollow.ResetCamera();
+        {
+            camFollow.forceFollow = false;
+            if (cameraResetRoutine != null) StopCoroutine(cameraResetRoutine);
+            cameraResetRoutine = StartCoroutine(SmoothCameraReturn(camFollow, 0.6f));
+        }
 
         // Destroy spawned road tiles and rewind the spawn cursor so the
         // next run builds the road fresh from the starter tile
@@ -1625,6 +1629,31 @@ public class UImanager : MonoBehaviour
         }
 
         SetMenuVehiclesActive(true);
+    }
+
+    private Coroutine cameraResetRoutine;
+
+    /// <summary>Glides the camera back to its home pose over `duration` seconds.
+    /// Bails early if a run transition takes over (forceFollow / playing), so the two
+    /// don't fight over the camera.</summary>
+    private IEnumerator SmoothCameraReturn(CameraFollowRunner cam, float duration)
+    {
+        Vector3 fromPos = cam.transform.position;
+        Quaternion fromRot = cam.transform.rotation;
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            if (cam.forceFollow || (GameStateController.Instance != null && GameStateController.Instance.IsPlaying()))
+                yield break;
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            float tSmooth = t * t * (3f - 2f * t);
+            cam.transform.position = Vector3.Lerp(fromPos, cam.HomePosition, tSmooth);
+            cam.transform.rotation = Quaternion.Slerp(fromRot, cam.HomeRotation, tSmooth);
+            yield return null;
+        }
+        cam.ResetCamera();
+        cameraResetRoutine = null;
     }
 
     public void ShowLevelSelect()
@@ -1713,6 +1742,12 @@ public class UImanager : MonoBehaviour
         // Smoothly rotate and move player runner from Home screen position to Gameplay starting position
         GameObject runnerObj = FindRunnerObject();
         SimplePlayerController runnerController = runnerObj != null ? runnerObj.GetComponent<SimplePlayerController>() : null;
+
+        // Let the camera glide with the runner during the run-in intro instead of
+        // snapping in at the end when playing starts
+        CameraFollowRunner camFollow = Object.FindFirstObjectByType<CameraFollowRunner>();
+        if (camFollow != null && camFollow.target != null)
+            camFollow.forceFollow = true;
         Debug.Log($"[UImanager] SeamlessInSceneTransitionCoroutine: runnerObj={(runnerObj != null ? runnerObj.name : "NULL")}, runnerController={(runnerController != null)}");
 
         if (runnerController != null)
@@ -1783,6 +1818,9 @@ public class UImanager : MonoBehaviour
         {
             GameStateController.Instance.SetPlaying(true);
         }
+
+        // Playing now drives the follow gate - release the intro override
+        if (camFollow != null) camFollow.forceFollow = false;
 
         // Also run the legacy play() flow for backward compatibility with any
         // remaining Playermuving-based systems still active in the scene.

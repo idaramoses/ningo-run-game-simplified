@@ -166,8 +166,13 @@ public class SimpleCameraFollow : MonoBehaviour
             float newX = Mathf.Lerp(transform.position.x, targetPosition.x, Time.deltaTime * smoothSpeed);
             float newY = Mathf.Lerp(transform.position.y, targetPosition.y, Time.deltaTime * smoothSpeed);
 
-            // Z position matches target's Z position with 0 lag to prevent forward camera stuttering/shaking
-            float newZ = targetPosition.z;
+            // Z position matches target's Z position with 0 lag to prevent forward camera stuttering/shaking,
+            // except while the camera is far away (e.g. blending in from the idle framing) - then it lerps
+            // smoothly into place instead of snapping forward in a single frame
+            float zDiff = Mathf.Abs(transform.position.z - targetPosition.z);
+            float newZ = zDiff > 0.05f
+                ? Mathf.Lerp(transform.position.z, targetPosition.z, Time.deltaTime * smoothSpeed)
+                : targetPosition.z;
 
             transform.position = new Vector3(newX, newY, newZ);
         }
