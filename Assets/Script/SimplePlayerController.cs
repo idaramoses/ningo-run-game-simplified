@@ -795,7 +795,10 @@ public class SimplePlayerController : MonoBehaviour
                     WordManager.Instance.CollectLetter(letterPickup.letter);
 
                 if (SoundEffectsManager.Instance != null)
+                {
                     SoundEffectsManager.Instance.PlayLetterCollect();
+                    SoundEffectsManager.Instance.SpawnLetterCollectEffect(letterPickup.transform.position);
+                }
 
                 Destroy(letterPickup.gameObject);
                 continue;

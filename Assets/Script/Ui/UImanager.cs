@@ -448,7 +448,8 @@ public class UImanager : MonoBehaviour
         PlayerPrefs.SetInt("RunCoins", 0);
 
         StartCoroutine(Playdelay());
-        Soundmanager.soundmanager.PlayPoliceSound();
+        if (Soundmanager.soundmanager != null)
+            Soundmanager.soundmanager.PlayPoliceSound();
     }
 
     IEnumerator Playdelay()
@@ -1569,6 +1570,63 @@ public class UImanager : MonoBehaviour
         StartCoroutine(SeamlessInSceneTransitionCoroutine());
     }
 
+    /// <summary>Resets the transition flag. Called when gameplay ends (complete/fail/home)
+    /// so a transition that was interrupted mid-flight can't lock out the next run.</summary>
+    public void ResetTransitionFlag()
+    {
+        isTransitioning = false;
+    }
+
+    /// <summary>
+    /// Resets gameplay in the background: hides gameplay panels, stops the run state,
+    /// resets the camera, re-enables menu vehicles and puts the runner back into its
+    /// roadside idle pose - WITHOUT showing the home canvas. Used by Replay/Next on
+    /// Canvas_CompleteLevel before starting a level through the normal run flow.
+    /// </summary>
+    public void ResetRunnerToHomePose()
+    {
+        isPaused = false;
+        isFailed = false;
+        isTransitioning = false;
+        isCountingDown = false;
+
+        // Hide gameplay panels
+        if (pausePanel) pausePanel.SetActive(false);
+        if (failPanel) failPanel.SetActive(false);
+        if (highScorePanel) highScorePanel.SetActive(false);
+        if (canvasHUD) canvasHUD.SetActive(false);
+        if (canvasGame) canvasGame.SetActive(false);
+
+        // Stop gameplay state
+        if (GameStateController.Instance != null)
+            GameStateController.Instance.SetPlaying(false);
+
+        // Reset camera
+        CameraFollowRunner camFollow = Object.FindFirstObjectByType<CameraFollowRunner>();
+        if (camFollow != null)
+            camFollow.ResetCamera();
+
+        // Destroy spawned road tiles and rewind the spawn cursor so the
+        // next run builds the road fresh from the starter tile
+        RoadSpawner roadSpawner = Object.FindFirstObjectByType<RoadSpawner>();
+        if (roadSpawner != null)
+            roadSpawner.ResetSpawner();
+
+        // Runner back to roadside idle pose
+        GameObject runnerObj = FindRunnerObject();
+        if (runnerObj != null)
+        {
+            SimplePlayerController runnerController = runnerObj.GetComponent<SimplePlayerController>();
+            if (runnerController != null)
+            {
+                runnerController.enabled = true;
+                runnerController.SetRoadsideIdlePose();
+            }
+        }
+
+        SetMenuVehiclesActive(true);
+    }
+
     public void ShowLevelSelect()
     {
         if (canvasLevel == null) return;
@@ -2290,6 +2348,12 @@ public class UImanager : MonoBehaviour
         if (canvasHUD) canvasHUD.SetActive(true);
         if (canvasGame) canvasGame.SetActive(true);
 
+        // Destroy spawned road tiles and rewind the spawn cursor so the
+        // restart builds the road fresh from the starter tile
+        RoadSpawner roadSpawner = Object.FindFirstObjectByType<RoadSpawner>();
+        if (roadSpawner != null)
+            roadSpawner.ResetSpawner();
+
         // Reset player to gameplay start
         GameObject runnerObj = FindRunnerObject();
         if (runnerObj != null)
@@ -2355,6 +2419,11 @@ public class UImanager : MonoBehaviour
         {
             GameStateController.Instance.SetPlaying(false);
         }
+
+        // Clear spawned road tiles so stale roads don't linger in the distance
+        RoadSpawner roadSpawner = Object.FindFirstObjectByType<RoadSpawner>();
+        if (roadSpawner != null)
+            roadSpawner.ResetSpawner();
 
         // Play home music
         if (BackgroundMusicManager.Instance != null)

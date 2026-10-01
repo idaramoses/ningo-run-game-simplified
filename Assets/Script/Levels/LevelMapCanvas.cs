@@ -37,6 +37,8 @@ public class LevelMapCanvas : MonoBehaviour
     public float connectorSize = 18f;
 
     private readonly List<LevelMapNode> nodes = new List<LevelMapNode>();
+    private LevelMapNode currentNode;
+    private int currentNodeLevel = -1;
 
     private void Awake()
     {
@@ -93,6 +95,7 @@ public class LevelMapCanvas : MonoBehaviour
 
             nodes[i].gameObject.SetActive(true);
             nodes[i].Configure(this, levelNumber, unlocked, data.isCompleted, data.starsEarned, isCurrent);
+            if (isCurrent) { currentNode = nodes[i]; currentNodeLevel = levelNumber; }
 
             float x = Mathf.Sin((levelNumber - 1) * 1.05f) * horizontalAmplitude;
             float y = -topPadding - (levelNumber - 1) * verticalSpacing;
@@ -158,6 +161,29 @@ public class LevelMapCanvas : MonoBehaviour
         }
 
         Debug.LogWarning("[LevelMapCanvas] UImanager not found - cannot start level");
+    }
+
+    /// <summary>Pulse the newly-unlocked "current" node, then auto-start that level.</summary>
+    public void AnimateCurrentNodeThenStart(float pulseDuration = 0.9f)
+    {
+        if (currentNode == null) Refresh();
+        if (currentNode == null) return;
+        StartCoroutine(AnimateThenStartCoroutine(pulseDuration));
+    }
+
+    private System.Collections.IEnumerator AnimateThenStartCoroutine(float duration)
+    {
+        RectTransform rt = currentNode.RectTransform;
+        float e = 0f;
+        while (e < duration)
+        {
+            e += Time.unscaledDeltaTime;
+            float s = 1f + Mathf.Sin((e / duration) * Mathf.PI * 2f) * 0.15f;
+            rt.localScale = Vector3.one * s;
+            yield return null;
+        }
+        rt.localScale = Vector3.one;
+        OnLevelNodeClicked(currentNodeLevel);
     }
 
     public void HidePanel()

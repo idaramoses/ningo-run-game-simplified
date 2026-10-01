@@ -336,15 +336,34 @@ public class LevelCompleteCanvas : MonoBehaviour
     private void OnNextLevel()
     {
         PlayClick();
-        if (LevelManager.Instance != null)
-            LevelManager.Instance.SetSelectedLevel(LevelManager.Instance.GetSelectedLevel() + 1);
-        RestartRun();
+        Time.timeScale = 1f;
+        gameObject.SetActive(false);
+        if (UImanager.uimanager == null) return;
+
+        // 1) Reset the game in the background - runner back to roadside idle,
+        //    gameplay state cleared (same reset the fail panel's Home does)
+        UImanager.uimanager.ResetRunnerToHomePose();
+
+        // 2) Show Canvas_Level, pulse the newly-unlocked node, then auto-start it
+        UImanager.uimanager.ShowLevelSelect();
+        if (LevelMapCanvas.Instance != null)
+            LevelMapCanvas.Instance.AnimateCurrentNodeThenStart();
     }
 
     private void OnReplay()
     {
         PlayClick();
-        RestartRun();
+        Time.timeScale = 1f;
+        gameObject.SetActive(false);
+        if (UImanager.uimanager == null) return;
+
+        // 1) Reset the game in the background - runner back to roadside idle
+        UImanager.uimanager.ResetRunnerToHomePose();
+
+        // 2) Start the SAME level through the normal node-click flow
+        //    (no Canvas_Level shown - goes straight into the run)
+        int current = LevelManager.Instance != null ? LevelManager.Instance.GetSelectedLevel() : 1;
+        UImanager.uimanager.StartLevelAndRun(current);
     }
 
     private void OnHome()

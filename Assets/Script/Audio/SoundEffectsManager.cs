@@ -13,6 +13,8 @@ public class SoundEffectsManager : MonoBehaviour
     
     [Header("Visual Effects")]
     public GameObject coinCollectEffectPrefab;
+    [Tooltip("Burst effect spawned where a word letter is picked up.")]
+    public GameObject letterCollectEffectPrefab;
     
     [Header("Settings")]
     public float sfxVolume = 1f;
@@ -104,42 +106,52 @@ public class SoundEffectsManager : MonoBehaviour
 
     public void SpawnCoinCollectEffect(Vector3 position)
     {
-        if (coinCollectEffectPrefab != null)
+        SpawnBurstEffect(coinCollectEffectPrefab, position);
+    }
+
+    public void SpawnLetterCollectEffect(Vector3 position)
+    {
+        SpawnBurstEffect(letterCollectEffectPrefab, position);
+    }
+
+    private void SpawnBurstEffect(GameObject prefab, Vector3 position)
+    {
+        if (prefab == null) return;
+
+        GameObject effect = null;
+        if (ObjectPoolManager.Instance != null)
         {
-            GameObject effect = null;
-            if (ObjectPoolManager.Instance != null)
+            ObjectPoolManager.Instance.AddPool(prefab.name, prefab, 10);
+            effect = ObjectPoolManager.Instance.SpawnFromPool(prefab.name, position, Quaternion.identity);
+        }
+        else
+        {
+            effect = Instantiate(prefab, position, Quaternion.identity);
+        }
+
+        if (effect != null)
+        {
+            // Set layer to the same layer as other temporary/UI particles or default
+            effect.layer = LayerMask.NameToLayer("Default");
+
+            ParticleSystem ps = effect.GetComponent<ParticleSystem>();
+            if (ps == null) ps = effect.GetComponentInChildren<ParticleSystem>();
+            if (ps != null)
             {
-                ObjectPoolManager.Instance.AddPool(coinCollectEffectPrefab.name, coinCollectEffectPrefab, 10);
-                effect = ObjectPoolManager.Instance.SpawnFromPool(coinCollectEffectPrefab.name, position, Quaternion.identity);
+                ps.Play();
+                var main = ps.main;
+                main.loop = false; // single burst explosion
+
+                // Get maximum lifetime to destroy/return cleanly
+                float maxLifetime = main.startLifetime.mode == ParticleSystemCurveMode.Constant
+                    ? main.startLifetime.constant
+                    : main.startLifetime.constantMax;
+
+                StartCoroutine(DeactivateEffectAfter(effect, main.duration + maxLifetime));
             }
             else
             {
-                effect = Instantiate(coinCollectEffectPrefab, position, Quaternion.identity);
-            }
-
-            if (effect != null)
-            {
-                // Set layer to the same layer as other temporary/UI particles or default
-                effect.layer = LayerMask.NameToLayer("Default");
-
-                ParticleSystem ps = effect.GetComponent<ParticleSystem>();
-                if (ps != null)
-                {
-                    ps.Play();
-                    var main = ps.main;
-                    main.loop = false; // single burst explosion
-                    
-                    // Get maximum lifetime to destroy/return cleanly
-                    float maxLifetime = main.startLifetime.mode == ParticleSystemCurveMode.Constant 
-                        ? main.startLifetime.constant 
-                        : main.startLifetime.constantMax;
-                        
-                    StartCoroutine(DeactivateEffectAfter(effect, main.duration + maxLifetime));
-                }
-                else
-                {
-                    StartCoroutine(DeactivateEffectAfter(effect, 1.5f));
-                }
+                StartCoroutine(DeactivateEffectAfter(effect, 1.5f));
             }
         }
     }

@@ -18,7 +18,8 @@ public class LetterSpawner : MonoBehaviour
     public float segmentLength = 40f; // 1 road = 40 units (spawn more frequently)
     public float segmentGap = 0f;
     public float wordGap = 0f; // No gap between words - endless letters
-    public float initialSpawnDelay = 40f; // Delay before first letters (1 road length)
+    [Tooltip("How many road tiles the player passes before letters start spawning (3 = letters begin after the 3rd tile).")]
+    public int firstLetterDelayTiles = 3;
 
     [Header("Letters Per Road Segment")]
     [Tooltip("Max total letters (correct + wrong) per road segment. Spawn count is random 0..max.")]
@@ -149,11 +150,12 @@ public class LetterSpawner : MonoBehaviour
 #endif
         }
         
-        // Only reset spawn position if this is the first word
+        // Only reset spawn position if this is the first word.
+        // Letters don't appear until the player has passed firstLetterDelayTiles road tiles.
         if (lastSpawnedZ == 0f)
         {
-            lastSpawnedZ = spawnPoint.position.z;
-            nextSegmentOffsetZ = initialSpawnDelay;
+            lastSpawnedZ = spawnPoint.position.z + (firstLetterDelayTiles * segmentLength);
+            nextSegmentOffsetZ = 0f;
         }
         // Otherwise keep spawning from where we left off for seamless transition
         

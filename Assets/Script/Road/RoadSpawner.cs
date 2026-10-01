@@ -126,6 +126,24 @@ public class RoadSpawner : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Destroys every spawned road tile and rewinds the spawn cursor back to
+    /// just after the starter road, so a restart builds a fresh road from scratch.
+    /// Obstacles/coins are children of the tiles, so they are cleaned up too.
+    /// </summary>
+    public void ResetSpawner()
+    {
+        while (activeRoads.Count > 0)
+        {
+            GameObject road = activeRoads.Dequeue();
+            if (road != null) Destroy(road);
+        }
+
+        nextSpawnZ = starterRoad != null
+            ? starterRoad.transform.position.z + tileLength
+            : transform.position.z;
+    }
+
     void SpawnRoad(float z)
     {
         int index = Random.Range(0, roadTilePrefabs.Length);

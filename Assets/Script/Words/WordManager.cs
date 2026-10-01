@@ -427,6 +427,9 @@ public class WordManager : MonoBehaviour
             }
             if (GameStateController.Instance != null)
                 GameStateController.Instance.SetPlaying(false);
+            // Clear the transition flag - if we completed mid-transition the flag
+            // would stay true forever and block every future StartLevelAndRun.
+            UImanager.uimanager.ResetTransitionFlag();
             Time.timeScale = 0f;
             completeCanvas.Show(currentLevel.levelNumber, wordsSpawnedThisLevel, targetWordsForLevel, stars, pairs);
             return;
@@ -605,6 +608,25 @@ public class WordManager : MonoBehaviour
     public string GetCollectedLetters()
     {
         return collectedLettersArray != null ? string.Concat(collectedLettersArray) : "";
+    }
+
+    /// <summary>The current translation word split into grapheme clusters (one per slot).</summary>
+    public IReadOnlyList<string> GetWordGraphemes() => wordGraphemes;
+
+    /// <summary>
+    /// Per-slot collection state: returns the collected grapheme for each filled
+    /// slot, or null/"_"/" " for slots not yet collected. Index aligns with GetWordGraphemes().
+    /// </summary>
+    public string[] GetCollectedSlots() => collectedLettersArray;
+
+    /// <summary>How many letter slots have been collected so far.</summary>
+    public int GetCollectedCount()
+    {
+        if (collectedLettersArray == null) return 0;
+        int n = 0;
+        foreach (var s in collectedLettersArray)
+            if (!string.IsNullOrWhiteSpace(s) && s != "_") n++;
+        return n;
     }
 
     /// <summary>
