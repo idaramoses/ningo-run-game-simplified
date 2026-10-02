@@ -353,17 +353,12 @@ public class LevelCompleteCanvas : MonoBehaviour
     private void OnReplay()
     {
         PlayClick();
-        Time.timeScale = 1f;
         gameObject.SetActive(false);
         if (UImanager.uimanager == null) return;
 
-        // 1) Reset the game in the background - runner back to roadside idle
-        UImanager.uimanager.ResetRunnerToHomePose();
-
-        // 2) Start the SAME level through the normal node-click flow
-        //    (no Canvas_Level shown - goes straight into the run)
-        int current = LevelManager.Instance != null ? LevelManager.Instance.GetSelectedLevel() : 1;
-        UImanager.uimanager.StartLevelAndRun(current);
+        // Fade to black, reset + replay the SAME level hidden,
+        // fade back in once the runner is running
+        UImanager.uimanager.RestartWithFade();
     }
 
     private void OnHome()

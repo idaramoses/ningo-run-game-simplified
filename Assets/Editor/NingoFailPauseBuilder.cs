@@ -165,7 +165,8 @@ public static class NingoFailPauseBuilder
         header.slotEmptySprite = F("slot_empty_round");
         header.checkSprite = F("icon_check");
         header.font = font;
-        header.slotSize = 64f;
+        header.slotWidth = 64f;
+        header.slotHeight = 64f;
         header.slotSpacing = 14f;
         header.letterFontSize = 32f;
 
@@ -271,7 +272,8 @@ public static class NingoFailPauseBuilder
         header.slotEmptySprite = P("slot_empty");
         header.checkSprite = P("icon_check");
         header.font = font;
-        header.slotSize = 66f;
+        header.slotWidth = 66f;
+        header.slotHeight = 66f;
         header.slotSpacing = 16f;
         header.letterFontSize = 34f;
 

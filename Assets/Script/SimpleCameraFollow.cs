@@ -148,9 +148,14 @@ public class SimpleCameraFollow : MonoBehaviour
             else
             {
                 Vector3 targetPosition = target.position + currentOffset;
-                float newX = Mathf.Lerp(transform.position.x, targetPosition.x, Time.deltaTime * smoothSpeed);
-                float newY = Mathf.Lerp(transform.position.y, targetPosition.y, Time.deltaTime * smoothSpeed);
-                float newZ = Mathf.Lerp(transform.position.z, targetPosition.z, Time.deltaTime * smoothSpeed);
+                // When the runner teleports back to the idle spot (restart/fail/complete reset)
+                // the camera is far away - pan back at the gentler idle blend speed instead of
+                // whipping across the level at gameplay follow speed
+                float panSpeed = Vector3.Distance(transform.position, targetPosition) > 2f
+                    ? idleBlendSpeed : smoothSpeed;
+                float newX = Mathf.Lerp(transform.position.x, targetPosition.x, Time.deltaTime * panSpeed);
+                float newY = Mathf.Lerp(transform.position.y, targetPosition.y, Time.deltaTime * panSpeed);
+                float newZ = Mathf.Lerp(transform.position.z, targetPosition.z, Time.deltaTime * panSpeed);
                 transform.position = new Vector3(newX, newY, newZ);
             }
         }

@@ -291,8 +291,7 @@ public class UImanager : MonoBehaviour
             }
         }
 
-        Debug.Log("[UImanager] CheckTapToPlayInput: no blocking interactive control hit - calling OnTapToPlay()");
-        OnTapToPlay();
+        Debug.Log("[UImanager] CheckTapToPlayInput: tap landed on empty space - ignoring (only the play button starts the run).");
     }
 
     private bool IsTapToPlayControl(GameObject go, Selectable sel)
@@ -302,8 +301,8 @@ public class UImanager : MonoBehaviour
             string goName = go.name.ToLower();
             string parentName = go.transform.parent != null ? go.transform.parent.name.ToLower() : "";
             if (goName.Contains("taptoplay") || goName.Contains("tap_to_play") || goName.Contains("tap to play") ||
-                goName.Contains("centerbutton") || goName.Contains("startbutton") || goName.Contains("playbutton") ||
-                parentName.Contains("centerbutton") || parentName.Contains("startbutton") || parentName.Contains("playbutton"))
+                goName.Contains("startbutton") || goName.Contains("playbutton") ||
+                parentName.Contains("startbutton") || parentName.Contains("playbutton"))
             {
                 return true;
             }
@@ -314,8 +313,8 @@ public class UImanager : MonoBehaviour
             string selName = sel.gameObject.name.ToLower();
             string parentName = sel.transform.parent != null ? sel.transform.parent.name.ToLower() : "";
             if (selName.Contains("taptoplay") || selName.Contains("tap_to_play") || selName.Contains("tap to play") ||
-                selName.Contains("centerbutton") || selName.Contains("startbutton") || selName.Contains("playbutton") ||
-                parentName.Contains("centerbutton") || parentName.Contains("startbutton") || parentName.Contains("playbutton"))
+                selName.Contains("startbutton") || selName.Contains("playbutton") ||
+                parentName.Contains("startbutton") || parentName.Contains("playbutton"))
             {
                 return true;
             }
@@ -1656,6 +1655,36 @@ public class UImanager : MonoBehaviour
         cameraResetRoutine = null;
     }
 
+    /// <summary>
+    /// Restart the current run behind a black fade: fades out, resets the runner/roads
+    /// instantly (hidden), starts the level, then fades back in once the runner is
+    /// actually running. Used by the Fail/Pause/CompleteLevel restart buttons so the
+    /// camera reset never shows on screen.
+    /// </summary>
+    public void RestartWithFade()
+    {
+        StartCoroutine(RestartWithFadeRoutine());
+    }
+
+    private IEnumerator RestartWithFadeRoutine()
+    {
+        yield return StartCoroutine(ScreenFader.FadeToBlack(0.35f));
+
+        Time.timeScale = 1f;
+        ResetRunnerToHomePose();
+
+        int current = LevelManager.Instance != null ? LevelManager.Instance.GetSelectedLevel() : 1;
+        StartLevelAndRun(current);
+
+        // Hold black through the run-in intro (stand up + jump onto the road);
+        // isTransitioning clears when SeamlessInSceneTransitionCoroutine finishes
+        // and the runner is already moving on the road.
+        while (isTransitioning)
+            yield return null;
+
+        yield return StartCoroutine(ScreenFader.FadeFromBlack(0.45f));
+    }
+
     public void ShowLevelSelect()
     {
         if (canvasLevel == null) return;
@@ -2024,6 +2053,29 @@ public class UImanager : MonoBehaviour
             canvasShop.SetActive(false);
         if (canvasHome != null)
             canvasHome.SetActive(true);
+    }
+
+    public void OnPowerUpsPressed()
+    {
+        Debug.Log("[HomeUI] Power-Ups pressed");
+        ShowPowerUps();
+    }
+
+    private void ShowPowerUps()
+    {
+        if (canvasPowerUps != null)
+            canvasPowerUps.SetActive(true);
+        if (canvasHome != null)
+            canvasHome.SetActive(false);
+    }
+
+    public void HidePowerUps()
+    {
+        if (canvasPowerUps != null)
+            canvasPowerUps.SetActive(false);
+        if (canvasHome != null)
+            canvasHome.SetActive(true);
+        RefreshUI();
     }
 
     public void OnLeaderboardPressed()

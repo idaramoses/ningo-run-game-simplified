@@ -5,7 +5,7 @@ using System;
 
 public class DailyGiftController : MonoBehaviour
 {
-    public enum RewardType { Coins, MysteryBox, Speedstar }
+    public enum RewardType { Coins, MysteryBox, Speedstar, Gems }
     [Header("Header")]
     [SerializeField] private TMP_Text titleText;
     [SerializeField] private TMP_Text subtitleText;
@@ -25,6 +25,11 @@ public class DailyGiftController : MonoBehaviour
     [Header("Reward Settings")]
     [SerializeField] private int[] dailyRewards = { 50, 100, 150, 100, 150, 300, 500 };
 
+    [Header("Card Sprites (new UI - sprite swap instead of tint when set)")]
+    [SerializeField] private Sprite cardNormalSprite;
+    [SerializeField] private Sprite cardTodaySprite;
+    [SerializeField] private Sprite cardClaimedSprite;
+
     private bool hasClaimedToday = false;
     private DateTime lastClaimDate;
 
@@ -39,6 +44,10 @@ public class DailyGiftController : MonoBehaviour
         public GameObject checkmark;
         public GameObject plusIcon;
         public RewardType rewardType;
+        [Tooltip("If set, overrides the auto-generated reward label (e.g. \"3 Gems\")")]
+        public string customRewardText;
+        [Tooltip("If set, overrides the weekday/today label (e.g. \"DAY 1\")")]
+        public string customDayLabel;
     }
 
     [Header("Activate Canvases")]
@@ -149,7 +158,9 @@ public class DailyGiftController : MonoBehaviour
             // Set day label
             if (card.dayLabel != null)
             {
-                if (i == todayIndex)
+                if (!string.IsNullOrEmpty(card.customDayLabel))
+                    card.dayLabel.text = card.customDayLabel;
+                else if (i == todayIndex)
                     card.dayLabel.text = "Today";
                 else
                     card.dayLabel.text = weekDays[i];
@@ -158,10 +169,19 @@ public class DailyGiftController : MonoBehaviour
             // Set reward text
             if (card.rewardText != null)
             {
-                if (card.rewardType == RewardType.Coins)
+                if (!string.IsNullOrEmpty(card.customRewardText))
+                {
+                    card.rewardText.text = card.customRewardText;
+                }
+                else if (card.rewardType == RewardType.Coins)
                 {
                     if (i < dailyRewards.Length)
                         card.rewardText.text = $"x{dailyRewards[i]} COINS";
+                }
+                else if (card.rewardType == RewardType.Gems)
+                {
+                    if (i < dailyRewards.Length)
+                        card.rewardText.text = $"x{dailyRewards[i]} GEMS";
                 }
                 else if (card.rewardType == RewardType.MysteryBox)
                 {
@@ -196,6 +216,16 @@ public class DailyGiftController : MonoBehaviour
     private void UpdateCardAppearance(DayCard card, bool isClaimed, bool isToday, bool isOther)
     {
         if (card.backgroundImage == null) return;
+
+        // New UI: swap the card sprite instead of tinting when sprites are assigned
+        if (cardNormalSprite != null)
+        {
+            card.backgroundImage.color = Color.white;
+            card.backgroundImage.sprite = isToday ? (cardTodaySprite != null ? cardTodaySprite : cardNormalSprite)
+                : isClaimed ? (cardClaimedSprite != null ? cardClaimedSprite : cardNormalSprite)
+                : cardNormalSprite;
+            return;
+        }
 
         if (isToday)
         {
@@ -273,6 +303,20 @@ public class DailyGiftController : MonoBehaviour
                 }
                 break;
 
+            case RewardType.Gems:
+                int gems = PlayerPrefs.GetInt("Gems", 0);
+                PlayerPrefs.SetInt("Gems", gems + rewardCoins);
+
+                if (canvasActivateReward != null)
+                {
+                    TMP_Text gemAddedText = canvasActivateReward.transform.Find("MainBody/CoinAddedText")?.GetComponent<TMP_Text>();
+                    if (gemAddedText != null)
+                    {
+                        gemAddedText.text = $"+{rewardCoins} GEMS";
+                    }
+                }
+                break;
+
             case RewardType.Speedstar:
                 int coinsSS = PlayerPrefs.GetInt("Coins", 0);
                 int energySS = PlayerPrefs.GetInt("Energy", 5);
@@ -306,6 +350,7 @@ public class DailyGiftController : MonoBehaviour
         switch (type)
         {
             case RewardType.Coins:
+            case RewardType.Gems:
                 if (canvasActivateReward != null) canvasActivateReward.SetActive(true);
                 break;
             case RewardType.MysteryBox:

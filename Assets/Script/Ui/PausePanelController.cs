@@ -181,14 +181,9 @@ public class PausePanelController : MonoBehaviour
         Debug.Log("[PausePanel] Restart pressed");
         if (UImanager.uimanager != null)
         {
-            // Same flow as the Complete Level Replay button: reset the runner
-            // to the roadside idle pose in the background, then start the
-            // current level through the normal node-click flow.
-            Time.timeScale = 1f;
+            // Fade to black, reset + restart hidden, fade back in once running
             gameObject.SetActive(false);
-            UImanager.uimanager.ResetRunnerToHomePose();
-            int current = LevelManager.Instance != null ? LevelManager.Instance.GetSelectedLevel() : 1;
-            UImanager.uimanager.StartLevelAndRun(current);
+            UImanager.uimanager.RestartWithFade();
         }
         else
         {

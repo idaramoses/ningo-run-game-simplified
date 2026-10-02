@@ -23,7 +23,8 @@ public class NingoProgressHeader : MonoBehaviour
     public Sprite slotEmptySprite;         // dashed empty slot
     public Sprite checkSprite;             // green check badge on collected slots
     public TMP_FontAsset font;             // Fredoka-Bold SDF
-    public float slotSize = 64f;
+    public float slotWidth = 64f;
+    public float slotHeight = 64f;
     public float slotSpacing = 14f;
     public float letterFontSize = 34f;
 
@@ -82,8 +83,8 @@ public class NingoProgressHeader : MonoBehaviour
         var hlg = slotsParent.GetComponent<HorizontalLayoutGroup>();
         if (hlg == null) hlg = slotsParent.gameObject.AddComponent<HorizontalLayoutGroup>();
         hlg.childAlignment = TextAnchor.MiddleCenter;
-        hlg.childControlWidth = false;
-        hlg.childControlHeight = false;
+        hlg.childControlWidth = true;
+        hlg.childControlHeight = true;
         hlg.childForceExpandWidth = false;
         hlg.childForceExpandHeight = false;
         hlg.spacing = slotSpacing;
@@ -95,13 +96,15 @@ public class NingoProgressHeader : MonoBehaviour
 
             var slot = new GameObject($"Slot_{i}", typeof(RectTransform), typeof(Image));
             slot.transform.SetParent(slotsParent, false);
+            var srt = slot.GetComponent<RectTransform>();
+            srt.sizeDelta = new Vector2(slotWidth, slotHeight);
             var img = slot.GetComponent<Image>();
             img.sprite = collected ? slotCollectedSprite : slotEmptySprite;
             img.preserveAspect = true;
             img.raycastTarget = false;
             var le = slot.AddComponent<LayoutElement>();
-            le.preferredWidth = slotSize;
-            le.preferredHeight = slotSize;
+            le.preferredWidth = slotWidth;
+            le.preferredHeight = slotHeight;
 
             if (collected)
             {
@@ -133,8 +136,9 @@ public class NingoProgressHeader : MonoBehaviour
                     crt.anchorMin = new Vector2(1f, 0f);
                     crt.anchorMax = new Vector2(1f, 0f);
                     crt.pivot = new Vector2(0.5f, 0.5f);
-                    crt.sizeDelta = new Vector2(slotSize * 0.42f, slotSize * 0.42f);
-                    crt.anchoredPosition = new Vector2(-slotSize * 0.12f, slotSize * 0.12f);
+                    float badge = Mathf.Min(slotWidth, slotHeight);
+                    crt.sizeDelta = new Vector2(badge * 0.42f, badge * 0.42f);
+                    crt.anchoredPosition = new Vector2(-badge * 0.12f, badge * 0.12f);
                 }
             }
         }
