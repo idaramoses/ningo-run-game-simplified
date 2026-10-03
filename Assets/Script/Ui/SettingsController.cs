@@ -1,34 +1,13 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 
 public class SettingsController : MonoBehaviour
 {
     [Header("Animation")]
     [SerializeField] private float fadeDuration = 0.3f;
 
-    [Header("Audio Controls")]
-    [SerializeField] private Slider musicVolumeSlider;
-    [SerializeField] private Slider soundEffectsSlider;
-
-    [Header("Region & Language")]
-    [SerializeField] private TMP_Text countryValueText;
-    [SerializeField] private TMP_Text languageValueText;
-
-    [Header("Footer")]
-    [SerializeField] private TMP_Text versionText;
-
     [Header("Modals")]
     [SerializeField] private SelectionModalController languageModal;
-    [SerializeField] private SelectionModalController countryModal;
-
-    // PlayerPrefs keys
-    private const string KEY_MUSIC_ON = "Settings_MusicOn";
-    private const string KEY_MUSIC_VOLUME = "MusicVolume";
-    private const string KEY_SFX_VOLUME = "SFXVolume";
-    private const string KEY_COUNTRY = "Settings_Country";
-    private const string KEY_LANGUAGE = "Settings_Language";
 
     private CanvasGroup canvasGroup;
     private Coroutine fadeCoroutine;
@@ -41,73 +20,7 @@ public class SettingsController : MonoBehaviour
             canvasGroup = gameObject.AddComponent<CanvasGroup>();
     }
 
-    private void Start()
-    {
-        LoadSettings();
-        SetupListeners();
-        UpdateVersionText();
-    }
-
-    private void LoadSettings()
-    {
-        // Load audio settings
-        if (musicVolumeSlider != null)
-            musicVolumeSlider.value = PlayerPrefs.GetFloat(KEY_MUSIC_VOLUME, 0.7f);
-
-        if (soundEffectsSlider != null)
-            soundEffectsSlider.value = PlayerPrefs.GetFloat(KEY_SFX_VOLUME, 0.5f);
-
-        // Load region/language
-        if (countryValueText != null)
-            countryValueText.text = PlayerPrefs.GetString(KEY_COUNTRY, "Nigeria");
-
-        if (languageValueText != null)
-            languageValueText.text = PlayerPrefs.GetString(KEY_LANGUAGE, "English");
-    }
-
-    private void SetupListeners()
-    {
-        // Sliders still use code wiring (they don't have OnClick events).
-        if (musicVolumeSlider != null)
-            musicVolumeSlider.onValueChanged.AddListener(OnMusicVolumeChanged);
-
-        if (soundEffectsSlider != null)
-            soundEffectsSlider.onValueChanged.AddListener(OnSoundEffectsChanged);
-
-        // NOTE: All Button OnClick events are wired in the Unity Inspector.
-        // Select each button, scroll to On Click(), click +, drag Canvas_Settings,
-        // and assign the public methods below.
-    }
-
-    private void UpdateVersionText()
-    {
-        if (versionText != null)
-            versionText.text = $"Game Version {Application.version}";
-    }
-
     #region Event Handlers
-
-    private void OnMusicVolumeChanged(float value)
-    {
-        PlayerPrefs.SetFloat(KEY_MUSIC_VOLUME, value);
-        PlayerPrefs.Save();
-        Debug.Log($"[Settings] Music Volume: {value:F2}");
-        if (BackgroundMusicManager.Instance != null)
-        {
-            BackgroundMusicManager.Instance.SetVolume(value);
-        }
-    }
-
-    private void OnSoundEffectsChanged(float value)
-    {
-        PlayerPrefs.SetFloat(KEY_SFX_VOLUME, value);
-        PlayerPrefs.Save();
-        Debug.Log($"[Settings] SFX Volume: {value:F2}");
-        if (SoundEffectsManager.Instance != null)
-        {
-            SoundEffectsManager.Instance.SetSFXVolume(value);
-        }
-    }
 
     /// <summary>
     /// Assign this to BackToHomeButton OnClick().
@@ -124,20 +37,6 @@ public class SettingsController : MonoBehaviour
     }
 
     /// <summary>
-    /// Assign this to CountryButton OnClick().
-    /// </summary>
-    public void OnCountryPressed()
-    {
-        Debug.Log("[Settings] Country/Region pressed");
-        if (countryModal != null)
-        {
-            countryModal.OnConfirmed -= HandleCountryConfirmed;
-            countryModal.OnConfirmed += HandleCountryConfirmed;
-            countryModal.Show();
-        }
-    }
-
-    /// <summary>
     /// Assign this to LanguageButton OnClick().
     /// </summary>
     public void OnLanguagePressed()
@@ -149,20 +48,18 @@ public class SettingsController : MonoBehaviour
             languageModal.OnConfirmed += HandleLanguageConfirmed;
             languageModal.Show();
         }
-    }
-
-    private void HandleCountryConfirmed(int index, string country)
-    {
-        if (countryValueText != null) countryValueText.text = country;
-        PlayerPrefs.SetString(KEY_COUNTRY, country);
-        PlayerPrefs.Save();
+        else
+        {
+            Debug.LogWarning("[Settings] languageModal is not assigned!");
+        }
     }
 
     private void HandleLanguageConfirmed(int index, string language)
     {
-        if (languageValueText != null) languageValueText.text = language;
-        PlayerPrefs.SetString(KEY_LANGUAGE, language);
-        PlayerPrefs.Save();
+        // SelectionModalController already saves "user_selected_language" and
+        // routes the change through LanguageAPI - just refresh the pill display
+        var pill = GetComponentInChildren<NingoLanguagePill>(true);
+        if (pill != null) pill.Refresh();
     }
 
     /// <summary>
@@ -171,8 +68,7 @@ public class SettingsController : MonoBehaviour
     public void OnSupportPressed()
     {
         Debug.Log("[Settings] Support pressed");
-        // TODO: Open support URL or panel
-        // Application.OpenURL("https://your-support-url.com");
+        Application.OpenURL("mailto:support@ningoafrica.app");
     }
 
     /// <summary>
@@ -181,7 +77,7 @@ public class SettingsController : MonoBehaviour
     public void OnTermsPressed()
     {
         Debug.Log("[Settings] Terms of Service pressed");
-        // Application.OpenURL("https://your-terms-url.com");
+        Application.OpenURL("https://ningoafrica.app/terms");
     }
 
     /// <summary>
@@ -190,25 +86,7 @@ public class SettingsController : MonoBehaviour
     public void OnPrivacyPressed()
     {
         Debug.Log("[Settings] Privacy Policy pressed");
-        // Application.OpenURL("https://your-privacy-url.com");
-    }
-
-    /// <summary>
-    /// Assign this to RestorePurchasesButton OnClick().
-    /// </summary>
-    public void OnRestorePurchasesPressed()
-    {
-        Debug.Log("[Settings] Restore Purchases pressed");
-        // TODO: Integrate with IAP system
-    }
-
-    /// <summary>
-    /// Assign this to DeleteAccountButton OnClick().
-    /// </summary>
-    public void OnDeleteAccountPressed()
-    {
-        Debug.Log("[Settings] Delete Account pressed");
-        // TODO: Show confirmation dialog and delete account
+        Application.OpenURL("https://ningoafrica.app/privacy");
     }
 
     #endregion

@@ -38,11 +38,16 @@ public class SelectionModalController : MonoBehaviour
     private RectTransform panelRectTransform;
     private Coroutine fadeCoroutine;
 
+    private bool IsLanguageModal => playerPrefsKey == "user_selected_language";
+
     private void Awake()
     {
         AutoDiscoverReferences();
         SetupListeners();
-        BuildOptions();
+        if (IsLanguageModal)
+            PopulateLanguageOptions();
+        else
+            BuildOptions();
         LoadSavedSelection();
 
         if (panel != null)
@@ -96,6 +101,49 @@ public class SelectionModalController : MonoBehaviour
         }
     }
 
+    private void PopulateLanguageOptions()
+    {
+        if (LanguageCache.Instance != null && LanguageCache.Instance.IsReady &&
+            LanguageCache.Instance.Languages != null)
+        {
+            ApplyLanguageList(LanguageCache.Instance.Languages);
+            return;
+        }
+
+        if (LanguageCache.Instance != null)
+            LanguageCache.Instance.OnLoaded += OnLanguagesLoaded;
+        else
+            BuildOptions();
+    }
+
+    private void OnLanguagesLoaded(LanguageCache.LanguageItem[] languages)
+    {
+        if (LanguageCache.Instance != null)
+            LanguageCache.Instance.OnLoaded -= OnLanguagesLoaded;
+        ApplyLanguageList(languages);
+        LoadSavedSelection();
+    }
+
+    private void ApplyLanguageList(LanguageCache.LanguageItem[] languages)
+    {
+        optionDataList.Clear();
+        foreach (var l in languages)
+        {
+            optionDataList.Add(new OptionData
+            {
+                label = string.IsNullOrEmpty(l.native_name) ? l.language : l.native_name,
+                value = l.language
+            });
+        }
+        BuildOptions();
+    }
+
+    private void OnDestroy()
+    {
+        if (LanguageCache.Instance != null)
+            LanguageCache.Instance.OnLoaded -= OnLanguagesLoaded;
+    }
+
     private void BuildOptions()
     {
         if (optionsContainer == null || optionPrefab == null) return;
@@ -144,7 +192,8 @@ public class SelectionModalController : MonoBehaviour
 
         for (int i = 0; i < optionDataList.Count; i++)
         {
-            if (string.Equals(optionDataList[i].label, saved, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(optionDataList[i].label, saved, StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(optionDataList[i].value, saved, StringComparison.OrdinalIgnoreCase))
             {
                 SelectOption(i);
                 return;
@@ -241,9 +290,21 @@ public class SelectionModalController : MonoBehaviour
         }
 
         string chosen = optionDataList[selectedIndex].label;
+        string code = optionDataList[selectedIndex].value;
         Debug.Log($"[Modal] Confirmed selection [{selectedIndex}]: {chosen}");
 
-        if (!string.IsNullOrEmpty(playerPrefsKey))
+        if (IsLanguageModal)
+        {
+            // Route through LanguageAPI so the user record + dictionary are updated
+            if (!string.IsNullOrEmpty(code) && LanguageAPI.Instance != null)
+                LanguageAPI.Instance.UpdateUserLanguage(code);
+            else
+            {
+                PlayerPrefs.SetString(playerPrefsKey, string.IsNullOrEmpty(code) ? chosen : code);
+                PlayerPrefs.Save();
+            }
+        }
+        else if (!string.IsNullOrEmpty(playerPrefsKey))
         {
             PlayerPrefs.SetString(playerPrefsKey, chosen);
             PlayerPrefs.Save();

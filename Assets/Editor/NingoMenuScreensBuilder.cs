@@ -28,6 +28,25 @@ public static class NingoMenuScreensBuilder
         BuildShop();
         BuildPowerUps();
         BuildDailyGift();
+
+        // All menu canvases must share Canvas_Home's scaler settings so the
+        // same fixed-position layout looks identical on every screen.
+        foreach (var name in new[] { "Canvas_Settings", "Canvas_Missions", "Canvas_Shop", "Canvas_PowerUps", "Canvas_Daily_Gift" })
+        {
+            var c = FindCanvas(name);
+            if (c == null) continue;
+            var scaler = c.GetComponent<CanvasScaler>();
+            if (scaler != null)
+            {
+                scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+                scaler.referenceResolution = new Vector2(390, 844);
+                scaler.matchWidthOrHeight = 1f;
+            }
+            var rt = c.GetComponent<RectTransform>();
+            if (rt != null) rt.localScale = Vector3.one;
+            EditorUtility.SetDirty(c.gameObject);
+        }
+
         UnityEditor.SceneManagement.EditorSceneManager.MarkAllScenesDirty();
         AssetDatabase.SaveAssets();
         Debug.Log("[NingoMenuScreensBuilder] Menu screens rebuilt.");
@@ -153,12 +172,12 @@ public static class NingoMenuScreensBuilder
         // ---- language row ----
         y -= step;
         var langRow = Img(root, "LanguageRow", S("panel_row_blank"), new Vector2(350, 64), new Vector2(0, y), 0.5f, 1f, false, true);
-        Img(langRow.transform, "Icon", S("icon_language"), new Vector2(38, 38), new Vector2(-145, -32));
+        Img(langRow.transform, "Icon", S("icon_language"), new Vector2(38, 38), new Vector2(-140, -13));
         Txt(langRow.transform, "Label", "Learning language", 18f, Color.white,
-            new Vector2(200, 30), new Vector2(-30, -17), FontStyles.Bold);
+            new Vector2(160, 30), new Vector2(-35, -17), FontStyles.Bold);
         var pill = Btn(langRow.transform, "LangPill", S("pill_blank"), new Vector2(125, 44), new Vector2(105, -10));
         var langTxt = Txt(pill.transform, "Text", "Yoruba", 15f, new Color(1f, 0.84f, 0f),
-            new Vector2(90, 30), new Vector2(-8, -22));
+            new Vector2(90, 30), new Vector2(-10, -7));
         Img(pill.transform, "Arrow", S("icon_arrow_right"), new Vector2(18, 18), new Vector2(45, -13));
         var pillComp = langRow.AddComponent<NingoLanguagePill>();
         pillComp.text = langTxt;
@@ -166,9 +185,9 @@ public static class NingoMenuScreensBuilder
         // ---- guest / sign in row ----
         y -= step;
         var guestRow = Img(root, "GuestRow", S("panel_row_blank"), new Vector2(350, 64), new Vector2(0, y), 0.5f, 1f, false, true);
-        Img(guestRow.transform, "Icon", S("icon_guest"), new Vector2(38, 38), new Vector2(-145, -32));
+        Img(guestRow.transform, "Icon", S("icon_guest"), new Vector2(38, 38), new Vector2(-140, -13));
         Txt(guestRow.transform, "Label", "Playing as Guest", 17f, Color.white,
-            new Vector2(180, 30), new Vector2(-40, -17), FontStyles.Bold);
+            new Vector2(160, 30), new Vector2(-35, -17), FontStyles.Bold);
         var signIn = Btn(guestRow.transform, "SignInButton", S("button_green_blank"), new Vector2(115, 48), new Vector2(105, -8));
         signIn.GetComponent<Image>().type = Image.Type.Sliced;
         Txt(signIn.transform, "Text", "SIGN IN", 17f, Color.white, new Vector2(110, 30), new Vector2(0, -9));
@@ -194,6 +213,65 @@ public static class NingoMenuScreensBuilder
         termBtn.GetComponent<Image>().color = new Color(0, 0, 0, 0);
         Txt(termBtn.transform, "Text", "Terms", 14f, new Color(1f, 1f, 1f, 0.75f), new Vector2(80, 28), new Vector2(0, -14), FontStyles.Normal);
 
+        // ---- language modal (API-driven via SelectionModalController + LanguageCache) ----
+        var optPrefab = BuildOptionItemPrefab();
+        var langModal = root.Find("Language_Modal");
+        if (langModal == null)
+        {
+            langModal = BuildSelectionModal(root, "Language_Modal");
+        }
+        SelectionModalController langModalCtrl = langModal.GetComponent<SelectionModalController>();
+        if (langModalCtrl != null)
+        {
+            var lso = SO(langModalCtrl);
+            SetRef(lso, "optionPrefab", optPrefab);
+            var pk = lso.FindProperty("playerPrefsKey");
+            if (pk != null) pk.stringValue = "user_selected_language";
+            // options are populated at runtime from LanguageCache (API) - keep the
+            // serialized list empty so no stale hardcoded languages are shown
+            var od = lso.FindProperty("optionDataList");
+            if (od != null) od.arraySize = 0;
+            lso.ApplyModifiedPropertiesWithoutUndo();
+        }
+        langModal.gameObject.SetActive(false);
+
+        // ---- how to play modal ----
+        var htpModal = root.Find("HowToPlay_Modal");
+        if (htpModal == null)
+        {
+            var mrt = NewRect(root, "HowToPlay_Modal", Vector2.zero, Vector2.zero, 0.5f, 0.5f);
+            mrt.anchorMin = Vector2.zero;
+            mrt.anchorMax = Vector2.one;
+            mrt.offsetMin = mrt.offsetMax = Vector2.zero;
+            var dim = mrt.gameObject.AddComponent<Image>();
+            dim.color = new Color(0f, 0f, 0f, 0.75f);
+            var dismiss = mrt.gameObject.AddComponent<Button>();
+            dismiss.transition = Selectable.Transition.None;
+            htpModal = mrt;
+
+            var card = Img(htpModal, "Panel", S("panel_card_blank"), new Vector2(330, 470),
+                new Vector2(0, -180), 0.5f, 1f, false, true);
+            Txt(card.transform, "Title", "HOW TO PLAY", 24f, Color.white,
+                new Vector2(300, 34), new Vector2(0, -24));
+            Txt(card.transform, "Body",
+                "1. Tap the play button to start a level.\n\n" +
+                "2. Swipe left or right to change lanes.\n\n" +
+                "3. Tap or swipe up to jump over obstacles.\n\n" +
+                "4. Collect the letters of the translated word in order.\n\n" +
+                "5. Wrong letters end the run - watch the word!\n\n" +
+                "6. Finish the word to complete the level.",
+                15f, new Color(1f, 1f, 1f, 0.9f), new Vector2(285, 300),
+                new Vector2(0, -75), FontStyles.Normal, 0.5f, 1f, TextAlignmentOptions.TopLeft);
+
+            var close = Btn(htpModal, "CloseButton", S("button_back"), new Vector2(56, 56),
+                new Vector2(-140, -190), 0.5f, 1f);
+            UnityEditor.Events.UnityEventTools.AddBoolPersistentListener(
+                close.onClick, htpModal.gameObject.SetActive, false);
+            UnityEditor.Events.UnityEventTools.AddBoolPersistentListener(
+                dismiss.onClick, htpModal.gameObject.SetActive, false);
+            htpModal.gameObject.SetActive(false);
+        }
+
         if (ctrl != null)
         {
             UnityEditor.Events.UnityEventTools.AddPersistentListener(back.onClick, ctrl.OnBackPressed);
@@ -201,6 +279,8 @@ public static class NingoMenuScreensBuilder
             UnityEditor.Events.UnityEventTools.AddPersistentListener(sup.onClick, ctrl.OnSupportPressed);
             UnityEditor.Events.UnityEventTools.AddPersistentListener(privBtn.onClick, ctrl.OnPrivacyPressed);
             UnityEditor.Events.UnityEventTools.AddPersistentListener(termBtn.onClick, ctrl.OnTermsPressed);
+            UnityEditor.Events.UnityEventTools.AddBoolPersistentListener(
+                htp.onClick, htpModal.gameObject.SetActive, true);
 
             // sign-in: open the user-info/login canvas and hide settings
             var ui = Object.FindObjectOfType<UImanager>(true);
@@ -210,17 +290,174 @@ public static class NingoMenuScreensBuilder
                     signIn.onClick, ui.canvasUserInfo.SetActive, true);
                 UnityEditor.Events.UnityEventTools.AddPersistentListener(signIn.onClick, ctrl.OnBackPressed);
             }
+
+            var cso2 = SO(ctrl);
+            if (langModalCtrl != null) SetRef(cso2, "languageModal", langModalCtrl);
+            cso2.ApplyModifiedPropertiesWithoutUndo();
+        }
+        else
+        {
+            UnityEditor.Events.UnityEventTools.AddBoolPersistentListener(
+                htp.onClick, htpModal.gameObject.SetActive, true);
         }
 
+        // ---- shared modal artwork + scrollable option lists ----
+        var modalSprite = AssetDatabase.LoadAssetAtPath<Sprite>(
+            "Assets/UI/ningo-ui/Home/compete-level/modal.png");
+        for (int i = 0; i < root.childCount; i++)
+        {
+            var ch = root.GetChild(i);
+            if (!ch.name.Contains("Modal")) continue;
+            var panel = ch.Find("Panel");
+            if (panel == null) continue;
+            var pimg = panel.GetComponent<Image>();
+            if (pimg != null && modalSprite != null)
+            {
+                pimg.sprite = modalSprite;
+                pimg.type = Image.Type.Sliced;
+                pimg.preserveAspect = false;
+            }
+            MakeScrollableOptions(panel);
+        }
+
+        // modals must render on top of every other settings element
+        var modals = new System.Collections.Generic.List<Transform>();
+        for (int i = 0; i < root.childCount; i++)
+        {
+            var ch = root.GetChild(i);
+            if (ch.name.Contains("Modal")) modals.Add(ch);
+        }
+        foreach (var m in modals) m.SetAsLastSibling();
+
         EditorUtility.SetDirty(root.gameObject);
+    }
+
+    /// <summary>Wraps Panel/OptionsList in a ScrollRect viewport so a long list
+    /// (e.g. API languages) scrolls instead of overflowing the panel.</summary>
+    static void MakeScrollableOptions(Transform panel)
+    {
+        var list = panel.Find("OptionsList");
+        if (list == null) return;
+        var listRt = list.GetComponent<RectTransform>();
+        if (listRt == null) return;
+
+        RectTransform viewport;
+        if (list.parent.name == "ScrollView")
+        {
+            viewport = list.parent.GetComponent<RectTransform>();
+            var existing = list.parent.GetComponent<Image>();
+            if (existing == null)
+            {
+                existing = list.parent.gameObject.AddComponent<Image>();
+                existing.color = new Color(0f, 0f, 0f, 0f);
+            }
+            existing.raycastTarget = true;
+        }
+        else
+        {
+            // capture the list's current layout inside the panel
+            var anchorMin = listRt.anchorMin;
+            var anchorMax = listRt.anchorMax;
+            var size = listRt.sizeDelta;
+            var pos = listRt.anchoredPosition;
+
+            var sv = new GameObject("ScrollView", typeof(RectTransform), typeof(RectMask2D), typeof(Image));
+            sv.transform.SetParent(panel, false);
+            sv.transform.SetSiblingIndex(list.GetSiblingIndex());
+            // transparent graphic so the ScrollRect can receive drag events
+            var svImg = sv.GetComponent<Image>();
+            svImg.color = new Color(0f, 0f, 0f, 0f);
+            svImg.raycastTarget = true;
+            viewport = (RectTransform)sv.transform;
+            viewport.anchorMin = anchorMin;
+            viewport.anchorMax = anchorMax;
+            viewport.pivot = listRt.pivot;
+            viewport.sizeDelta = size;
+            viewport.anchoredPosition = pos;
+            var svRect = sv.AddComponent<ScrollRect>();
+
+            list.SetParent(viewport, false);
+            svRect.content = listRt;
+            svRect.horizontal = false;
+            svRect.vertical = true;
+            svRect.movementType = ScrollRect.MovementType.Clamped;
+            svRect.scrollSensitivity = 25f;
+        }
+
+        // content: top-anchored, stretches horizontally, grows vertically
+        listRt.anchorMin = new Vector2(0f, 1f);
+        listRt.anchorMax = new Vector2(1f, 1f);
+        listRt.pivot = new Vector2(0.5f, 1f);
+        listRt.anchoredPosition = Vector2.zero;
+        listRt.offsetMin = new Vector2(listRt.offsetMin.x, 0f);
+        listRt.offsetMax = new Vector2(listRt.offsetMax.x, listRt.offsetMax.y);
+
+        var vlg = list.GetComponent<VerticalLayoutGroup>();
+        if (vlg == null) vlg = list.gameObject.AddComponent<VerticalLayoutGroup>();
+        vlg.childAlignment = TextAnchor.UpperCenter;
+        vlg.spacing = 8f;
+        vlg.childControlWidth = true;
+        vlg.childControlHeight = false;
+        vlg.childForceExpandWidth = false;
+        vlg.childForceExpandHeight = false;
+
+        var csf = list.GetComponent<ContentSizeFitter>();
+        if (csf == null) csf = list.gameObject.AddComponent<ContentSizeFitter>();
+        csf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+    }
+
+    /// <summary>Creates the modal structure that SelectionModalController
+    /// auto-discovers: Overlay + Panel(CloseButton, Subtitle, OptionsList, ConfirmButton).</summary>
+    static Transform BuildSelectionModal(Transform root, string name)
+    {
+        var mrt = NewRect(root, name, Vector2.zero, Vector2.zero, 0.5f, 0.5f);
+        mrt.anchorMin = Vector2.zero;
+        mrt.anchorMax = Vector2.one;
+        mrt.offsetMin = mrt.offsetMax = Vector2.zero;
+        mrt.gameObject.AddComponent<SelectionModalController>();
+
+        // dimmed overlay that dismisses on click
+        var ov = NewRect(mrt, "Overlay", Vector2.zero, Vector2.zero, 0.5f, 0.5f);
+        ov.anchorMin = Vector2.zero;
+        ov.anchorMax = Vector2.one;
+        ov.offsetMin = ov.offsetMax = Vector2.zero;
+        var ovImg = ov.gameObject.AddComponent<Image>();
+        ovImg.color = new Color(0f, 0f, 0f, 0.6f);
+        var ovBtn = ov.gameObject.AddComponent<Button>();
+        ovBtn.transition = Selectable.Transition.None;
+
+        var panel = Img(mrt, "Panel", S("panel_card_blank"), new Vector2(362, 540),
+            Vector2.zero, 0.5f, 0.5f, false, true);
+
+        var close = Img(panel.transform, "CloseButton", S("button_back"), new Vector2(34, 34),
+            new Vector2(165, -14), 0.5f, 1f, true);
+        close.AddComponent<Button>().targetGraphic = close.GetComponent<Image>();
+
+        Txt(panel.transform, "Subtitle", "Choose an option", 15f, new Color(1f, 1f, 1f, 0.85f),
+            new Vector2(300, 24), new Vector2(0, -52), FontStyles.Normal);
+
+        var list = NewRect(panel.transform, "OptionsList", new Vector2(332, 350),
+            new Vector2(0, -95));
+        var vlg = list.gameObject.AddComponent<VerticalLayoutGroup>();
+        vlg.childAlignment = TextAnchor.UpperCenter;
+        vlg.spacing = 8f;
+
+        var confirm = Img(panel.transform, "ConfirmButton", S("button_green_blank"),
+            new Vector2(180, 48), new Vector2(0, -480), 0.5f, 1f, true, true);
+        confirm.AddComponent<Button>().targetGraphic = confirm.GetComponent<Image>();
+        confirm.AddComponent<ButtonClickEffect>();
+        Txt(confirm.transform, "Text", "CONFIRM", 17f, Color.white,
+            new Vector2(170, 30), new Vector2(0, -9));
+
+        return mrt;
     }
 
     static void BuildSettingsRow(Transform root, string name, Sprite icon, string label, bool toggle,
         float y, NingoPillToggle.Kind kind)
     {
         var row = Img(root, name, S("panel_row_blank"), new Vector2(350, 64), new Vector2(0, y), 0.5f, 1f, false, true);
-        Img(row.transform, "Icon", icon, new Vector2(38, 38), new Vector2(-145, -32));
-        Txt(row.transform, "Label", label, 18f, Color.white, new Vector2(200, 30), new Vector2(-45, -17), FontStyles.Bold);
+        Img(row.transform, "Icon", icon, new Vector2(38, 38), new Vector2(-140, -13));
+        Txt(row.transform, "Label", label, 18f, Color.white, new Vector2(170, 30), new Vector2(-35, -17), FontStyles.Bold);
 
         var tog = Btn(row.transform, "Toggle", S("toggle_on"), new Vector2(92, 40), new Vector2(112, -12));
         var nt = tog.gameObject.AddComponent<NingoPillToggle>();
@@ -364,9 +601,9 @@ public static class NingoMenuScreensBuilder
         Stretch(root, "Background", S("background_menu"));
         var back = Btn(root, "BackButton", S("button_back"), new Vector2(56, 56), new Vector2(45, -60), 0f, 1f);
 
-        // currency pills top-right
-        BuildCurrencyPill(root, "CoinsPill", S("icon_coin"), 0, new Vector2(-95, -62));
-        BuildCurrencyPill(root, "GemsPill", S("icon_gem"), 1, new Vector2(55, -62));
+        // currency pills top-right corner (right-anchored so they never collide with the heading)
+        var coinsPill = BuildCurrencyPill(root, "CoinsPill", S("icon_coin"), 0, new Vector2(-140, -40), 1f);
+        var gemsPill = BuildCurrencyPill(root, "GemsPill", S("icon_gem"), 1, new Vector2(-8, -40), 1f);
 
         Img(root, "Heading", S("heading_shop"), new Vector2(300, 105), new Vector2(0, -62));
 
@@ -395,10 +632,19 @@ public static class NingoMenuScreensBuilder
             BuildCoinPack(coinsContent, i, packIcons[i], amounts[i], new Vector2(cx, cy), panel);
         }
 
-        // gems content placeholder
+        // gems content - same 2x2 pack grid as coins
         var gemsContent = NewRect(root, "GemsContent", new Vector2(360, 560), new Vector2(0, -235));
-        Txt(gemsContent, "ComingSoon", "Gem packs coming soon", 18f, new Color(1f, 1f, 1f, 0.6f),
-            new Vector2(320, 30), new Vector2(0, -200), FontStyles.Normal);
+        Txt(gemsContent, "Hint", "Choose a gem pack", 16f, new Color(1f, 1f, 1f, 0.85f),
+            new Vector2(320, 24), new Vector2(0, 0), FontStyles.Normal);
+
+        var gemPackIcons = new[] { "icon_gem", "icon_gem", "icon_gem_cluster", "icon_gem_cluster" };
+        var gemAmounts = new[] { "10", "30", "80", "200" };
+        for (int i = 0; i < 4; i++)
+        {
+            float cx = i % 2 == 0 ? -84f : 84f;
+            float cy = i < 2 ? -140f : -375f;
+            BuildGemPack(gemsContent, i, gemPackIcons[i], gemAmounts[i], new Vector2(cx, cy), panel);
+        }
         gemsContent.gameObject.SetActive(false);
 
         // wire panel
@@ -408,6 +654,82 @@ public static class NingoMenuScreensBuilder
         panel.tabInactiveSprite = S("tab_inactive_blank");
         panel.coinsContent = coinsContent.gameObject;
         panel.gemsContent = gemsContent.gameObject;
+
+        // ---- purchase flow modals (modal.png artwork) ----
+        var modalSprite = AssetDatabase.LoadAssetAtPath<Sprite>(
+            "Assets/UI/ningo-ui/Home/compete-level/modal.png");
+        var purchase = BuildShopModal(root, "Purchase_Modal", modalSprite);
+        var success = BuildShopModal(root, "Purchase_Success_Modal", modalSprite);
+        var failed = BuildShopModal(root, "Purchase_Failed_Modal", modalSprite);
+
+        // confirm modal contents
+        var pPanel = purchase.Find("Panel");
+        Txt(pPanel, "Title", "PURCHASE", 22f, Color.white, new Vector2(300, 30), new Vector2(0, -35));
+        var pIcon = Img(pPanel, "PackIcon", S("icon_coin_pack_small"), new Vector2(110, 90), new Vector2(0, -80));
+        var pAmt = Txt(pPanel, "Amount", "500", 26f, new Color(1f, 0.84f, 0f), new Vector2(200, 32), new Vector2(0, -180));
+        var pType = Txt(pPanel, "Type", "COINS", 16f, Color.white, new Vector2(200, 24), new Vector2(0, -214), FontStyles.Normal);
+        var pPrice = Txt(pPanel, "Price", "$0.99", 20f, Color.white, new Vector2(150, 28), new Vector2(0, -245));
+        var pBuy = Btn(pPanel, "BuyButton", S("button_green_blank"), new Vector2(200, 52), new Vector2(0, -285));
+        pBuy.GetComponent<Image>().type = Image.Type.Sliced;
+        Txt(pBuy.transform, "Text", "BUY NOW", 18f, Color.white, new Vector2(190, 30), new Vector2(0, -10));
+        var pProc = Txt(pPanel, "Processing", "Processing...", 18f, new Color(1f, 0.84f, 0f), new Vector2(280, 30), new Vector2(0, -345));
+        var pCancel = Btn(pPanel, "CancelButton", S("button_back"), new Vector2(56, 56), new Vector2(-125, -395));
+
+        // success modal contents
+        var sPanel = success.Find("Panel");
+        Img(sPanel, "Check", S("icon_check"), new Vector2(80, 80), new Vector2(0, -50));
+        Txt(sPanel, "Title", "PURCHASE SUCCESSFUL", 20f, Color.white, new Vector2(300, 30), new Vector2(0, -150));
+        Txt(sPanel, "Body", "Your purchase has been added!", 15f, new Color(1f, 1f, 1f, 0.85f), new Vector2(280, 30), new Vector2(0, -185), FontStyles.Normal);
+        var sOk = Btn(sPanel, "ContinueButton", S("button_green_blank"), new Vector2(200, 52), new Vector2(0, -240));
+        sOk.GetComponent<Image>().type = Image.Type.Sliced;
+        Txt(sOk.transform, "Text", "CONTINUE", 18f, Color.white, new Vector2(190, 30), new Vector2(0, -10));
+
+        // failed modal contents
+        var fPanel = failed.Find("Panel");
+        var xTxt = Txt(fPanel, "X", "X", 60f, new Color(0.95f, 0.3f, 0.3f), new Vector2(80, 80), new Vector2(0, -50));
+        Txt(fPanel, "Title", "PURCHASE FAILED", 20f, Color.white, new Vector2(300, 30), new Vector2(0, -150));
+        Txt(fPanel, "Body", "Something went wrong.\nPlease try again.", 15f, new Color(1f, 1f, 1f, 0.85f), new Vector2(280, 50), new Vector2(0, -185), FontStyles.Normal);
+        var fRetry = Btn(fPanel, "RetryButton", S("button_green_blank"), new Vector2(200, 52), new Vector2(0, -245));
+        fRetry.GetComponent<Image>().type = Image.Type.Sliced;
+        Txt(fRetry.transform, "Text", "TRY AGAIN", 18f, Color.white, new Vector2(190, 30), new Vector2(0, -10));
+        var fClose = Btn(fPanel, "CloseButton", S("button_back"), new Vector2(56, 56), new Vector2(-125, -315));
+
+        // wire purchase flow
+        UnityEditor.Events.UnityEventTools.AddPersistentListener(pBuy.onClick, panel.ConfirmPurchase);
+        UnityEditor.Events.UnityEventTools.AddPersistentListener(pCancel.onClick, panel.CancelPurchase);
+        UnityEditor.Events.UnityEventTools.AddPersistentListener(sOk.onClick, panel.CloseSuccessModal);
+        UnityEditor.Events.UnityEventTools.AddPersistentListener(fRetry.onClick, panel.RetryPurchase);
+        UnityEditor.Events.UnityEventTools.AddPersistentListener(fClose.onClick, panel.CloseFailedModal);
+
+        purchase.gameObject.SetActive(false);
+        success.gameObject.SetActive(false);
+        failed.gameObject.SetActive(false);
+        purchase.SetAsLastSibling();
+        success.SetAsLastSibling();
+        failed.SetAsLastSibling();
+
+        var pso = SO(panel);
+        SetRef(pso, "purchaseModal", purchase.gameObject);
+        SetRef(pso, "successModal", success.gameObject);
+        SetRef(pso, "failedModal", failed.gameObject);
+        SetRef(pso, "packIconImage", pIcon.GetComponent<Image>());
+        SetRef(pso, "packAmountText", pAmt);
+        SetRef(pso, "packTypeText", pType);
+        SetRef(pso, "priceText", pPrice);
+        SetRef(pso, "processingObject", pProc.gameObject);
+        var cps = pso.FindProperty("coinPackSprites");
+        if (cps != null)
+        {
+            cps.arraySize = 4;
+            for (int i = 0; i < 4; i++) cps.GetArrayElementAtIndex(i).objectReferenceValue = S(i < 2 ? "icon_coin_pack_small" : "icon_coin_pack_large");
+        }
+        var gps = pso.FindProperty("gemPackSprites");
+        if (gps != null)
+        {
+            gps.arraySize = 4;
+            for (int i = 0; i < 4; i++) gps.GetArrayElementAtIndex(i).objectReferenceValue = S(i < 2 ? "icon_gem" : "icon_gem_cluster");
+        }
+        pso.ApplyModifiedPropertiesWithoutUndo();
 
         if (shopCtrl != null)
         {
@@ -420,15 +742,34 @@ public static class NingoMenuScreensBuilder
         EditorUtility.SetDirty(root.gameObject);
     }
 
-    static void BuildCurrencyPill(Transform root, string name, Sprite icon, int currency, Vector2 pos)
+    /// <summary>Dim overlay + modal.png panel skeleton used by all shop modals.</summary>
+    static Transform BuildShopModal(Transform root, string name, Sprite modalSprite)
     {
-        var pill = Img(root, name, S("pill_blank"), new Vector2(125, 40), pos, 0.5f, 1f, false, true);
+        var mrt = NewRect(root, name, Vector2.zero, Vector2.zero, 0.5f, 0.5f);
+        mrt.anchorMin = Vector2.zero;
+        mrt.anchorMax = Vector2.one;
+        mrt.offsetMin = mrt.offsetMax = Vector2.zero;
+        var dim = mrt.gameObject.AddComponent<Image>();
+        dim.color = new Color(0f, 0f, 0f, 0.75f);
+
+        var panel = NewRect(mrt, "Panel", new Vector2(340, 430), Vector2.zero, 0.5f, 0.5f);
+        var pimg = panel.gameObject.AddComponent<Image>();
+        pimg.sprite = modalSprite;
+        pimg.type = Image.Type.Sliced;
+        return mrt;
+    }
+
+    static GameObject BuildCurrencyPill(Transform root, string name, Sprite icon, int currency, Vector2 pos,
+        float anchorX = 0.5f)
+    {
+        var pill = Img(root, name, S("pill_blank"), new Vector2(125, 40), pos, anchorX, 1f, false, true);
         Img(pill.transform, "Icon", icon, new Vector2(30, 30), new Vector2(-40, -20));
-        var txt = Txt(pill.transform, "Value", "0", 16f, Color.white, new Vector2(70, 26), new Vector2(6, -22));
+        var txt = Txt(pill.transform, "Value", "0", 16f, Color.white, new Vector2(70, 30), new Vector2(6, -5));
         var cp = pill.AddComponent<CurrencyPill>();
         cp.currency = currency == 0 ? CurrencyPill.Currency.Coins : CurrencyPill.Currency.Gems;
         cp.valueText = txt;
         Btn(pill.transform, "Plus", S("button_plus"), new Vector2(34, 34), new Vector2(52, -3));
+        return pill;
     }
 
     static void BuildCoinPack(Transform parent, int index, string iconName, string amount, Vector2 pos,
@@ -436,13 +777,59 @@ public static class NingoMenuScreensBuilder
     {
         var card = Img(parent, "Pack_" + index, S("panel_card_blank"), new Vector2(165, 215), pos, 0.5f, 1f, false, true);
         Img(card.transform, "CoinIcon", S("icon_coin"), new Vector2(28, 28), new Vector2(-42, -14));
-        Txt(card.transform, "Amount", amount, 20f, Color.white, new Vector2(110, 30), new Vector2(14, -14));
+        Txt(card.transform, "Amount", amount, 20f, Color.white, new Vector2(90, 30), new Vector2(24, -14));
         Img(card.transform, "PackImage", S(iconName), new Vector2(110, 90), new Vector2(0, -60));
         var offer = Btn(card.transform, "ViewOffer", S("button_green_blank"), new Vector2(135, 46), new Vector2(0, -160));
         offer.GetComponent<Image>().type = Image.Type.Sliced;
         Txt(offer.transform, "Text", "VIEW OFFER", 15f, Color.white, new Vector2(130, 30), new Vector2(0, -8));
 
         UnityEditor.Events.UnityEventTools.AddIntPersistentListener(offer.onClick, panel.OnViewOffer, index);
+    }
+
+    static void BuildGemPack(Transform parent, int index, string iconName, string amount, Vector2 pos,
+        NingoShopPanel panel)
+    {
+        var card = Img(parent, "GemPack_" + index, S("panel_card_blank"), new Vector2(165, 215), pos, 0.5f, 1f, false, true);
+        Img(card.transform, "GemIcon", S("icon_gem"), new Vector2(28, 28), new Vector2(-42, -14));
+        Txt(card.transform, "Amount", amount, 20f, Color.white, new Vector2(90, 30), new Vector2(24, -14));
+        Img(card.transform, "PackImage", S(iconName), new Vector2(110, 90), new Vector2(0, -60));
+        var offer = Btn(card.transform, "ViewOffer", S("button_green_blank"), new Vector2(135, 46), new Vector2(0, -160));
+        offer.GetComponent<Image>().type = Image.Type.Sliced;
+        Txt(offer.transform, "Text", "VIEW OFFER", 15f, Color.white, new Vector2(130, 30), new Vector2(0, -8));
+
+        UnityEditor.Events.UnityEventTools.AddIntPersistentListener(offer.onClick, panel.OnViewGemOffer, index);
+    }
+
+    // ---------------------------------------------------------------
+    // OPTION ITEM PREFAB (SelectionModalController rows)
+    // ---------------------------------------------------------------
+    static OptionItem BuildOptionItemPrefab()
+    {
+        var go = new GameObject("OptionItem", typeof(RectTransform), typeof(Image), typeof(Button), typeof(OptionItem));
+        var rt = (RectTransform)go.transform;
+        rt.sizeDelta = new Vector2(280, 48);
+        var img = go.GetComponent<Image>();
+        img.sprite = S("panel_row_blank");
+        img.type = Image.Type.Sliced;
+        var btn = go.GetComponent<Button>();
+        btn.targetGraphic = img;
+
+        var label = Txt(go.transform, "Label", "Option", 17f, Color.white,
+            new Vector2(230, 30), new Vector2(0, -9));
+        var chk = Img(go.transform, "Selected", S("icon_check"), new Vector2(26, 26), new Vector2(115, -11));
+        chk.SetActive(false);
+
+        var item = go.GetComponent<OptionItem>();
+        var so = SO(item);
+        SetRef(so, "label", label);
+        SetRef(so, "selectedIndicator", chk);
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        UnityEditor.Events.UnityEventTools.AddPersistentListener(btn.onClick, item.OnClick);
+
+        var saved = PrefabUtility.SaveAsPrefabAsset(go, "Assets/Prefab/OptionItem.prefab");
+        Object.DestroyImmediate(go);
+        return saved.GetComponent<OptionItem>();
     }
 
     // ---------------------------------------------------------------
@@ -485,7 +872,7 @@ public static class NingoMenuScreensBuilder
         var back = Btn(root, "BackButton", S("button_back"), new Vector2(56, 56), new Vector2(45, -60), 0f, 1f);
         UnityEditor.Events.UnityEventTools.AddPersistentListener(back.onClick, panel.OnBackPressed);
 
-        BuildCurrencyPill(root, "CoinsPill", S("icon_coin"), 0, new Vector2(105, -62));
+        BuildCurrencyPill(root, "CoinsPill", S("icon_coin"), 0, new Vector2(-8, -40), 1f);
 
         Img(root, "Heading", S("heading_powerups"), new Vector2(300, 105), new Vector2(0, -62));
 
@@ -504,7 +891,7 @@ public static class NingoMenuScreensBuilder
             Txt(row.transform, "Name", names[i], 20f, Color.white, new Vector2(170, 28), new Vector2(30, -16), FontStyles.Bold);
             Txt(row.transform, "Desc", descs[i], 13f, new Color(1f, 1f, 1f, 0.8f), new Vector2(170, 22), new Vector2(30, -46), FontStyles.Normal);
             var owned = Txt(row.transform, "Owned", "Owned: 0", 13f, Color.white,
-                new Vector2(110, 24), new Vector2(-100, -88), FontStyles.Bold);
+                new Vector2(110, 24), new Vector2(-100, -78), FontStyles.Bold);
             var buy = Btn(row.transform, "BuyButton", S("button_green_blank"), new Vector2(115, 48), new Vector2(105, -62));
             buy.GetComponent<Image>().type = Image.Type.Sliced;
             Img(buy.transform, "Coin", S("icon_coin"), new Vector2(26, 26), new Vector2(-32, -11));
@@ -553,7 +940,7 @@ public static class NingoMenuScreensBuilder
         var back = Btn(root, "BackButton", S("button_back"), new Vector2(56, 56), new Vector2(45, -60), 0f, 1f);
         Img(root, "Heading", S("heading_rewards"), new Vector2(300, 105), new Vector2(0, -62));
         Txt(root, "Subtitle", "Come back daily for a gift.", 16f, new Color(1f, 1f, 1f, 0.85f),
-            new Vector2(320, 24), new Vector2(0, -148), FontStyles.Normal);
+            new Vector2(320, 24), new Vector2(0, -170), FontStyles.Normal);
 
         // day cards 1-6 (3x2 grid), day 7 wide bonus card
         var cardSprites = S("panel_card_blank");
@@ -578,9 +965,9 @@ public static class NingoMenuScreensBuilder
             if (!wide)
             {
                 int col = i % 3, rowIdx = i / 3;
-                pos = new Vector2(-112f + col * 112f, -185f - rowIdx * 165f);
+                pos = new Vector2(-112f + col * 112f, -210f - rowIdx * 165f);
             }
-            else pos = new Vector2(0, -515f);
+            else pos = new Vector2(0, -540f);
 
             var card = Img(root, "Day" + (i + 1), cardSprites, size, pos, 0.5f, 1f, true, true);
             var cardBtn = card.AddComponent<Button>();
@@ -628,7 +1015,7 @@ public static class NingoMenuScreensBuilder
         }
 
         // CLAIM REWARD button
-        var claim = Btn(root, "ClaimButton", S("button_green_blank"), new Vector2(330, 62), new Vector2(0, -700));
+        var claim = Btn(root, "ClaimButton", S("button_green_blank"), new Vector2(330, 62), new Vector2(0, -715));
         claim.GetComponent<Image>().type = Image.Type.Sliced;
         var claimTxt = Txt(claim.transform, "Text", "CLAIM REWARD", 20f, Color.white,
             new Vector2(320, 40), new Vector2(0, -11));
