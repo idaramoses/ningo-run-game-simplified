@@ -50,7 +50,16 @@ public class LanguageCache : MonoBehaviour
     // Config
     // -----------------------------------------------------------------------
     [SerializeField] private string apiBaseUrl = "https://ningoafrica.app";
+    [Tooltip("WebGL only: base URL for API calls. Empty = same-origin /api (no CORS). Set a full URL only if the player is hosted on a different domain than the API.")]
+    [SerializeField] private string webApiBaseUrl = "";
     [SerializeField] private float  fetchDelaySeconds = 2f;   // wait before background fetch
+
+    private string ApiBase =>
+#if UNITY_WEBGL && !UNITY_EDITOR
+        webApiBaseUrl.TrimEnd('/');
+#else
+        apiBaseUrl.TrimEnd('/');
+#endif
     [SerializeField] private float  cacheTTLHours     = 24f;  // how long PlayerPrefs cache is valid
 
     private const string CacheDataKey = "language_cache_json";
@@ -144,7 +153,7 @@ public class LanguageCache : MonoBehaviour
         // Small delay — let scene finish initialising first
         yield return new WaitForSeconds(fetchDelaySeconds);
 
-        string url = apiBaseUrl.TrimEnd('/') + "/api/languages";
+        string url = ApiBase + "/api/languages";
         Debug.Log($"[LanguageCache] Background fetch: {url}");
 
         using (var req = UnityWebRequest.Get(url))

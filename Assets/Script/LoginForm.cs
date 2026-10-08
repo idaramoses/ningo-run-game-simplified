@@ -9,6 +9,15 @@ public class LoginForm : MonoBehaviour
     [Header("API")]
     [Tooltip("Base URL of the Ningo production API (no trailing slash). Example: https://ningoafrica.app")] 
     [SerializeField] private string apiBaseUrl = "https://ningoafrica.app";
+    [Tooltip("WebGL only: base URL for API calls. Empty = same-origin /api (no CORS). Set a full URL only if the player is hosted on a different domain than the API.")]
+    [SerializeField] private string webApiBaseUrl = "";
+
+    private string ApiBase =>
+#if UNITY_WEBGL && !UNITY_EDITOR
+        webApiBaseUrl.TrimEnd('/');
+#else
+        apiBaseUrl.TrimEnd('/');
+#endif
 
     [Header("UI Refs")]
     [SerializeField] private TMP_InputField emailInput;
@@ -71,7 +80,7 @@ public class LoginForm : MonoBehaviour
     {
         if (languageSelectionModal != null) languageSelectionModal.SetActive(false);
         ShowLoadingView(false);
-        Debug.Log($"[LoginForm] Initialized. API: {apiBaseUrl}");
+        Debug.Log($"[LoginForm] Initialized. API: {(string.IsNullOrEmpty(ApiBase) ? "(same-origin)" : ApiBase)}");
     }
 
     public void ShowLoginPanel()
@@ -162,7 +171,7 @@ public class LoginForm : MonoBehaviour
             yield break;
         }
 
-        string url = apiBaseUrl.TrimEnd('/') + "/api/languages";
+        string url = ApiBase + "/api/languages";
         Debug.Log($"[LoginForm] Fetching languages from: {url}");
 
         using (var request = new UnityWebRequest(url, UnityWebRequest.kHttpVerbGET))
@@ -269,7 +278,7 @@ public class LoginForm : MonoBehaviour
         string guestFirstName = "Guest";
         string guestLastName = $"User{guestId}";
 
-        string url = apiBaseUrl.TrimEnd('/') + "/api/auth/signup";
+        string url = ApiBase + "/api/auth/signup";
         var reqBody = new SignupRequest
         {
             email = guestEmail,
@@ -448,7 +457,7 @@ public class LoginForm : MonoBehaviour
             yield break;
         }
 
-        string url = apiBaseUrl.TrimEnd('/') + "/api/auth/login";
+        string url = ApiBase + "/api/auth/login";
         Debug.Log($"[LoginForm] Attempting login to: {url}");
 
         var body = new LoginRequest(email, password);
@@ -593,7 +602,7 @@ public class LoginForm : MonoBehaviour
             yield break;
         }
 
-        string url = apiBaseUrl.TrimEnd('/') + $"/api/dictionary?language={language}&limit=1000";
+        string url = ApiBase + $"/api/dictionary?language={language}&limit=1000";
         Debug.Log($"[LoginForm] Fetching dictionary from: {url}");
 
         ShowLoadingView(true, "Loading dictionary...");

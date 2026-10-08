@@ -20,6 +20,15 @@ public class UserInfoController : MonoBehaviour
 {
     [Header("API")]
     [SerializeField] private string apiBaseUrl = "https://ningoafrica.app";
+    [Tooltip("WebGL only: base URL for API calls. Empty = same-origin /api (no CORS). Set a full URL only if the player is hosted on a different domain than the API.")]
+    [SerializeField] private string webApiBaseUrl = "";
+
+    private string ApiBase =>
+#if UNITY_WEBGL && !UNITY_EDITOR
+        webApiBaseUrl.TrimEnd('/');
+#else
+        ApiBase;
+#endif
 
     [Header("Panels")]
     [SerializeField] private GameObject loginPanel;
@@ -391,7 +400,7 @@ public class UserInfoController : MonoBehaviour
         string languageCode = PlayerPrefs.GetString("user_selected_language", "yoruba");
         if (string.IsNullOrEmpty(languageCode)) languageCode = "yoruba";
 
-        string url = apiBaseUrl.TrimEnd('/') + "/api/auth/signup";
+        string url = ApiBase + "/api/auth/signup";
         var reqBody = new SignupRequest
         {
             email = guestEmail,
@@ -493,7 +502,7 @@ public class UserInfoController : MonoBehaviour
         SetLoginStatus(progressMessage);
         ShowLoading(true, progressMessage);
 
-        string url = apiBaseUrl.TrimEnd('/') + "/api/auth/login";
+        string url = ApiBase + "/api/auth/login";
         var body = new LoginRequest(email, password);
         string json = JsonUtility.ToJson(body);
 
@@ -677,7 +686,7 @@ public class UserInfoController : MonoBehaviour
 
     private IEnumerator FetchLanguagesFallback()
     {
-        string url = apiBaseUrl.TrimEnd('/') + "/api/languages";
+        string url = ApiBase + "/api/languages";
         using (var request = UnityWebRequest.Get(url))
         {
             request.SetRequestHeader("Content-Type", "application/json");
@@ -873,7 +882,7 @@ public class UserInfoController : MonoBehaviour
             yield break;
         }
 
-        string url = apiBaseUrl.TrimEnd('/') + $"/api/dictionary?language={language}&limit=1000";
+        string url = ApiBase + $"/api/dictionary?language={language}&limit=1000";
         ShowLoading(true, "Loading dictionary...");
 
         using (var request = UnityWebRequest.Get(url))

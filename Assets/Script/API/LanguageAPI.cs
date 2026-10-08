@@ -8,6 +8,15 @@ public class LanguageAPI : MonoBehaviour
     
     [Header("API Configuration")]
     [SerializeField] private string apiBaseUrl = "https://ningoafrica.app";
+    [Tooltip("WebGL only: base URL for API calls. Empty = same-origin /api (no CORS). Set a full URL only if the player is hosted on a different domain than the API.")]
+    [SerializeField] private string webApiBaseUrl = "";
+
+    private string ApiBase =>
+#if UNITY_WEBGL && !UNITY_EDITOR
+        webApiBaseUrl.TrimEnd('/');
+#else
+        apiBaseUrl.TrimEnd('/');
+#endif
     
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void AutoBootstrap()
@@ -83,7 +92,7 @@ public class LanguageAPI : MonoBehaviour
         }
         
         // Update user language via API
-        string url = apiBaseUrl.TrimEnd('/') + "/api/user/language";
+        string url = ApiBase + "/api/user/language";
         string jsonData = $"{{\"language\":\"{languageCode}\"}}";
         
         Debug.Log($"[LanguageAPI] Updating user language to: {languageCode}");
@@ -153,7 +162,7 @@ public class LanguageAPI : MonoBehaviour
     
     private IEnumerator FetchDictionary(string authToken, string language, bool[] success = null)
     {
-        string url = apiBaseUrl.TrimEnd('/') + $"/api/dictionary?language={language}&limit=1000";
+        string url = ApiBase + $"/api/dictionary?language={language}&limit=1000";
         Debug.Log($"[LanguageAPI] Fetching dictionary from: {url}");
         
         using (var request = UnityWebRequest.Get(url))
