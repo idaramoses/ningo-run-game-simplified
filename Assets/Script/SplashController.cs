@@ -181,7 +181,7 @@ public class SplashController : MonoBehaviour
                 }
                 else
                 {
-                    SceneManager.LoadSceneAsync(homeSceneName);
+                    RemoteScene.Load(homeSceneName);
                 }
             }
             else

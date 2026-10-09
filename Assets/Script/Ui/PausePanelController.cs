@@ -204,7 +204,7 @@ public class PausePanelController : MonoBehaviour
         {
             Debug.LogWarning("[PausePanel] UImanager is NULL - using fallback");
             Time.timeScale = 1f;
-            UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("Home");
+            RemoteScene.Load("Home");
         }
     }
 
@@ -221,7 +221,7 @@ public class PausePanelController : MonoBehaviour
         {
             Debug.LogWarning("[PausePanel] UImanager is NULL - using fallback");
             Time.timeScale = 1f;
-            UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("Home");
+            RemoteScene.Load("Home");
         }
     }
 

@@ -256,7 +256,7 @@ public class GameFlowController : MonoBehaviour
         {
             // Fallback: reload current scene
             Time.timeScale = 1f;
-            SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
+            RemoteScene.Load(SceneManager.GetActiveScene().name);
         }
     }
 
@@ -272,7 +272,7 @@ public class GameFlowController : MonoBehaviour
             Time.timeScale = 1f;
             if (BackgroundMusicManager.Instance != null)
                 BackgroundMusicManager.Instance.PlayHomeMusic();
-            SceneManager.LoadSceneAsync(SceneLoader.HOME_SCENE);
+            RemoteScene.Load(SceneLoader.HOME_SCENE);
         }
     }
 

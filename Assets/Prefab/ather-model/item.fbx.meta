@@ -1,78 +1,153 @@
 fileFormatVersion: 2
 guid: 4631fad8ed595114199bffe5d03dad26
-timeCreated: 1464312139
-licenseType: Free
 ModelImporter:
-  serializedVersion: 19
-  fileIDToRecycleName:
-    100000: //RootNode
-    100002: pCylinder14
-    100004: pCylinder33
-    100006: polySurface1
-    100008: pPipe3
-    400000: //RootNode
-    400002: pCylinder14
-    400004: pCylinder33
-    400006: polySurface1
-    400008: pPipe3
-    2300000: pCylinder14
-    2300002: pCylinder33
-    2300004: polySurface1
-    2300006: pPipe3
-    3300000: pCylinder14
-    3300002: pCylinder33
-    3300004: polySurface1
-    3300006: pPipe3
-    4300000: pPipe3
-    4300002: pCylinder14
-    4300004: pCylinder33
-    4300006: polySurface1
+  serializedVersion: 24200
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: //RootNode
+  - first:
+      1: 100002
+    second: pCylinder14
+  - first:
+      1: 100004
+    second: pCylinder33
+  - first:
+      1: 100006
+    second: polySurface1
+  - first:
+      1: 100008
+    second: pPipe3
+  - first:
+      4: 400000
+    second: //RootNode
+  - first:
+      4: 400002
+    second: pCylinder14
+  - first:
+      4: 400004
+    second: pCylinder33
+  - first:
+      4: 400006
+    second: polySurface1
+  - first:
+      4: 400008
+    second: pPipe3
+  - first:
+      23: 2300000
+    second: pCylinder14
+  - first:
+      23: 2300002
+    second: pCylinder33
+  - first:
+      23: 2300004
+    second: polySurface1
+  - first:
+      23: 2300006
+    second: pPipe3
+  - first:
+      33: 3300000
+    second: pCylinder14
+  - first:
+      33: 3300002
+    second: pCylinder33
+  - first:
+      33: 3300004
+    second: polySurface1
+  - first:
+      33: 3300006
+    second: pPipe3
+  - first:
+      43: 4300000
+    second: pPipe3
+  - first:
+      43: 4300002
+    second: pCylinder14
+  - first:
+      43: 4300004
+    second: pCylinder33
+  - first:
+      43: 4300006
+    second: polySurface1
+  externalObjects: {}
   materials:
-    importMaterials: 1
+    materialImportMode: 1
     materialName: 0
     materialSearch: 1
+    materialLocation: 1
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
-    resampleRotations: 1
+    resampleCurves: 1
     optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
     motionNodeName: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
     animationCompression: 1
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
+    extraUserProperties: []
     clipAnimations: []
     isReadable: 1
   meshes:
     lODScreenPercentages: []
     globalScale: 50
-    meshCompression: 0
+    meshCompression: 3
     addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 0
+    importVisibility: 0
     importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
+    nodeNameCollisionStrategy: 0
+    fileIdsGeneration: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
-    optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    generateMeshLods: 0
+    meshLodGenerationFlags: 0
+    maximumMeshLod: -1
+    meshOptimizationFlags: -1
+    indexFormat: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 0
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
     secondaryUVPackMargin: 4
     useFileScale: 1
+    strictVertexDataChecks: 0
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
     tangentImportMode: 3
+    normalCalculationMode: 0
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
   importAnimation: 1
-  copyAvatar: 0
   humanDescription:
+    serializedVersion: 3
     human: []
     skeleton: []
     armTwist: 0.5
@@ -82,11 +157,19 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
+    globalScale: 50
     rootMotionBoneName: 
     hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 0
   lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 0
   humanoidOversampling: 1
+  avatarSetup: 0
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 0
+  importBlendShapeDeformPercent: 0
+  remapMaterialsIfMaterialImportModeIsNone: 1
   additionalBone: 0
   userData: 
   assetBundleName: 

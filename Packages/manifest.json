@@ -8,6 +8,7 @@
   ],
   "dependencies": {
     "com.unity.purchasing": "5.4.4",
+    "com.unity.addressables": "2.7.4",
     "com.coplaydev.unity-mcp": "10.0.0",
     "com.unity.ai.assistant": "2.20.0-pre.1",
     "com.unity.ai.inference": "2.6.1",

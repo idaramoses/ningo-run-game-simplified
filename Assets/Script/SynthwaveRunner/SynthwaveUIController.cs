@@ -147,13 +147,13 @@ namespace SynthwaveRunner
             {
                 SynthwaveGameManager.Instance.TriggerGameOver(); // Fallback
             }
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            RemoteScene.Load(SceneManager.GetActiveScene().name);
         }
 
         public void ExitToMainGame()
         {
             // Load the main/home scene of the main game if it exists
-            SceneManager.LoadScene("Home");
+            RemoteScene.Load("Home");
         }
 
         #endregion

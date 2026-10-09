@@ -309,6 +309,39 @@
     var loaderPromise = null;
     var starting = false;
 
+    // Remote scene streaming progress (sent from Unity via NingoBridge.jslib)
+    window.addEventListener('ningo-scene-progress', function (e) {
+      var p = Math.round((e.detail || 0) * 100);
+      document.getElementById('loading-ui').classList.remove('done');
+      document.getElementById('progress-fill').style.width = p + '%';
+      document.getElementById('loading-label').textContent = 'Downloading city… ' + p + '%';
+    });
+    window.addEventListener('ningo-scene-done', function () {
+      document.getElementById('loading-ui').classList.add('done');
+    });
+
+    // Warm the browser cache with the remote scene bundles while the user is
+    // still on the landing page — the in-game stream then reads from cache.
+    function prefetchBundles() {
+      fetch('ServerData/WebGL/manifest.json', { cache: 'no-cache' })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (m) {
+          if (!m || !m.bundles) return;
+          m.bundles.forEach(function (name, i) {
+            setTimeout(function () {
+              fetch('ServerData/WebGL/' + name).catch(function () {});
+            }, i * 500); // gentle spacing, don't spike the network
+          });
+        })
+        .catch(function () {});
+    }
+    window.addEventListener('load', function () {
+      if ('requestIdleCallback' in window)
+        requestIdleCallback(prefetchBundles, { timeout: 5000 });
+      else
+        setTimeout(prefetchBundles, 3000);
+    });
+
     function loadLoader() {
       if (loaderPromise) return loaderPromise;
       loaderPromise = new Promise(function (resolve, reject) {
@@ -348,6 +381,9 @@
           companyName: {{{ JSON.stringify(COMPANY_NAME) }}},
           productName: {{{ JSON.stringify(PRODUCT_NAME) }}},
           productVersion: {{{ JSON.stringify(PRODUCT_VERSION) }}},
+          // Perf: cap retina resolution (2x DPI = 4x pixels = jank on WebGL)
+          devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),
+          webglContextAttributes: { powerPreference: "high-performance" },
         }, function (progress) {
           fill.style.width = Math.round(progress * 100) + '%';
           label.textContent = 'Loading Ningo Run… ' + Math.round(progress * 100) + '%';

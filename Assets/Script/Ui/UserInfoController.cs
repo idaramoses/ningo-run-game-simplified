@@ -964,7 +964,7 @@ public class UserInfoController : MonoBehaviour
             if (SceneLoader.Instance != null)
                 SceneLoader.Instance.LoadHomeScene();
             else
-                UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(homeSceneName);
+                RemoteScene.Load(homeSceneName);
         }
     }
 

@@ -101,7 +101,7 @@ public class SceneLoader : MonoBehaviour
         }
 
         Debug.Log("[SceneLoader] Loading Home scene");
-        SceneManager.LoadSceneAsync(HOME_SCENE);
+        RemoteScene.Load(HOME_SCENE);
     }
 
     public void LoadGameScene()

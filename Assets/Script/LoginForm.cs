@@ -245,7 +245,7 @@ public class LoginForm : MonoBehaviour
         if (SplashController.Instance != null)
             SplashController.Instance.ShowWelcome();
         else if (!string.IsNullOrEmpty(homeSceneName))
-            SceneManager.LoadSceneAsync(homeSceneName);
+            RemoteScene.Load(homeSceneName);
     }
 
     public void OnLanguageSelected(string languageCode)

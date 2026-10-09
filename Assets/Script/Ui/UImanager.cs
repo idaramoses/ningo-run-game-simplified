@@ -2482,14 +2482,14 @@ public class UImanager : MonoBehaviour
         if (activeSceneName == "Home" || activeSceneName == "Home_new" || activeSceneName == "Home_old")
         {
             Debug.Log($"[UImanager] Reloading scene '{activeSceneName}' to return to clean Home state!");
-            UnityEngine.SceneManagement.SceneManager.LoadScene(activeSceneName);
+            RemoteScene.Load(activeSceneName);
             return;
         }
 
         if (SceneLoader.Instance != null)
             SceneLoader.Instance.LoadHomeScene();
         else
-            UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("Home");
+            RemoteScene.Load("Home");
     }
 
     private void ReturnToHomeMenuInScene()

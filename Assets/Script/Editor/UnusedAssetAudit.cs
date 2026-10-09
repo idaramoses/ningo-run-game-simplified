@@ -62,6 +62,18 @@ public static class UnusedAssetAudit
             foreach (var guid in AssetDatabase.FindAssets("", new[] { "Assets/WebGLTemplates" }))
                 used.Add(AssetDatabase.GUIDToAssetPath(guid));
 
+        // Addressables groups + every entry's dependencies ship as bundles.
+        if (Directory.Exists("Assets/AddressableAssetsData"))
+            foreach (var guid in AssetDatabase.FindAssets("", new[] { "Assets/AddressableAssetsData" }))
+                used.Add(AssetDatabase.GUIDToAssetPath(guid));
+        var aaSettings = UnityEditor.AddressableAssets.AddressableAssetSettingsDefaultObject.Settings;
+        if (aaSettings != null)
+            foreach (var g in aaSettings.groups)
+                if (g != null)
+                    foreach (var e in g.entries)
+                        foreach (var dep in AssetDatabase.GetDependencies(e.AssetPath, true))
+                            used.Add(dep);
+
         string root = Directory.GetCurrentDirectory();
         var unused = new List<(string path, long bytes)>();
         foreach (var guid in AssetDatabase.FindAssets(""))
