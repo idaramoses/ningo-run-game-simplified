@@ -9,14 +9,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --cream: #f7f2e2;
-      --cream-card: #efe8d2;
-      --green: #0c4527;
-      --green-deep: #08301b;
+      --cream: #fdf4e0;
+      --cream-card: #f8ecd4;
+      --brand: #3d2207;
+      --brand-deep: #241203;
       --gold: #f7b81e;
       --gold-2: #ffd21f;
-      --ink: #1b2b24;
-      --muted: #5d6a62;
+      --ink: #2b1a05;
+      --muted: #7d6440;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
@@ -33,10 +33,10 @@
       position: fixed; top: 0; left: 0; right: 0; z-index: 50;
       display: flex; align-items: center; justify-content: space-between;
       padding: 14px 4vw;
-      background: rgba(12,69,39,.92);
+      background: rgba(45,25,5,.92);
       backdrop-filter: blur(8px);
     }
-    .brand img { height: 42px; display: block; }
+    .brand img { height: 50px; display: block; }
     nav { display: flex; gap: 30px; align-items: center; }
     nav a {
       color: rgba(255,255,255,.85); text-decoration: none; font-weight: 700;
@@ -63,7 +63,7 @@
       min-height: 92vh; display: flex; align-items: center;
       padding: 120px 4vw 60px;
       background:
-        linear-gradient(90deg, rgba(8,30,18,.82) 0%, rgba(8,30,18,.45) 45%, rgba(8,30,18,.05) 75%),
+        linear-gradient(90deg, rgba(36,18,3,.82) 0%, rgba(36,18,3,.45) 45%, rgba(36,18,3,.05) 75%),
         url('TemplateData/hero-banner.png') center / cover no-repeat;
     }
     .hero .inner { max-width: 560px; }
@@ -86,7 +86,10 @@
     /* ---------- stats ---------- */
     .stats {
       display: flex; flex-wrap: wrap; justify-content: center; gap: 14px 70px;
-      padding: 22px 4vw; background: var(--green);
+      padding: 22px 4vw;
+      background:
+        linear-gradient(0deg, rgba(61,34,7,.28), rgba(61,34,7,.28)),
+        url('TemplateData/loader-bg.png') center / cover;
     }
     .stat { display: flex; align-items: center; gap: 12px; }
     .stat img { height: 30px; }
@@ -134,7 +137,7 @@
     .cta {
       display: flex; align-items: center; min-height: 420px; padding: 70px 6vw;
       background:
-        linear-gradient(90deg, rgba(8,30,18,.85) 0%, rgba(8,30,18,.5) 45%, rgba(8,30,18,.1) 80%),
+        linear-gradient(90deg, rgba(36,18,3,.85) 0%, rgba(36,18,3,.5) 45%, rgba(36,18,3,.1) 80%),
         url('TemplateData/bottom-runner-banner.png') center / cover no-repeat;
     }
     .cta h2 { font-size: clamp(34px, 5vw, 58px); font-weight: 900; color: #fff; }
@@ -146,11 +149,11 @@
       display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;
       padding: 22px 4vw;
       background:
-        linear-gradient(0deg, rgba(8,48,27,.93), rgba(8,48,27,.93)),
+        linear-gradient(0deg, rgba(45,25,5,.93), rgba(45,25,5,.93)),
         url('TemplateData/emerald-pattern-background.png') center / cover;
     }
     footer .left { display: flex; align-items: center; gap: 14px; }
-    footer img { height: 34px; }
+    footer img { height: 40px; }
     footer .tag { color: rgba(255,255,255,.75); font-weight: 700; font-size: 14px; }
     footer .links a {
       color: rgba(255,255,255,.8); text-decoration: none; font-weight: 700;
@@ -161,36 +164,36 @@
     /* ---------- game overlay ---------- */
     #game-overlay {
       position: fixed; inset: 0; z-index: 100; display: none;
-      background: var(--green-deep); flex-direction: column;
+      background: #f58a1c url('TemplateData/loader-bg.png') center / cover; flex-direction: column;
     }
     #game-overlay.open { display: flex; }
     #btn-exit {
       position: absolute; top: 12px; right: 14px; z-index: 10;
-      background: rgba(8,48,27,.65); border: 2px solid var(--gold-2); color: var(--gold-2);
+      background: rgba(36,18,3,.65); border: 2px solid var(--gold-2); color: var(--gold-2);
       font-family: inherit; font-weight: 800; font-size: 14px;
       padding: 7px 18px; border-radius: 999px; cursor: pointer;
       opacity: .55; transition: opacity .15s;
     }
-    #btn-exit:hover { opacity: 1; background: rgba(8,48,27,.9); }
+    #btn-exit:hover { opacity: 1; background: rgba(36,18,3,.9); }
     #game-stage { position: relative; flex: 1; }
-    #unity-canvas { width: 100%; height: 100%; display: block; background: var(--green-deep); }
+    #unity-canvas { width: 100%; height: 100%; display: block; background: #f58a1c; }
     #loading-ui {
       position: absolute; inset: 0; display: flex; flex-direction: column;
       align-items: center; justify-content: center; gap: 24px;
-      background: var(--green-deep); transition: opacity .4s;
+      background: #f58a1c url('TemplateData/loader-bg.png') center / cover; transition: opacity .4s;
     }
     #loading-ui.done { opacity: 0; pointer-events: none; }
     #loading-ui img { height: 84px; animation: pulse 1.6s ease-in-out infinite; }
     @keyframes pulse { 50% { transform: scale(1.06); } }
     .progress-track {
       width: min(420px, 70vw); height: 12px; border-radius: 999px;
-      background: rgba(255,255,255,.14); overflow: hidden;
+      background: rgba(61,34,7,.25); overflow: hidden;
     }
     .progress-fill {
       height: 100%; width: 0%; border-radius: 999px;
-      background: var(--gold-2); transition: width .25s ease;
+      background: #3d2207; transition: width .25s ease;
     }
-    #loading-label { color: rgba(255,255,255,.75); font-weight: 800; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; }
+    #loading-label { color: #3d2207; font-weight: 800; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; }
 
     @media (max-width: 720px) {
       nav a:not(.btn-play) { display: none; }
