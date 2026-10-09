@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>{{{ PRODUCT_NAME }}} — Run. Learn. Explore.</title>
+  <link rel="icon" href="TemplateData/ningo-run-logo.png">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream: #f7f2e2;
+      --cream-card: #efe8d2;
+      --green: #0c4527;
+      --green-deep: #08301b;
+      --gold: #f7b81e;
+      --gold-2: #ffd21f;
+      --ink: #1b2b24;
+      --muted: #5d6a62;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Nunito', 'Segoe UI', -apple-system, sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      overflow-x: hidden;
+    }
+    body.locked { overflow: hidden; }
+
+    /* ---------- header ---------- */
+    header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 4vw;
+      background: rgba(12,69,39,.92);
+      backdrop-filter: blur(8px);
+    }
+    .brand img { height: 42px; display: block; }
+    nav { display: flex; gap: 30px; align-items: center; }
+    nav a {
+      color: rgba(255,255,255,.85); text-decoration: none; font-weight: 700;
+      font-size: 15px; transition: color .2s;
+    }
+    nav a:hover { color: var(--gold-2); }
+    .btn-play {
+      display: inline-flex; align-items: center; gap: 9px; cursor: pointer; border: none;
+      background: var(--gold-2); color: #20200a; font-family: inherit;
+      font-weight: 900; font-size: 15px; padding: 11px 24px; border-radius: 999px;
+      transition: transform .12s; text-transform: uppercase; letter-spacing: .4px;
+      text-decoration: none;
+    }
+    .btn-play:hover { transform: scale(1.04); }
+    .btn-play.big { font-size: 18px; padding: 16px 34px; }
+    .btn-play::before {
+      content: ""; width: 0; height: 0;
+      border-left: 11px solid #20200a; border-top: 7px solid transparent;
+      border-bottom: 7px solid transparent;
+    }
+
+    /* ---------- hero ---------- */
+    .hero {
+      min-height: 92vh; display: flex; align-items: center;
+      padding: 120px 4vw 60px;
+      background:
+        linear-gradient(90deg, rgba(8,30,18,.82) 0%, rgba(8,30,18,.45) 45%, rgba(8,30,18,.05) 75%),
+        url('TemplateData/hero-banner.png') center / cover no-repeat;
+    }
+    .hero .inner { max-width: 560px; }
+    .hero h1 {
+      font-size: clamp(46px, 7vw, 84px); font-weight: 900; line-height: 1.0;
+      color: #fff; text-shadow: 0 3px 18px rgba(0,0,0,.45);
+    }
+    .hero h1 span { color: var(--gold-2); }
+    .hero p {
+      margin: 18px 0 30px; font-size: clamp(17px, 2vw, 21px); font-weight: 700;
+      color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,.55);
+    }
+    .hero-actions { display: flex; align-items: center; gap: 26px; flex-wrap: wrap; }
+    .how-link {
+      color: #fff; font-weight: 800; font-size: 16px; text-decoration: none;
+      border-bottom: 2px solid transparent; transition: border-color .2s;
+    }
+    .how-link:hover { border-color: var(--gold-2); }
+
+    /* ---------- stats ---------- */
+    .stats {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 14px 70px;
+      padding: 22px 4vw; background: var(--green);
+    }
+    .stat { display: flex; align-items: center; gap: 12px; }
+    .stat img { height: 30px; }
+    .stat b { font-size: 22px; color: #fff; font-weight: 900; }
+    .stat span { color: rgba(255,255,255,.8); font-weight: 700; font-size: 16px; }
+
+    /* ---------- sections ---------- */
+    section { padding: 78px 4vw; max-width: 1240px; margin: 0 auto; }
+    .section-title {
+      text-align: center; font-size: clamp(30px, 4.5vw, 44px); font-weight: 900;
+      color: var(--ink); margin-bottom: 10px;
+    }
+    .section-sub {
+      text-align: center; color: var(--muted); font-weight: 700;
+      max-width: 620px; margin: 0 auto 44px; font-size: 16px;
+    }
+
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; }
+
+    /* city cards — image with bottom-left overlay text */
+    .card-city {
+      position: relative; border-radius: 16px; overflow: hidden; height: 300px;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .card-city:hover { transform: translateY(-5px); box-shadow: 0 16px 34px rgba(0,0,0,.28); }
+    .card-city img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .card-city .body {
+      position: absolute; left: 0; right: 0; bottom: 0; padding: 46px 20px 18px;
+      background: linear-gradient(180deg, transparent, rgba(0,0,0,.75));
+    }
+    .card-city h3 { color: #fff; font-size: 22px; font-weight: 900; }
+    .card-city p { color: rgba(255,255,255,.9); font-size: 14px; font-weight: 700; }
+
+    /* feature cards — light cream, black text */
+    .card-feat {
+      background: var(--cream-card); border-radius: 16px; padding: 36px 24px;
+      text-align: center; transition: transform .2s;
+    }
+    .card-feat:hover { transform: translateY(-5px); }
+    .card-feat img { width: 84px; height: 84px; object-fit: contain; margin-bottom: 16px; }
+    .card-feat h3 { font-size: 20px; font-weight: 900; margin-bottom: 10px; }
+    .card-feat p { color: var(--muted); font-size: 14px; font-weight: 700; line-height: 1.55; }
+
+    /* ---------- CTA ---------- */
+    .cta {
+      display: flex; align-items: center; min-height: 420px; padding: 70px 6vw;
+      background:
+        linear-gradient(90deg, rgba(8,30,18,.85) 0%, rgba(8,30,18,.5) 45%, rgba(8,30,18,.1) 80%),
+        url('TemplateData/bottom-runner-banner.png') center / cover no-repeat;
+    }
+    .cta h2 { font-size: clamp(34px, 5vw, 58px); font-weight: 900; color: #fff; }
+    .cta h2 span { color: var(--gold-2); }
+    .cta p { color: rgba(255,255,255,.9); font-weight: 700; margin: 12px 0 30px; font-size: 18px; }
+
+    /* ---------- footer ---------- */
+    footer {
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;
+      padding: 22px 4vw;
+      background:
+        linear-gradient(0deg, rgba(8,48,27,.93), rgba(8,48,27,.93)),
+        url('TemplateData/emerald-pattern-background.png') center / cover;
+    }
+    footer .left { display: flex; align-items: center; gap: 14px; }
+    footer img { height: 34px; }
+    footer .tag { color: rgba(255,255,255,.75); font-weight: 700; font-size: 14px; }
+    footer .links a {
+      color: rgba(255,255,255,.8); text-decoration: none; font-weight: 700;
+      font-size: 14px; margin-left: 26px;
+    }
+    footer .links a:hover { color: var(--gold-2); }
+
+    /* ---------- game overlay ---------- */
+    #game-overlay {
+      position: fixed; inset: 0; z-index: 100; display: none;
+      background: var(--green-deep); flex-direction: column;
+    }
+    #game-overlay.open { display: flex; }
+    #btn-exit {
+      position: absolute; top: 12px; right: 14px; z-index: 10;
+      background: rgba(8,48,27,.65); border: 2px solid var(--gold-2); color: var(--gold-2);
+      font-family: inherit; font-weight: 800; font-size: 14px;
+      padding: 7px 18px; border-radius: 999px; cursor: pointer;
+      opacity: .55; transition: opacity .15s;
+    }
+    #btn-exit:hover { opacity: 1; background: rgba(8,48,27,.9); }
+    #game-stage { position: relative; flex: 1; }
+    #unity-canvas { width: 100%; height: 100%; display: block; background: var(--green-deep); }
+    #loading-ui {
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 24px;
+      background: var(--green-deep); transition: opacity .4s;
+    }
+    #loading-ui.done { opacity: 0; pointer-events: none; }
+    #loading-ui img { height: 84px; animation: pulse 1.6s ease-in-out infinite; }
+    @keyframes pulse { 50% { transform: scale(1.06); } }
+    .progress-track {
+      width: min(420px, 70vw); height: 12px; border-radius: 999px;
+      background: rgba(255,255,255,.14); overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; width: 0%; border-radius: 999px;
+      background: var(--gold-2); transition: width .25s ease;
+    }
+    #loading-label { color: rgba(255,255,255,.75); font-weight: 800; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; }
+
+    @media (max-width: 720px) {
+      nav a:not(.btn-play) { display: none; }
+      footer { flex-direction: column; text-align: center; }
+      footer .links a { margin: 0 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a class="brand" href="#top"><img src="TemplateData/ningo-run-logo.png" alt="{{{ PRODUCT_NAME }}}"></a>
+    <nav>
+      <a href="#game" onclick="startGame(); return false;">Game</a>
+      <a href="#cities">Cities</a>
+      <a href="#features">Languages</a>
+      <a class="btn-play" href="#game" onclick="startGame(); return false;">Play Now</a>
+    </nav>
+  </header>
+
+  <div class="hero" id="top">
+    <div class="inner">
+      <h1>Run. <span>Learn.</span><br>Explore.</h1>
+      <p>Your African adventure starts here.</p>
+      <div class="hero-actions">
+        <button class="btn-play big" onclick="startGame()">Play Now</button>
+        <a class="how-link" href="#features">See how it works →</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><img src="TemplateData/location-pin-icon.png" alt=""><div><b>8</b> <span>cities</span></div></div>
+    <div class="stat"><img src="TemplateData/speech-bubble-icon.png" alt=""><div><b>4</b> <span>languages</span></div></div>
+    <div class="stat"><img src="TemplateData/infinity-icon.png" alt=""><div><b>Endless</b> <span>runs</span></div></div>
+  </div>
+
+  <section id="cities">
+    <h2 class="section-title">Explore Nigeria</h2>
+    <p class="section-sub">Run through real Nigerian cities. Discover the sights, sounds and culture.</p>
+    <div class="cards">
+      <div class="card-city">
+        <img src="TemplateData/lagos-city.png" alt="Lagos">
+        <div class="body"><h3>Lagos</h3><p>Vibrant streets and big energy.</p></div>
+      </div>
+      <div class="card-city">
+        <img src="TemplateData/abuja-city.png" alt="Abuja">
+        <div class="body"><h3>Abuja</h3><p>Modern capital, rich culture.</p></div>
+      </div>
+      <div class="card-city">
+        <img src="TemplateData/port-harcourt-city.png" alt="Port Harcourt">
+        <div class="body"><h3>Port Harcourt</h3><p>Rivers and opportunities.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <h2 class="section-title">Learn while you run</h2>
+    <p class="section-sub">A fun and engaging way to pick up African languages, inspired by real Nigerian cities.</p>
+    <div class="cards">
+      <div class="card-feat">
+        <img src="TemplateData/gold-letter-a-icon.png" alt="Collect letters">
+        <h3>Collect letters</h3><p>Pick up letter tokens on the run to form words in different Nigerian languages.</p>
+      </div>
+      <div class="card-feat">
+        <img src="TemplateData/traffic-cone-icon.png" alt="Dodge obstacles">
+        <h3>Dodge obstacles</h3><p>Jump, slide and dodge through real Nigerian streets.</p>
+      </div>
+      <div class="card-feat">
+        <img src="TemplateData/speech-bubble-icon.png" alt="Discover words">
+        <h3>Discover words</h3><p>Learn new words, their meanings, and how they're used in everyday life.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="cta" id="game">
+    <div>
+      <h2>Ready <span>to run?</span></h2>
+      <p>New cities. New words. A bigger Nigeria.</p>
+      <button class="btn-play big" onclick="startGame()">Play Now</button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="left">
+      <img src="TemplateData/ningo-run-logo.png" alt="{{{ PRODUCT_NAME }}}">
+      <span class="tag">A game by {{{ COMPANY_NAME }}}</span>
+    </div>
+    <div class="links">
+      <a href="#game" onclick="startGame(); return false;">Game</a>
+      <a href="#cities">Cities</a>
+      <a href="#features">Languages</a>
+      <a href="#">Privacy</a>
+      <a href="#">Contact</a>
+    </div>
+  </footer>
+
+  <!-- ============ Unity game overlay ============ -->
+  <div id="game-overlay">
+    <div id="game-stage">
+      <button id="btn-exit" onclick="exitGame()">✕ Exit</button>
+      <canvas id="unity-canvas" width={{{ WIDTH }}} height={{{ HEIGHT }}} tabindex="-1"></canvas>
+      <div id="loading-ui">
+        <img src="TemplateData/ningo-run-logo.png" alt="loading">
+        <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+        <div id="loading-label">Loading Ningo Run…</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var unityInstance = null;
+    var loaderPromise = null;
+    var starting = false;
+
+    function loadLoader() {
+      if (loaderPromise) return loaderPromise;
+      loaderPromise = new Promise(function (resolve, reject) {
+        var s = document.createElement('script');
+        s.src = 'Build/{{{ LOADER_FILENAME }}}';
+        s.onload = resolve;
+        s.onerror = function () { reject(new Error('Failed to load game loader')); };
+        document.body.appendChild(s);
+      });
+      return loaderPromise;
+    }
+
+    function startGame() {
+      var overlay = document.getElementById('game-overlay');
+      overlay.classList.add('open');
+      document.body.classList.add('locked');
+      if (unityInstance || starting) return;
+      starting = true;
+      var fill = document.getElementById('progress-fill');
+      var label = document.getElementById('loading-label');
+      document.getElementById('loading-ui').classList.remove('done');
+      loadLoader().then(function () {
+        return createUnityInstance(document.getElementById('unity-canvas'), {
+          arguments: [],
+          dataUrl: 'Build/{{{ DATA_FILENAME }}}',
+          frameworkUrl: 'Build/{{{ FRAMEWORK_FILENAME }}}',
+#if USE_THREADS
+          workerUrl: 'Build/{{{ WORKER_FILENAME }}}',
+#endif
+#if USE_WASM
+          codeUrl: 'Build/{{{ CODE_FILENAME }}}',
+#endif
+#if SYMBOLS_FILENAME
+          symbolsUrl: 'Build/{{{ SYMBOLS_FILENAME }}}',
+#endif
+          streamingAssetsUrl: 'StreamingAssets',
+          companyName: {{{ JSON.stringify(COMPANY_NAME) }}},
+          productName: {{{ JSON.stringify(PRODUCT_NAME) }}},
+          productVersion: {{{ JSON.stringify(PRODUCT_VERSION) }}},
+        }, function (progress) {
+          fill.style.width = Math.round(progress * 100) + '%';
+          label.textContent = 'Loading Ningo Run… ' + Math.round(progress * 100) + '%';
+        });
+      }).then(function (instance) {
+        unityInstance = instance;
+        starting = false;
+        document.getElementById('loading-ui').classList.add('done');
+      }).catch(function (msg) {
+        starting = false;
+        label.textContent = 'Failed to load: ' + msg;
+      });
+    }
+
+    function exitGame() {
+      var overlay = document.getElementById('game-overlay');
+      var done = function () {
+        overlay.classList.remove('open');
+        document.body.classList.remove('locked');
+      };
+      if (unityInstance) {
+        var inst = unityInstance;
+        unityInstance = null;
+        if (inst.Quit) inst.Quit().then(done).catch(done);
+        else done();
+      } else {
+        done();
+      }
+    }
+  </script>
+</body>
+</html>
