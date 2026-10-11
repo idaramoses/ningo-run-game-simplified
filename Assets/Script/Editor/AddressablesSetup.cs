@@ -93,6 +93,8 @@ public static class AddressablesSetup
         bundleSchema.BuildPath.SetVariableByName(settings, "Remote.BuildPath");
         bundleSchema.LoadPath.SetVariableByName(settings, "Remote.LoadPath");
         bundleSchema.BundleMode = BundledAssetGroupSchema.BundlePackingMode.PackTogether;
+        // WebGL can only decompress LZ4 or uncompressed bundles at runtime —
+        // LZMA fails with "Decompressing this format (1) is not supported".
         bundleSchema.Compression = BundledAssetGroupSchema.BundleCompressionMode.LZ4;
         return group;
     }

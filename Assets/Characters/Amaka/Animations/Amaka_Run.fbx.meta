@@ -63,7 +63,7 @@ ModelImporter:
   meshes:
     lODScreenPercentages: []
     globalScale: 1
-    meshCompression: 3
+    meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
     sortHierarchyByName: 1
@@ -876,8 +876,7 @@ ModelImporter:
     hasTranslationDoF: 0
     hasExtraRoot: 1
     skeletonHasParents: 1
-  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: 0d93a7fc591ad44a69a0dc3cbb1bd4e5,
-    type: 3}
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: 0d93a7fc591ad44a69a0dc3cbb1bd4e5, type: 3}
   autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 3
   humanoidOversampling: 1

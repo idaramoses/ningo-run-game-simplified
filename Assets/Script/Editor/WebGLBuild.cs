@@ -82,37 +82,66 @@ public static class WebGLBuild
     }
 
     /// <summary>
-    /// Caps UI sprite textures at 1024px on the long edge. UI art is displayed
-    /// at a few hundred px on screen — a 2172px button image is invisible
-    /// overhead (4x the pixels, ~4x the bytes). Scene/model/character textures
-    /// are NOT touched — only textures under Assets/UI.
+    /// Caps every texture at 1024px on the long edge and disables mipmaps on
+    /// UI sprites (mipmaps are ~33% of sprite bytes and useless for fixed-size
+    /// UI). 1024px is invisible on phones and imperceptible for this art style.
     /// </summary>
     [MenuItem("Build/Apply UI Texture Cap (1024px)")]
     public static void ApplyUITextureCap()
     {
         const int cap = 1024;
-        var guids = AssetDatabase.FindAssets("t:Texture", new[] { "Assets/UI" });
-        int changed = 0;
+        var guids = AssetDatabase.FindAssets("t:Texture");
+        int capped = 0, mipsStripped = 0;
         AssetDatabase.StartAssetEditing();
         try
         {
             foreach (var guid in guids)
             {
                 string path = AssetDatabase.GUIDToAssetPath(guid);
+                if (!path.StartsWith("Assets/")) continue;
                 if (!(AssetImporter.GetAtPath(path) is TextureImporter importer)) continue;
+
+                bool dirty = false;
                 var tex = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
-                if (tex == null || Mathf.Max(tex.width, tex.height) <= cap) continue;
-                if (importer.maxTextureSize <= cap) continue;
-                importer.maxTextureSize = cap;
-                importer.SaveAndReimport();
-                changed++;
+                if (tex != null && Mathf.Max(tex.width, tex.height) > cap)
+                {
+                    if (importer.maxTextureSize > cap)
+                    {
+                        importer.maxTextureSize = cap;
+                        dirty = true;
+                    }
+                    // A platform override's own maxTextureSize wins over the
+                    // base value — must cap it too or WebGL keeps full res.
+                    foreach (var platform in Platforms)
+                    {
+                        var s = importer.GetPlatformTextureSettings(platform);
+                        if (s.overridden && s.maxTextureSize > cap)
+                        {
+                            s.maxTextureSize = cap;
+                            importer.SetPlatformTextureSettings(s);
+                            dirty = true;
+                        }
+                    }
+                }
+                // Sprites render at fixed size — mipmaps are dead bytes.
+                if (importer.textureType == TextureImporterType.Sprite && importer.mipmapEnabled)
+                {
+                    importer.mipmapEnabled = false;
+                    mipsStripped++;
+                    dirty = true;
+                }
+                if (dirty)
+                {
+                    importer.SaveAndReimport();
+                    capped++;
+                }
             }
         }
         finally
         {
             AssetDatabase.StopAssetEditing();
         }
-        Debug.Log($"[Build] UI texture cap ({cap}px) applied to {changed} textures");
+        Debug.Log($"[Build] Texture cap ({cap}px) applied to {capped} textures; mipmaps stripped on {mipsStripped} sprites");
     }
 
     /// <summary>Rebuilds Addressables content only (no player rebuild).</summary>
@@ -216,10 +245,20 @@ public static class WebGLBuild
                 foreach (var platform in Platforms)
                 {
                     var s = importer.GetPlatformTextureSettings(platform);
-                    if (s.overridden && s.textureCompression == TextureImporterCompression.CompressedHQ) continue;
+                    // AutomaticCompressed resolves to RGBA32 when the project's
+                    // default WebGL compression format is unset — pin it to DXT
+                    // explicitly (Unity software-decompresses where s3tc is
+                    // missing, e.g. mobile Safari).
+                    var fmt = importer.textureType == TextureImporterType.NormalMap
+                        ? TextureImporterFormat.Automatic
+                        : importer.DoesSourceTextureHaveAlpha()
+                            ? TextureImporterFormat.DXT5
+                            : TextureImporterFormat.DXT1;
+                    if (s.overridden && s.textureCompression == TextureImporterCompression.CompressedHQ
+                        && s.format == fmt) continue;
 
                     s.overridden = true;
-                    s.format = TextureImporterFormat.Automatic;
+                    s.format = fmt;
                     s.textureCompression = TextureImporterCompression.CompressedHQ;
                     importer.SetPlatformTextureSettings(s);
                     dirty = true;

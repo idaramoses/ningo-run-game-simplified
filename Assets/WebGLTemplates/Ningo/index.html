@@ -321,25 +321,29 @@
     });
 
     // Warm the browser cache with the remote scene bundles while the user is
-    // still on the landing page — the in-game stream then reads from cache.
+    // still on the landing page — sequential, and aborts the moment Play Now
+    // is pressed so it never competes with the wasm instantiation.
+    var prefetchCancelled = false;
     function prefetchBundles() {
       fetch('ServerData/WebGL/manifest.json', { cache: 'no-cache' })
         .then(function (r) { return r.ok ? r.json() : null; })
         .then(function (m) {
           if (!m || !m.bundles) return;
-          m.bundles.forEach(function (name, i) {
-            setTimeout(function () {
-              fetch('ServerData/WebGL/' + name).catch(function () {});
-            }, i * 500); // gentle spacing, don't spike the network
-          });
+          var i = 0;
+          (function next() {
+            if (prefetchCancelled || starting || unityInstance || i >= m.bundles.length) return;
+            fetch('ServerData/WebGL/' + m.bundles[i++])
+              .catch(function () {})
+              .then(function () { setTimeout(next, 250); });
+          })();
         })
         .catch(function () {});
     }
     window.addEventListener('load', function () {
       if ('requestIdleCallback' in window)
-        requestIdleCallback(prefetchBundles, { timeout: 5000 });
+        requestIdleCallback(prefetchBundles, { timeout: 8000 });
       else
-        setTimeout(prefetchBundles, 3000);
+        setTimeout(prefetchBundles, 4000);
     });
 
     function loadLoader() {
@@ -360,6 +364,7 @@
       document.body.classList.add('locked');
       if (unityInstance || starting) return;
       starting = true;
+      prefetchCancelled = true;
       var fill = document.getElementById('progress-fill');
       var label = document.getElementById('loading-label');
       document.getElementById('loading-ui').classList.remove('done');
@@ -378,6 +383,9 @@
           symbolsUrl: 'Build/{{{ SYMBOLS_FILENAME }}}',
 #endif
           streamingAssetsUrl: 'StreamingAssets',
+          // Firefox: UnityCache (IndexedDB) triggers "too much recursion" on
+          // cached loads — HTTP cache already covers these immutable files.
+          cacheControl: function (url) { return 'no-store'; },
           companyName: {{{ JSON.stringify(COMPANY_NAME) }}},
           productName: {{{ JSON.stringify(PRODUCT_NAME) }}},
           productVersion: {{{ JSON.stringify(PRODUCT_VERSION) }}},
