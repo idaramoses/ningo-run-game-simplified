@@ -14,6 +14,17 @@ public class CityLocationPanel : MonoBehaviour
     [Tooltip("Optional: clicking the plaque itself cycles to the next city.")]
     [SerializeField] private Button plaqueButton;
 
+    [Header("Locked Cities")]
+    [Tooltip("Lock icon shown for locked and coming-soon cities.")]
+    [SerializeField] private GameObject lockIcon;
+    [Tooltip("Locked cities: lock icon only.")]
+    [SerializeField] private string[] lockedCityNames = { "Abuja", "PortHarcourt" };
+
+    [Header("Coming Soon Cities")]
+    [Tooltip("Dim overlay with 'Coming Soon' label. The lock icon also shows for these cities.")]
+    [SerializeField] private GameObject comingSoonOverlay;
+    [SerializeField] private string[] comingSoonCityNames = { "Uyo", "Ibadan", "Kano", "Umuahia", "Onitsha" };
+
     private void Start()
     {
         if (cityManager == null) cityManager = CityManager.Instance;
@@ -51,5 +62,26 @@ public class CityLocationPanel : MonoBehaviour
         {
             if (img != null) img.sprite = city.plaqueSprite;
         }
+        UpdateLockState(city.cityName);
+    }
+
+    private void UpdateLockState(string cityName)
+    {
+        bool locked = IsInList(cityName, lockedCityNames);
+        bool comingSoon = IsInList(cityName, comingSoonCityNames);
+
+        if (lockIcon != null) lockIcon.SetActive(locked || comingSoon);
+        if (comingSoonOverlay != null) comingSoonOverlay.SetActive(comingSoon);
+    }
+
+    private static bool IsInList(string cityName, string[] list)
+    {
+        if (list == null) return false;
+        foreach (string entry in list)
+        {
+            if (string.Equals(entry, cityName, System.StringComparison.OrdinalIgnoreCase))
+                return true;
+        }
+        return false;
     }
 }
