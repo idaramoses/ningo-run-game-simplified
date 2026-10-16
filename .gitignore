@@ -73,3 +73,6 @@ crashlytics-build.properties
 .DS_Store
 Thumbs.db
 .devin/mcp_config.local.json
+
+# Unity recovery scenes
+Assets/_Recovery/
