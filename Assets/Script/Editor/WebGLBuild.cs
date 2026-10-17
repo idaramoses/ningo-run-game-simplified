@@ -280,9 +280,13 @@ public static class WebGLBuild
 
     private static string[] EnabledScenes()
     {
+        // Home stays enabled in Build Settings so Android/editor can load it
+        // with SceneManager — exclude it here because WebGL streams it as a
+        // remote Addressables scene (RemoteScene.RemoteNames).
         var scenes = new List<string>();
         foreach (var scene in EditorBuildSettings.scenes)
-            if (scene.enabled) scenes.Add(scene.path);
+            if (scene.enabled && !scene.path.EndsWith("/Home.unity"))
+                scenes.Add(scene.path);
         return scenes.ToArray();
     }
 }

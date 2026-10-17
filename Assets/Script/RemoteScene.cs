@@ -49,7 +49,17 @@ public static class RemoteScene
     private static void NingoReportSceneDone() { }
 #endif
 
-    public static bool IsRemote(string sceneName) => RemoteNames.Contains(sceneName);
+    public static bool IsRemote(string sceneName)
+    {
+        // Only WebGL streams scenes from remote bundles — every other platform
+        // (Android, iOS, desktop, editor) has the scene in Build Settings and
+        // loads it directly. RemoteNames stays for documentation.
+#if UNITY_WEBGL && !UNITY_EDITOR
+        return RemoteNames.Contains(sceneName);
+#else
+        return false;
+#endif
+    }
 
     /// <summary>Drop-in for SceneManager.LoadSceneAsync — fire and forget.</summary>
     public static void Load(string sceneName)
