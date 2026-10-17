@@ -27,7 +27,7 @@ public class UserInfoController : MonoBehaviour
 #if UNITY_WEBGL && !UNITY_EDITOR
         webApiBaseUrl.TrimEnd('/');
 #else
-        ApiBase;
+        apiBaseUrl.TrimEnd('/');
 #endif
 
     [Header("Panels")]
