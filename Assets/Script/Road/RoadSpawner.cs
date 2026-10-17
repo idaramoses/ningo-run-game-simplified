@@ -75,6 +75,36 @@ public class RoadSpawner : MonoBehaviour
         roadTilePrefabs = tiles;
     }
 
+    /// <summary>
+    /// Swaps the tile prefabs AND rebuilds every already-spawned road tile
+    /// at the same position, so a city change applies immediately instead
+    /// of only affecting tiles spawned afterwards.
+    /// </summary>
+    public void ReplaceActiveTiles(GameObject[] tiles)
+    {
+        if (tiles == null || tiles.Length == 0) return;
+        roadTilePrefabs = tiles;
+
+        // Spawn replacements first so the road is never missing under the player.
+        List<KeyValuePair<GameObject, GameObject>> oldAndNew = new List<KeyValuePair<GameObject, GameObject>>();
+        foreach (var road in activeRoads)
+        {
+            if (road == null) continue;
+            int index = Random.Range(0, roadTilePrefabs.Length);
+            GameObject prefab = roadTilePrefabs[index];
+            if (prefab == null) continue;
+            GameObject replacement = Instantiate(prefab, road.transform.position, Quaternion.identity);
+            oldAndNew.Add(new KeyValuePair<GameObject, GameObject>(road, replacement));
+        }
+        activeRoads.Clear();
+
+        foreach (var pair in oldAndNew)
+        {
+            Destroy(pair.Key);
+            activeRoads.Enqueue(pair.Value);
+        }
+    }
+
     void Start()
     {
         if (player == null)

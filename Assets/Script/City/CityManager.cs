@@ -87,7 +87,7 @@ public class CityManager : MonoBehaviour
             if (group != null && i != index) group.SetActive(false);
         }
 
-        if (roadSpawner != null) roadSpawner.SetRoadTiles(cities[index].roadTiles);
+        if (roadSpawner != null) roadSpawner.ReplaceActiveTiles(cities[index].roadTiles);
 
         if (notify)
         {
