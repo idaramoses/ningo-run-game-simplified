@@ -63,6 +63,7 @@ public class RoadSpawner : MonoBehaviour
     public float coinZMargin = 4f;
 
     float nextSpawnZ;
+    int lightGateFrames;
     Queue<GameObject> activeRoads = new Queue<GameObject>();
 
     /// <summary>
@@ -94,6 +95,7 @@ public class RoadSpawner : MonoBehaviour
             GameObject prefab = roadTilePrefabs[index];
             if (prefab == null) continue;
             GameObject replacement = Instantiate(prefab, road.transform.position, Quaternion.identity);
+            if (LowQuality) DisableLocalLightsOn(replacement);
             oldAndNew.Add(new KeyValuePair<GameObject, GameObject>(road, replacement));
         }
         activeRoads.Clear();
@@ -121,6 +123,29 @@ public class RoadSpawner : MonoBehaviour
         {
             nextSpawnZ = transform.position.z;
         }
+
+        DisableLocalLightsIfLowQuality();
+    }
+
+    /// <summary>
+    /// Each street lamp carries point + spot lights (~170 realtime lights on a
+    /// full stretch of road). They cost several ms per frame and are invisible
+    /// in daylight — the emissive material already sells the "lit" look — so on
+    /// the lower quality tiers we turn every non-directional light off.
+    /// </summary>
+    static bool LowQuality => QualitySettings.GetQualityLevel() <= 2;
+
+    static void DisableLocalLightsIfLowQuality()
+    {
+        if (!LowQuality) return;
+        foreach (Light l in FindObjectsOfType<Light>())
+            if (l.type != LightType.Directional && l.enabled) l.enabled = false;
+    }
+
+    static void DisableLocalLightsOn(GameObject root)
+    {
+        foreach (Light l in root.GetComponentsInChildren<Light>())
+            if (l.type != LightType.Directional && l.enabled) l.enabled = false;
     }
 
     void Update()
@@ -132,6 +157,14 @@ public class RoadSpawner : MonoBehaviour
         {
             SpawnRoad(nextSpawnZ);
             nextSpawnZ += tileLength;
+        }
+
+        // Lamp lights can arrive through other paths too (starter-group swaps
+        // on city change) — sweep roughly once a second and shut them back off.
+        if (LowQuality && ++lightGateFrames >= 60)
+        {
+            lightGateFrames = 0;
+            DisableLocalLightsIfLowQuality();
         }
 
         // Remove road tiles that are far behind the player.
@@ -182,6 +215,9 @@ public class RoadSpawner : MonoBehaviour
 
         Vector3 position = new Vector3(0, 0, z);
         GameObject road = Instantiate(prefab, position, Quaternion.identity);
+
+        // New tiles bring fresh lamp lights — keep them gated on low quality.
+        if (LowQuality) DisableLocalLightsOn(road);
 
         // Sometimes spawn an obstacle on this road tile.
         if (obstaclePrefabs.Length > 0 && Random.value < obstacleChance)
