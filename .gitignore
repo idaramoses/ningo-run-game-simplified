@@ -76,3 +76,6 @@ Thumbs.db
 
 # Unity recovery scenes
 Assets/_Recovery/
+
+# Generated Addressables build output
+ServerData/
