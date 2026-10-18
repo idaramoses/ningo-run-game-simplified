@@ -11,8 +11,10 @@ public class LetterSpawner : MonoBehaviour
     [Header("Lane (match PlayerRunnerController.laneDistance)")]
     public float laneDistance = 2.5f;
     public float laneJitter = 0.8f; // Increased for more scattered placement
-    [Tooltip("Matches CoinSpawner/RoadSpawner coinYOffset so letters float at coin height.")]
+    [Tooltip("Ground height for letters.")]
     public float spawnHeightOffset = 0.2f;
+    [Tooltip("Glider flight altitude for airborne letters when player is gliding.")]
+    public float skyLetterHeight = 7.5f;
 
     [Header("Scatter / Long Run Feel")]
     public float segmentLength = 40f; // 1 road = 40 units (spawn more frequently)
@@ -385,7 +387,9 @@ public class LetterSpawner : MonoBehaviour
         {
             // Direct fallback: spawn the letter pickup at the world position.
             float laneX = (laneIndex - 1) * laneDistance;
-            Vector3 pos = new Vector3(laneX, spawnHeightOffset, worldZ);
+            bool isGliding = SimplePlayerController.Instance != null && SimplePlayerController.Instance.IsGliding;
+            float yPos = isGliding ? skyLetterHeight : spawnHeightOffset;
+            Vector3 pos = new Vector3(laneX, yPos, worldZ);
             GameObject obj = Instantiate(letterPrefab, pos, Quaternion.identity, lettersParent);
 
             var visual = obj.GetComponent<LetterVisual>();

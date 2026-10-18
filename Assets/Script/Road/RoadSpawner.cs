@@ -62,6 +62,29 @@ public class RoadSpawner : MonoBehaviour
     [Tooltip("Keep coins away from the start/end edges of a tile.")]
     public float coinZMargin = 4f;
 
+    [Header("Pickups & Powerups")]
+    [Tooltip("Gem prefab to spawn on road tiles.")]
+    public GameObject gemPrefab;
+    [Range(0f, 1f)]
+    public float gemSpawnChance = 0.25f; // 25% chance per tile
+    public float gemYOffset = 1.0f;
+
+    [Tooltip("Skateboard pickup prefab.")]
+    public GameObject skateboardPrefab;
+    [Range(0f, 1f)]
+    public float skateboardSpawnChance = 0.15f; // 15% chance per tile
+    public float skateboardYOffset = 0.8f;
+
+    [Tooltip("Hang Glider pickup prefab.")]
+    public GameObject gliderPrefab;
+    [Range(0f, 1f)]
+    public float gliderSpawnChance = 0.15f; // 15% chance per tile
+    public float gliderYOffset = 1.2f;
+
+    [Header("Glider Sky Pickups")]
+    [Tooltip("Sky altitude for coins and gems during glider flight (matches SimplePlayerController.gliderHeight).")]
+    public float skyPickupAltitude = 7.5f;
+
     float nextSpawnZ;
     int lightGateFrames;
     Queue<GameObject> activeRoads = new Queue<GameObject>();
@@ -167,6 +190,9 @@ public class RoadSpawner : MonoBehaviour
             DisableLocalLightsIfLowQuality();
         }
 
+        // Smoothly adjust active coins & gems height based on whether player is gliding or running
+        UpdatePickupHeights();
+
         // Remove road tiles that are far behind the player.
         while (activeRoads.Count > 0)
         {
@@ -244,6 +270,9 @@ public class RoadSpawner : MonoBehaviour
             SpawnCoinsOnRoad(road, z);
         }
 
+        // Spawn other road pickups (gems, skateboard, glider)
+        SpawnPickupsOnRoad(road, z);
+
         activeRoads.Enqueue(road);
     }
 
@@ -251,24 +280,27 @@ public class RoadSpawner : MonoBehaviour
     {
         if (coinLanes.Length == 0) return;
 
+        bool isGliding = SimplePlayerController.Instance != null && SimplePlayerController.Instance.IsGliding;
+        float currentCoinY = isGliding ? skyPickupAltitude : coinYOffset;
+
         int coinCount = Random.Range(minCoinsPerTile, maxCoinsPerTile + 1);
         int pattern = Random.Range(0, 3); // 0 = straight line, 1 = zigzag, 2 = scattered
 
         switch (pattern)
         {
             case 0:
-                SpawnCoinLine(road, roadStartZ, coinCount);
+                SpawnCoinLine(road, roadStartZ, coinCount, currentCoinY);
                 break;
             case 1:
-                SpawnCoinZigzag(road, roadStartZ, coinCount);
+                SpawnCoinZigzag(road, roadStartZ, coinCount, currentCoinY);
                 break;
             case 2:
-                SpawnCoinScattered(road, roadStartZ, coinCount);
+                SpawnCoinScattered(road, roadStartZ, coinCount, currentCoinY);
                 break;
         }
     }
 
-    void SpawnCoinLine(GameObject road, float roadStartZ, int count)
+    void SpawnCoinLine(GameObject road, float roadStartZ, int count, float yHeight)
     {
         int lane = Random.Range(0, coinLanes.Length);
         float laneX = coinLanes[lane];
@@ -280,12 +312,12 @@ public class RoadSpawner : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             float z = startZ + spacing * (i + 1);
-            Vector3 pos = new Vector3(laneX, coinYOffset, z);
+            Vector3 pos = new Vector3(laneX, yHeight, z);
             SpawnCoin(pos, road.transform);
         }
     }
 
-    void SpawnCoinZigzag(GameObject road, float roadStartZ, int count)
+    void SpawnCoinZigzag(GameObject road, float roadStartZ, int count, float yHeight)
     {
         float startZ = roadStartZ + coinZMargin;
         float endZ = roadStartZ + tileLength - coinZMargin;
@@ -297,7 +329,7 @@ public class RoadSpawner : MonoBehaviour
         {
             float laneX = coinLanes[currentLane];
             float z = startZ + spacing * (i + 1);
-            Vector3 pos = new Vector3(laneX, coinYOffset, z);
+            Vector3 pos = new Vector3(laneX, yHeight, z);
             SpawnCoin(pos, road.transform);
 
             // Alternate lanes: left -> right, right -> left, center -> random
@@ -310,7 +342,7 @@ public class RoadSpawner : MonoBehaviour
         }
     }
 
-    void SpawnCoinScattered(GameObject road, float roadStartZ, int count)
+    void SpawnCoinScattered(GameObject road, float roadStartZ, int count, float yHeight)
     {
         float startZ = roadStartZ + coinZMargin;
         float endZ = roadStartZ + tileLength - coinZMargin;
@@ -320,7 +352,7 @@ public class RoadSpawner : MonoBehaviour
             int lane = Random.Range(0, coinLanes.Length);
             float laneX = coinLanes[lane];
             float z = Random.Range(startZ, endZ);
-            Vector3 pos = new Vector3(laneX, coinYOffset, z);
+            Vector3 pos = new Vector3(laneX, yHeight, z);
             SpawnCoin(pos, road.transform);
         }
     }
@@ -360,6 +392,106 @@ public class RoadSpawner : MonoBehaviour
             if (coinCol == null) coinCol = coinPickup.gameObject.AddComponent<SphereCollider>();
             coinCol.isTrigger = true;
             coinPickup.gameObject.tag = "Coin";
+        }
+    }
+
+    void UpdatePickupHeights()
+    {
+        bool isGliding = SimplePlayerController.Instance != null && SimplePlayerController.Instance.IsGliding;
+        float targetCoinY = isGliding ? skyPickupAltitude : coinYOffset;
+        float targetGemY = isGliding ? skyPickupAltitude : gemYOffset;
+
+        foreach (var road in activeRoads)
+        {
+            if (road == null) continue;
+            if (player != null && road.transform.position.z + tileLength < player.position.z - 5f) continue;
+
+            Coin[] coins = road.GetComponentsInChildren<Coin>();
+            for (int i = 0; i < coins.Length; i++)
+            {
+                if (coins[i] == null) continue;
+                Vector3 p = coins[i].transform.position;
+                if (Mathf.Abs(p.y - targetCoinY) > 0.05f)
+                {
+                    p.y = Mathf.MoveTowards(p.y, targetCoinY, 14f * Time.deltaTime);
+                    coins[i].transform.position = p;
+                }
+            }
+
+            Gem[] gems = road.GetComponentsInChildren<Gem>();
+            for (int i = 0; i < gems.Length; i++)
+            {
+                if (gems[i] == null) continue;
+                Vector3 p = gems[i].transform.position;
+                if (Mathf.Abs(p.y - targetGemY) > 0.05f)
+                {
+                    p.y = Mathf.MoveTowards(p.y, targetGemY, 14f * Time.deltaTime);
+                    gems[i].transform.position = p;
+                }
+            }
+        }
+    }
+
+    void SpawnPickupsOnRoad(GameObject road, float roadStartZ)
+    {
+        if (coinLanes == null || coinLanes.Length == 0) return;
+
+        bool isGliding = SimplePlayerController.Instance != null && SimplePlayerController.Instance.IsGliding;
+        float currentGemY = isGliding ? skyPickupAltitude : gemYOffset;
+
+        float startZ = roadStartZ + coinZMargin + 2f;
+        float endZ = roadStartZ + tileLength - coinZMargin - 2f;
+
+        // 1. Gem spawn
+        if (gemPrefab != null && Random.value < gemSpawnChance)
+        {
+            int lane = Random.Range(0, coinLanes.Length);
+            float laneX = coinLanes[lane];
+            float z = Random.Range(startZ, endZ);
+            Vector3 pos = new Vector3(laneX, currentGemY, z);
+            SpawnPickup(gemPrefab, pos, road.transform);
+        }
+
+        // 2. Skateboard pickup spawn
+        if (skateboardPrefab != null && Random.value < skateboardSpawnChance)
+        {
+            int lane = Random.Range(0, coinLanes.Length);
+            float laneX = coinLanes[lane];
+            float z = Random.Range(startZ, endZ);
+            Vector3 pos = new Vector3(laneX, skateboardYOffset, z);
+            SpawnPickup(skateboardPrefab, pos, road.transform);
+        }
+
+        // 3. Glider pickup spawn
+        if (gliderPrefab != null && Random.value < gliderSpawnChance)
+        {
+            int lane = Random.Range(0, coinLanes.Length);
+            float laneX = coinLanes[lane];
+            float z = Random.Range(startZ, endZ);
+            Vector3 pos = new Vector3(laneX, gliderYOffset, z);
+            SpawnPickup(gliderPrefab, pos, road.transform);
+        }
+    }
+
+    void SpawnPickup(GameObject prefab, Vector3 position, Transform parent)
+    {
+        if (prefab == null) return;
+        GameObject item = Instantiate(prefab, position, Quaternion.identity, parent);
+
+        // Ensure triggers on all colliders so runner passes through & triggers pickup
+        Collider[] cols = item.GetComponentsInChildren<Collider>();
+        if (cols.Length == 0)
+        {
+            SphereCollider sc = item.AddComponent<SphereCollider>();
+            sc.radius = 0.8f;
+            sc.isTrigger = true;
+        }
+        else
+        {
+            foreach (Collider c in cols)
+            {
+                if (c != null) c.isTrigger = true;
+            }
         }
     }
 }

@@ -1,0 +1,23 @@
+{
+    "asset": "45fcbb0e94b9c412d853c829e201e038",
+    "fileName": "01a1506e-b569-75c6-8498-e779e4140648.fbx",
+    "prompt": "A shiny faceted bright magenta purple diamond gem, crystalline jewel, game pickup",
+    "negativePrompt": "",
+    "model": "model3d-tripo-p2",
+    "modelName": "Tripo P2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "refinementMode": "Generation",
+    "promptImageReferenceGuid": "e3b8c594b5a6d44e2905c5430df2f443",
+    "modelReferenceGuid": "",
+    "multiviewFrontGuid": "",
+    "multiviewBackGuid": "",
+    "multiviewLeftGuid": "",
+    "multiviewRightGuid": "",
+    "multiviewTopGuid": "",
+    "multiviewBottomGuid": "",
+    "multiviewLeftFrontGuid": "",
+    "multiviewRightFrontGuid": "",
+    "faceLimit": -1
+}

@@ -49,8 +49,12 @@ public class SimplePlayerController : MonoBehaviour
     public GameObject skateboardObject;
     public Transform skateboardAttachPoint;
     public float skateboardDuration = 15f;
-    public float multiTapThreshold = 0.6f;
+    public float multiTapThreshold = 0.45f;
     public float tutorialMultiTapThreshold = 1.0f;
+    [Tooltip("Number of quick taps needed to activate skateboard (2 for Subway Surfers double-tap).")]
+    public int tapsToActivateSkateboard = 2;
+    [Tooltip("When true, double-tapping or pressing E will summon the skateboard during gameplay.")]
+    public bool enableDoubleTapSkateboard = true;
     [Tooltip("Temporarily disabled: when off, triple-tapping will not activate the skateboard during normal gameplay.")]
     public bool enableTripleTapSkateboard = false;
     [Tooltip("Name of the Animator state to play while skateboarding")]
@@ -203,9 +207,15 @@ public class SimplePlayerController : MonoBehaviour
 
         isGliding = true;
         isDescendingFromGlider = false;
-        gliderTimer = gliderDuration;
+        gliderTimer = duration > 0f ? duration : gliderDuration;
         isGrounded = false;
-        if (animator != null && HasParameter(animator, "isGrounded")) animator.SetBool("isGrounded", false);
+        if (animator != null)
+        {
+            if (HasParameter(animator, "isGrounded")) animator.SetBool("isGrounded", false);
+            if (HasParameter(animator, "isGliding")) animator.SetBool("isGliding", true);
+            if (HasParameter(animator, "isSliding")) animator.SetBool("isSliding", false);
+            if (HasParameter(animator, "isSkating")) animator.SetBool("isSkating", false);
+        }
 
         if (isSkatingInternal)
         {
@@ -214,23 +224,34 @@ public class SimplePlayerController : MonoBehaviour
 
         // Deactivate slide state
         isSliding = false;
-        if (animator != null && HasParameter(animator, "isSliding")) animator.SetBool("isSliding", false);
 
-        // Spawn glider visual
+        // Spawn or reposition glider visual attached to runner
         if (activeGliderInstance != null)
         {
             Destroy(activeGliderInstance);
+            activeGliderInstance = null;
         }
 
         if (gliderPrefab != null)
         {
-            Vector3 spawnPos = transform.position + gliderAttachOffset;
-            activeGliderInstance = Instantiate(gliderPrefab, spawnPos, Quaternion.Euler(gliderAttachRotation));
+            // Attach glider to player transform so it follows player perfectly
+            Transform parentAttach = gliderAttachPoint != null ? gliderAttachPoint : transform;
+            activeGliderInstance = Instantiate(gliderPrefab, parentAttach);
+            activeGliderInstance.transform.localPosition = gliderAttachOffset;
+            activeGliderInstance.transform.localRotation = Quaternion.Euler(gliderAttachRotation);
             activeGliderInstance.transform.localScale = gliderAttachScale;
+
+            // Remove any pickup collider or rotation script from the held glider instance
+            var pickupScript = activeGliderInstance.GetComponent<HangGliderPowerup>();
+            if (pickupScript != null) Destroy(pickupScript);
+            var rotScript = activeGliderInstance.GetComponent<CoinRotation>();
+            if (rotScript != null) Destroy(rotScript);
+            var col = activeGliderInstance.GetComponent<Collider>();
+            if (col != null) Destroy(col);
         }
 
         PlayState("glider");
-        MakeInvulnerable(duration + 2f);
+        MakeInvulnerable(gliderTimer + 2f);
     }
 
     public int LaneChangeCount
@@ -265,11 +286,31 @@ public class SimplePlayerController : MonoBehaviour
             skateOriginalRot = skateboardObject.transform.localRotation;
             skateboardObject.SetActive(false);
         }
+
+        if (activeGliderInstance != null)
+        {
+            Destroy(activeGliderInstance);
+            activeGliderInstance = null;
+        }
     }
 
     private void OnDestroy()
     {
         if (Instance == this) Instance = null;
+        if (activeGliderInstance != null)
+        {
+            Destroy(activeGliderInstance);
+            activeGliderInstance = null;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (activeGliderInstance != null)
+        {
+            Destroy(activeGliderInstance);
+            activeGliderInstance = null;
+        }
     }
 
     private void OnEnable()
@@ -503,7 +544,11 @@ public class SimplePlayerController : MonoBehaviour
                     isGliding = false;
                     isDescendingFromGlider = false;
                     isGrounded = true;
-                    if (animator != null && HasParameter(animator, "isGrounded")) animator.SetBool("isGrounded", true);
+                    if (animator != null)
+                    {
+                        if (HasParameter(animator, "isGliding")) animator.SetBool("isGliding", false);
+                        if (HasParameter(animator, "isGrounded")) animator.SetBool("isGrounded", true);
+                    }
                     PlayState("run");
 
                     // Destroy glider visual when cat touches the ground
@@ -565,8 +610,8 @@ public class SimplePlayerController : MonoBehaviour
             maxDistanceTraveled = currentDist;
         }
 
-        // Keep glider visual steady in world space (no animation shake)
-        if (activeGliderInstance != null && isGliding)
+        // Keep glider visual aligned if unparented, or maintain local offsets
+        if (activeGliderInstance != null && isGliding && activeGliderInstance.transform.parent == null)
         {
             activeGliderInstance.transform.position = new Vector3(newX + gliderAttachOffset.x, yPosition + gliderAttachOffset.y, newZ + gliderAttachOffset.z);
             activeGliderInstance.transform.rotation = Quaternion.Euler(gliderAttachRotation);
@@ -582,12 +627,16 @@ public class SimplePlayerController : MonoBehaviour
 
     private void HandleInputs()
     {
-        // Count 3 quick taps to activate the skateboard (works both in-game and in tutorial mode).
-        // Temporarily disabled for normal gameplay via enableTripleTapSkateboard; the tutorial's
-        // forced tap mode (skateboardTapMode) still works regardless, since it's a separate flow.
+        // Keyboard shortcut 'E' or quick double-tap activates the skateboard (like Subway Surfers)
+        if (enableDoubleTapSkateboard && !isSkatingInternal && Input.GetKeyDown(KeyCode.E))
+        {
+            ActivateSkateboard(skateboardDuration);
+            return;
+        }
+
         bool tapBegan = Input.GetMouseButtonDown(0) || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began);
 
-        if (tapBegan && (enableTripleTapSkateboard || skateboardTapMode))
+        if (tapBegan && (enableDoubleTapSkateboard || enableTripleTapSkateboard || skateboardTapMode))
         {
             float timeSinceLastClick = Time.unscaledTime - lastClickTime;
             float threshold = skateboardTapMode ? tutorialMultiTapThreshold : multiTapThreshold;
@@ -599,11 +648,15 @@ public class SimplePlayerController : MonoBehaviour
 
             lastClickTime = Time.unscaledTime;
 
-            if (clickCount == 3)
+            int neededTaps = skateboardTapMode ? 3 : (enableDoubleTapSkateboard ? tapsToActivateSkateboard : 3);
+            if (clickCount >= neededTaps)
             {
                 clickCount = 0;
-                ActivateSkateboard(skateboardDuration);
-                return;
+                if (!isSkatingInternal)
+                {
+                    ActivateSkateboard(skateboardDuration);
+                    return;
+                }
             }
         }
 
@@ -737,6 +790,8 @@ public class SimplePlayerController : MonoBehaviour
 
     private void Jump()
     {
+        if (isGliding) return;
+
         if (isGrounded && !isSliding)
         {
             verticalVelocity = jumpForce;
@@ -751,6 +806,8 @@ public class SimplePlayerController : MonoBehaviour
 
     private void Slide()
     {
+        if (isGliding) return;
+
         if (isGrounded && !isSliding)
         {
             isSliding = true;
@@ -784,6 +841,22 @@ public class SimplePlayerController : MonoBehaviour
             if (coin != null)
             {
                 coin.Collect();
+                continue;
+            }
+
+            // Gem - try to collect it
+            Gem gem = col.GetComponentInParent<Gem>();
+            if (gem != null)
+            {
+                gem.Collect();
+                continue;
+            }
+
+            // Skateboard pickup - collect and activate
+            SkateboardPickup skatePickup = col.GetComponentInParent<SkateboardPickup>();
+            if (skatePickup != null)
+            {
+                skatePickup.Collect(this);
                 continue;
             }
 
@@ -946,7 +1019,11 @@ public class SimplePlayerController : MonoBehaviour
 
     public void PlayState(string stateName)
     {
-        if (isSkatingInternal && stateName == "run")
+        if (isGliding && (stateName == "run" || stateName == "jump" || stateName == "slide" || stateName == "skating"))
+        {
+            stateName = "glider";
+        }
+        else if (isSkatingInternal && stateName == "run")
         {
             stateName = skateAnimationName;
         }
@@ -959,16 +1036,26 @@ public class SimplePlayerController : MonoBehaviour
             return;
         }
 
-        if (animator.HasState(0, Animator.StringToHash(stateName)))
+        int stateHash = Animator.StringToHash(stateName);
+        if (animator.HasState(0, stateHash))
         {
-            animator.Play(stateName, 0, 0f);
+            var current = animator.GetCurrentAnimatorStateInfo(0);
+            if (!current.IsName(stateName))
+            {
+                animator.Play(stateName, 0, 0f);
+            }
         }
         else
         {
             string capitalizedName = char.ToUpper(stateName[0]) + stateName.Substring(1);
-            if (animator.HasState(0, Animator.StringToHash(capitalizedName)))
+            int capHash = Animator.StringToHash(capitalizedName);
+            if (animator.HasState(0, capHash))
             {
-                animator.Play(capitalizedName, 0, 0f);
+                var current = animator.GetCurrentAnimatorStateInfo(0);
+                if (!current.IsName(capitalizedName))
+                {
+                    animator.Play(capitalizedName, 0, 0f);
+                }
             }
             else
             {

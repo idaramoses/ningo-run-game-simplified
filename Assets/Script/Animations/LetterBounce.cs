@@ -19,7 +19,7 @@ public class LetterBounce : MonoBehaviour
     
     private void Start()
     {
-        startPosition = transform.localPosition;
+        startPosition = transform.position;
         
         if (randomizeStartOffset)
         {
@@ -29,15 +29,22 @@ public class LetterBounce : MonoBehaviour
     
     private void Update()
     {
+        bool isGliding = SimplePlayerController.Instance != null && SimplePlayerController.Instance.IsGliding;
+        float targetY = isGliding ? 7.5f : 0.2f;
+        if (Mathf.Abs(startPosition.y - targetY) > 0.02f)
+        {
+            startPosition.y = Mathf.MoveTowards(startPosition.y, targetY, 14f * Time.deltaTime);
+        }
+
         float yOffset = Mathf.Sin((Time.time * bounceSpeed) + timeOffset) * bounceHeight;
-        transform.localPosition = startPosition + new Vector3(0f, yOffset, 0f);
+        transform.position = new Vector3(transform.position.x, startPosition.y + yOffset, transform.position.z);
     }
     
     private void OnDisable()
     {
         if (startPosition != Vector3.zero)
         {
-            transform.localPosition = startPosition;
+            transform.position = startPosition;
         }
     }
 }

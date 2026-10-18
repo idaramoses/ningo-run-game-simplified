@@ -7,14 +7,42 @@ public class HangGliderPowerup : MonoBehaviour
     public GameObject collectEffectPrefab;
     public AudioClip collectSound;
 
+    private bool isCollected = false;
+
+    private void OnEnable()
+    {
+        isCollected = false;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         // Check if the player collided with the glider
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") ||
+            other.GetComponent<SimpleRunner>() != null ||
+            other.GetComponentInParent<SimpleRunner>() != null ||
+            other.GetComponentInParent<SimplePlayerController>() != null)
         {
-            Debug.Log("[HangGliderPowerup] Collected by player!");
-            OnCollected();
+            SimplePlayerController spc = other.GetComponentInParent<SimplePlayerController>() ??
+                                         other.GetComponent<SimplePlayerController>() ??
+                                         SimplePlayerController.Instance;
+            Collect(spc);
         }
+    }
+
+    public void Collect(SimplePlayerController spc = null)
+    {
+        if (isCollected) return;
+        isCollected = true;
+
+        if (spc == null)
+            spc = SimplePlayerController.Instance ?? Object.FindAnyObjectByType<SimplePlayerController>();
+
+        if (spc != null && !spc.IsGliding)
+        {
+            spc.ActivateHangGlider(duration);
+        }
+
+        OnCollected();
     }
 
     private void OnCollected()
