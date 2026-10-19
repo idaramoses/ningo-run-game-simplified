@@ -1,0 +1,23 @@
+{
+    "asset": "9c614b5f65c37445ab1ba765621d123b",
+    "fileName": "01a15538-4373-7aef-997e-b433a98460fc.fbx",
+    "prompt": "Stylized cartoon skateboard, bright lime green top deck with neon yellow star accents, black grip tape, skateboard trucks and wheels, mobile runner game powerup item",
+    "negativePrompt": "",
+    "model": "model3d-tripo-p2",
+    "modelName": "Tripo P2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "refinementMode": "Generation",
+    "promptImageReferenceGuid": "ec8b2907e0fa344f9b8347d1b404207b",
+    "modelReferenceGuid": "",
+    "multiviewFrontGuid": "",
+    "multiviewBackGuid": "",
+    "multiviewLeftGuid": "",
+    "multiviewRightGuid": "",
+    "multiviewTopGuid": "",
+    "multiviewBottomGuid": "",
+    "multiviewLeftFrontGuid": "",
+    "multiviewRightFrontGuid": "",
+    "faceLimit": -1
+}

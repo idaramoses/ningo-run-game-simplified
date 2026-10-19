@@ -32,12 +32,29 @@ public class MagnetProgressBarController : MonoBehaviour
 
     private void Update()
     {
-        // Magnet tracking was previously tied to PlayerRunnerController which has been removed.
-        // The existing game player scripts handle magnet logic directly.
-        // This progress bar will remain hidden until re-wired to the active player.
-        if (container != null && container.activeSelf)
+        var player = SimplePlayerController.Instance;
+        if (player != null && player.IsMagnetActive && player.MagnetTimer > 0f)
         {
-            container.SetActive(false);
+            if (container != null && !container.activeSelf)
+            {
+                container.SetActive(true);
+            }
+
+            float duration = player.magnetDuration > 0f ? player.magnetDuration : 10f;
+            float progress = Mathf.Clamp01(player.MagnetTimer / duration);
+            UpdateSegments(progress);
+
+            if (timerText != null)
+            {
+                timerText.text = Mathf.CeilToInt(player.MagnetTimer).ToString() + "s";
+            }
+        }
+        else
+        {
+            if (container != null && container.activeSelf)
+            {
+                container.SetActive(false);
+            }
         }
     }
 

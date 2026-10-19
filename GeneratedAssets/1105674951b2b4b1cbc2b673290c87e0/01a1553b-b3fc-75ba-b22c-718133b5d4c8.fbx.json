@@ -1,0 +1,23 @@
+{
+    "asset": "1105674951b2b4b1cbc2b673290c87e0",
+    "fileName": "01a1553b-b3fc-75ba-b22c-718133b5d4c8.fbx",
+    "prompt": "Stylized 3D gold star coin, thick embossed cartoon game coin with a 5-pointed star emblem, vibrant golden metallic sheen, mobile runner game collectible asset",
+    "negativePrompt": "",
+    "model": "model3d-tripo-p1",
+    "modelName": "Tripo P1",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "refinementMode": "Generation",
+    "promptImageReferenceGuid": "4b6c6c6e509e94409a34cf419dd4228f",
+    "modelReferenceGuid": "",
+    "multiviewFrontGuid": "",
+    "multiviewBackGuid": "",
+    "multiviewLeftGuid": "",
+    "multiviewRightGuid": "",
+    "multiviewTopGuid": "",
+    "multiviewBottomGuid": "",
+    "multiviewLeftFrontGuid": "",
+    "multiviewRightFrontGuid": "",
+    "faceLimit": -1
+}

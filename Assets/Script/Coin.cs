@@ -5,9 +5,41 @@ public class Coin : MonoBehaviour
     public bool isPremium = false;
     private bool isCollected = false;
 
+    private Transform magnetTarget = null;
+    private float magnetFlySpeed = 20f;
+    private bool isBeingAttracted = false;
+
     private void OnEnable()
     {
         isCollected = false;
+        isBeingAttracted = false;
+        magnetTarget = null;
+    }
+
+    private void Update()
+    {
+        if (isCollected) return;
+
+        if (isBeingAttracted && magnetTarget != null)
+        {
+            // Accelerate towards player magnet point
+            magnetFlySpeed += 30f * Time.deltaTime;
+            transform.position = Vector3.MoveTowards(transform.position, magnetTarget.position + Vector3.up * 0.8f, magnetFlySpeed * Time.deltaTime);
+
+            float dist = Vector3.Distance(transform.position, magnetTarget.position + Vector3.up * 0.8f);
+            if (dist < 0.8f)
+            {
+                Collect();
+            }
+        }
+    }
+
+    public void AttractTo(Transform target)
+    {
+        if (isCollected || isBeingAttracted) return;
+        magnetTarget = target;
+        isBeingAttracted = true;
+        magnetFlySpeed = 18f;
     }
 
     void OnTriggerEnter(Collider other)

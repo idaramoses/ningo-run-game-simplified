@@ -71,6 +71,12 @@ public class SimplePlayerController : MonoBehaviour
     public Vector3 gliderAttachRotation = Vector3.zero;
     public Vector3 gliderAttachScale = new Vector3(3f, 3f, 3f);
 
+    [Header("Coin Magnet")]
+    public float magnetDuration = 10f;
+    public float magnetRadius = 16f;
+    private bool isMagnetActive = false;
+    private float magnetTimer = 0f;
+
     private bool isGliding = false;
     private float gliderTimer = 0f;
     private GameObject activeGliderInstance;
@@ -127,6 +133,15 @@ public class SimplePlayerController : MonoBehaviour
 
     public bool IsGliding => isGliding;
     public float GliderTimer => gliderTimer;
+
+    public bool IsMagnetActive => isMagnetActive;
+    public float MagnetTimer => magnetTimer;
+
+    public void ActivateMagnet(float duration = -1f)
+    {
+        isMagnetActive = true;
+        magnetTimer = duration > 0f ? duration : magnetDuration;
+    }
 
     public float SkateTimer => skateTimer;
 
@@ -518,6 +533,30 @@ public class SimplePlayerController : MonoBehaviour
             }
         }
 
+        // Magnet Timer & Coin Attraction
+        if (isMagnetActive)
+        {
+            magnetTimer -= Time.deltaTime;
+            if (magnetTimer <= 0f)
+            {
+                isMagnetActive = false;
+                magnetTimer = 0f;
+            }
+            else
+            {
+                // Find all nearby coins and attract them towards player
+                Collider[] magnetHits = Physics.OverlapSphere(transform.position + Vector3.up * 0.8f, magnetRadius);
+                for (int i = 0; i < magnetHits.Length; i++)
+                {
+                    Coin nearbyCoin = magnetHits[i].GetComponentInParent<Coin>();
+                    if (nearbyCoin != null)
+                    {
+                        nearbyCoin.AttractTo(transform);
+                    }
+                }
+            }
+        }
+
         // Glider Timer
         if (isGliding && !isDescendingFromGlider)
         {
@@ -891,6 +930,23 @@ public class SimplePlayerController : MonoBehaviour
                     ObjectPoolManager.Instance.ReturnToPool(gliderPickup.gameObject);
                 else
                     Destroy(gliderPickup.gameObject);
+                continue;
+            }
+
+            // Coin Magnet powerup - collect it
+            MagnetPowerup magnetPickup = col.GetComponentInParent<MagnetPowerup>();
+            if (magnetPickup != null)
+            {
+                ActivateMagnet(magnetPickup.duration);
+                if (SoundEffectsManager.Instance != null)
+                {
+                    SoundEffectsManager.Instance.PlayLetterCollect();
+                    SoundEffectsManager.Instance.SpawnCoinCollectEffect(col.transform.position);
+                }
+                if (ObjectPoolManager.Instance != null)
+                    ObjectPoolManager.Instance.ReturnToPool(magnetPickup.gameObject);
+                else
+                    Destroy(magnetPickup.gameObject);
                 continue;
             }
 

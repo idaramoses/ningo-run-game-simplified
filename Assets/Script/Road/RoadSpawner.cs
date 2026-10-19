@@ -81,6 +81,12 @@ public class RoadSpawner : MonoBehaviour
     public float gliderSpawnChance = 0.15f; // 15% chance per tile
     public float gliderYOffset = 1.2f;
 
+    [Tooltip("Coin Magnet pickup prefab.")]
+    public GameObject magnetPrefab;
+    [Range(0f, 1f)]
+    public float magnetSpawnChance = 0.15f; // 15% chance per tile
+    public float magnetYOffset = 1.0f;
+
     [Header("Glider Sky Pickups")]
     [Tooltip("Sky altitude for coins and gems during glider flight (matches SimplePlayerController.gliderHeight).")]
     public float skyPickupAltitude = 7.5f;
@@ -470,6 +476,16 @@ public class RoadSpawner : MonoBehaviour
             float z = Random.Range(startZ, endZ);
             Vector3 pos = new Vector3(laneX, gliderYOffset, z);
             SpawnPickup(gliderPrefab, pos, road.transform);
+        }
+
+        // 4. Magnet pickup spawn
+        if (magnetPrefab != null && Random.value < magnetSpawnChance)
+        {
+            int lane = Random.Range(0, coinLanes.Length);
+            float laneX = coinLanes[lane];
+            float z = Random.Range(startZ, endZ);
+            Vector3 pos = new Vector3(laneX, magnetYOffset, z);
+            SpawnPickup(magnetPrefab, pos, road.transform);
         }
     }
 
