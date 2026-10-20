@@ -63,7 +63,7 @@ ModelImporter:
   meshes:
     lODScreenPercentages: []
     globalScale: 1
-    meshCompression: 0
+    meshCompression: 3
     addColliders: 0
     useSRGBMaterialColor: 1
     sortHierarchyByName: 1
@@ -782,7 +782,8 @@ ModelImporter:
     - name: mixamorig:LeftHandRing3
       parentName: mixamorig:LeftHandRing2
       position: {x: -0, y: 0.0295, z: 0}
-      rotation: {x: 0.000000020870967, y: 0.000000065097126, z: -0.000000064272044, w: 1}
+      rotation: {x: 0.000000020870967, y: 0.000000065097126, z: -0.000000064272044,
+        w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: mixamorig:LeftHandRing4
       parentName: mixamorig:LeftHandRing3
@@ -802,7 +803,8 @@ ModelImporter:
     - name: mixamorig:LeftHandPinky3
       parentName: mixamorig:LeftHandPinky2
       position: {x: -0, y: 0.020999998, z: 0}
-      rotation: {x: 0.00000003927451, y: 0.000000023485988, z: 0.000000045643407, w: 1}
+      rotation: {x: 0.00000003927451, y: 0.000000023485988, z: 0.000000045643407,
+        w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: mixamorig:LeftHandPinky4
       parentName: mixamorig:LeftHandPinky3
