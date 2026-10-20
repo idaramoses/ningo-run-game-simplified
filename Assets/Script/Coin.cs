@@ -64,6 +64,11 @@ public class Coin : MonoBehaviour
             SoundEffectsManager.Instance.SpawnCoinCollectEffect(transform.position);
         }
 
+        if (CoinPickupEffectManager.Instance != null)
+        {
+            CoinPickupEffectManager.Instance.PlayCoinPickupAnimation(transform.position, 1);
+        }
+
         int totalCoins = PlayerPrefs.GetInt("Coins", 0);
         totalCoins++;
         PlayerPrefs.SetInt("Coins", totalCoins);

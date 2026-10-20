@@ -63,9 +63,21 @@ public class PanelAnimator : MonoBehaviour
         
         if (rectTransform != null && !hasOriginalPosition)
         {
-            originalPosition = rectTransform.anchoredPosition;
+            // If originalPosition was serialized as Vector2.zero but actual position is non-zero,
+            // or if it was never captured, remember the scene design position.
+            if (originalPosition == Vector2.zero && rectTransform.anchoredPosition != Vector2.zero)
+            {
+                originalPosition = rectTransform.anchoredPosition;
+            }
+            else if (originalPosition == Vector2.zero && rectTransform.anchoredPosition == Vector2.zero)
+            {
+                originalPosition = Vector2.zero;
+            }
             hasOriginalPosition = true;
         }
+
+        if (endScale == Vector3.zero)
+            endScale = Vector3.one;
     }
     
     private void OnEnable()

@@ -166,7 +166,44 @@ public class WordTranslationPanelUI : MonoBehaviour
         }
 
         var check = slot.Find("Check");
+        bool wasCollected = check != null && check.gameObject.activeSelf;
         if (check != null) check.gameObject.SetActive(collected);
+
+        if (collected && !wasCollected && gameObject.activeInHierarchy)
+        {
+            StartCoroutine(AnimateSlotPunch(slot));
+        }
+    }
+
+    private System.Collections.IEnumerator AnimateSlotPunch(Transform slot)
+    {
+        if (slot == null) yield break;
+        Vector3 baseScale = Vector3.one;
+        float duration = 0.25f;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            if (slot == null) yield break;
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            float scaleMultiplier;
+            if (t < 0.35f)
+            {
+                scaleMultiplier = Mathf.Lerp(1f, 1.35f, t / 0.35f);
+            }
+            else
+            {
+                float downT = (t - 0.35f) / 0.65f;
+                scaleMultiplier = Mathf.Lerp(1.35f, 1f, Mathf.SmoothStep(0f, 1f, downT));
+            }
+
+            slot.localScale = baseScale * scaleMultiplier;
+            yield return null;
+        }
+
+        if (slot != null)
+            slot.localScale = baseScale;
     }
 
     private void ApplyCollected(string collected)
