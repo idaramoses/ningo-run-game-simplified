@@ -1627,6 +1627,11 @@ public class UImanager : MonoBehaviour
             }
         }
 
+        if (PoliceChaserController.Instance != null)
+        {
+            PoliceChaserController.Instance.ResetChase();
+        }
+
         SetMenuVehiclesActive(true);
     }
 
@@ -2267,6 +2272,11 @@ public class UImanager : MonoBehaviour
         isPaused = false;
 
         Debug.Log($"[UImanager] Fail() called. failPanel={failPanel != null}, highScorePanel={highScorePanel != null}");
+
+        if (PoliceChaserController.Instance != null && PoliceChaserController.Instance.CurrentState != PoliceChaserController.ChaseState.Busted)
+        {
+            PoliceChaserController.Instance.TriggerBusted();
+        }
 
         if (GameStateController.Instance != null)
             GameStateController.Instance.SetPlaying(false);

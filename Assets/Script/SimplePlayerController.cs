@@ -119,6 +119,11 @@ public class SimplePlayerController : MonoBehaviour
         get { return isMoving; }
     }
 
+    public int CurrentLane
+    {
+        get { return currentLane; }
+    }
+
     public bool IsInRoadsideIdlePose
     {
         get { return isInRoadsideIdlePose; }
@@ -439,6 +444,11 @@ public class SimplePlayerController : MonoBehaviour
         initialZ = transform.position.z;
         maxDistanceTraveled = 0f;
         PlayState("run");
+
+        if (PoliceChaserController.Instance != null)
+        {
+            PoliceChaserController.Instance.StartChase();
+        }
     }
 
     public void SetRoadsideIdlePose()
@@ -449,6 +459,11 @@ public class SimplePlayerController : MonoBehaviour
         StopMotionForIntro();
         transform.SetPositionAndRotation(roadsideIdlePosition, Quaternion.Euler(roadsideIdleRotation));
         PlayState(HasAnimatorState(roadsideIdleAnimationName) ? roadsideIdleAnimationName : "idle");
+
+        if (PoliceChaserController.Instance != null)
+        {
+            PoliceChaserController.Instance.ResetChase();
+        }
     }
 
     public IEnumerator BeginRoadsideRun()
@@ -813,6 +828,11 @@ public class SimplePlayerController : MonoBehaviour
             laneChangeTimer = 0f;
             LaneChangeCount++;
 
+            if (PoliceChaserController.Instance != null)
+            {
+                PoliceChaserController.Instance.OnPlayerLaneChanged(currentLane);
+            }
+
             // Add hop/bounce when switching lanes while grounded
             if (isGrounded && !isSliding)
             {
@@ -1010,6 +1030,11 @@ public class SimplePlayerController : MonoBehaviour
 
     private void HitObstacle()
     {
+        if (PoliceChaserController.Instance != null)
+        {
+            PoliceChaserController.Instance.TriggerBusted();
+        }
+
         if (SoundEffectsManager.Instance != null)
         {
             SoundEffectsManager.Instance.PlayObstacleHit();

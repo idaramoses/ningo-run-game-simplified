@@ -6,16 +6,25 @@ public class CurvedWorldManager : MonoBehaviour
     public static CurvedWorldManager Instance { get; private set; }
 
     [Header("Curvature Settings")]
-    [Range(-0.01f, 0.01f)]
-    public float curveStrength = 0.0015f;
+    [Range(0f, 0.005f)]
+    public float curveStrength = 0.0006f;
+
+    [Tooltip("Distance ahead of the reference origin before bending starts (keeps close ground flat)")]
+    public float curveStartOffset = 15f;
+
+    [Tooltip("Transform used as reference origin for curvature (typically Player). If null, Camera is used.")]
+    public Transform referenceOrigin;
 
     [Header("Shaders")]
+    public Shader curvedDiffuseShader;
     public Shader curvedStandardShader;
     public Shader curvedStandardAlphaShader;
     public Shader curvedUnlitShader;
     public Shader curvedUnlitAlphaShader;
 
     private int curveStrengthID;
+    private int curveOriginID;
+    private int curveStartOffsetID;
 
     // Cache: original shared material -> curved variant (or the original itself when no
     // conversion is needed). Each unique material is converted exactly ONCE and the
@@ -35,7 +44,11 @@ public class CurvedWorldManager : MonoBehaviour
         Instance = this;
 
         curveStrengthID = Shader.PropertyToID("_CurveStrength");
+        curveOriginID = Shader.PropertyToID("_CurveOrigin");
+        curveStartOffsetID = Shader.PropertyToID("_CurveStartOffset");
         
+        if (curvedDiffuseShader == null)
+            curvedDiffuseShader = Shader.Find("Custom/CurvedDiffuse");
         if (curvedStandardShader == null)
             curvedStandardShader = Shader.Find("Custom/CurvedStandard");
         if (curvedStandardAlphaShader == null)
@@ -45,19 +58,55 @@ public class CurvedWorldManager : MonoBehaviour
         if (curvedUnlitAlphaShader == null)
             curvedUnlitAlphaShader = Shader.Find("Unlit/CurvedUnlitAlpha");
 
+        UpdateShaderGlobals();
+
         ApplyCurvatureToScene();
     }
 
-    private float lastAppliedCurveStrength = float.NaN;
-
     private void Update()
     {
-        // Update global shader variable only when the value actually changes
-        if (curveStrength != lastAppliedCurveStrength)
+        UpdateShaderGlobals();
+    }
+
+    private void UpdateShaderGlobals()
+    {
+        // Continuously find/track the actual active running character
+        if (referenceOrigin == null || referenceOrigin.name == "Player")
         {
-            lastAppliedCurveStrength = curveStrength;
-            Shader.SetGlobalFloat(curveStrengthID, curveStrength);
+            var controller = FindFirstObjectByType<SimplePlayerController>();
+            if (controller != null)
+            {
+                referenceOrigin = controller.transform;
+            }
+            else if (RunnerManager.Instance != null && RunnerManager.Instance.GetCurrentRunnerInstance() != null)
+            {
+                referenceOrigin = RunnerManager.Instance.GetCurrentRunnerInstance().transform;
+            }
+            else
+            {
+                var playerObj = GameObject.Find("Player");
+                if (playerObj != null)
+                {
+                    var anim = playerObj.GetComponentInChildren<Animator>();
+                    referenceOrigin = anim != null ? anim.transform : playerObj.transform;
+                }
+                else if (Camera.main != null)
+                {
+                    referenceOrigin = Camera.main.transform;
+                }
+            }
         }
+
+        Vector4 origin = Vector4.zero;
+        if (referenceOrigin != null)
+        {
+            Vector3 pos = referenceOrigin.position;
+            origin = new Vector4(pos.x, pos.y, pos.z, 0f);
+        }
+
+        Shader.SetGlobalFloat(curveStrengthID, curveStrength);
+        Shader.SetGlobalFloat(curveStartOffsetID, curveStartOffset);
+        Shader.SetGlobalVector(curveOriginID, origin);
     }
 
     public void ApplyCurvatureToScene()
@@ -83,6 +132,13 @@ public class CurvedWorldManager : MonoBehaviour
     {
         if (r == null || r.sharedMaterials == null) return;
         if (r is CanvasRenderer) return;
+
+        // Never curve the player character, player models, or UI preview elements
+        if (r.CompareTag("Player") ||
+            (r.transform.root != null && (r.transform.root.name == "Player" || r.transform.root.name.Contains("Preview") || r.transform.root.name == "Canvas")))
+        {
+            return;
+        }
 
         // Auto-detect potholes to disable shadow-casting and snap them to the ground road surface
         if (r.gameObject.name.ToLower().Contains("pothole"))
@@ -197,12 +253,33 @@ public class CurvedWorldManager : MonoBehaviour
             return m;
         }
 
-        if (shaderName == "Standard" || shaderName == "Standard (Specular setup)" || shaderName == "Legacy Shaders/Diffuse")
+        if (shaderName == "Mobile/Diffuse" || shaderName == "Legacy Shaders/Diffuse")
+        {
+            if (curvedDiffuseShader != null)
+            {
+                Material clone = new Material(m);
+                clone.shader = curvedDiffuseShader;
+                return clone;
+            }
+        }
+        else if (shaderName == "Standard" || shaderName == "Standard (Specular setup)" || shaderName == "Autodesk Interactive")
         {
             if (curvedStandardShader != null)
             {
                 Material clone = new Material(m);
                 clone.shader = curvedStandardShader;
+                // If original material had a metallic gloss map or high metallic value,
+                // reset metallic to 0 to prevent 100% metallic black specular blackout,
+                // since CurvedStandard does not sample _MetallicGlossMap.
+                if ((m.HasProperty("_MetallicGlossMap") && m.GetTexture("_MetallicGlossMap") != null) ||
+                    (clone.HasProperty("_Metallic") && clone.GetFloat("_Metallic") >= 0.8f))
+                {
+                    clone.SetFloat("_Metallic", 0f);
+                    if (clone.HasProperty("_Glossiness") && clone.GetFloat("_Glossiness") > 0.5f)
+                    {
+                        clone.SetFloat("_Glossiness", 0.2f);
+                    }
+                }
                 return clone;
             }
         }

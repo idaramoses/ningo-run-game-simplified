@@ -125,6 +125,10 @@ public class RoadSpawner : MonoBehaviour
             if (prefab == null) continue;
             GameObject replacement = Instantiate(prefab, road.transform.position, Quaternion.identity);
             if (LowQuality) DisableLocalLightsOn(replacement);
+            if (CurvedWorldManager.Instance != null)
+            {
+                CurvedWorldManager.Instance.ApplyCurvatureToGameObject(replacement);
+            }
             oldAndNew.Add(new KeyValuePair<GameObject, GameObject>(road, replacement));
         }
         activeRoads.Clear();
@@ -278,6 +282,11 @@ public class RoadSpawner : MonoBehaviour
 
         // Spawn other road pickups (gems, skateboard, glider)
         SpawnPickupsOnRoad(road, z);
+
+        if (CurvedWorldManager.Instance != null)
+        {
+            CurvedWorldManager.Instance.ApplyCurvatureToGameObject(road);
+        }
 
         activeRoads.Enqueue(road);
     }
