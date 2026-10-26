@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class Soundmanager : MonoBehaviour {
@@ -80,10 +80,16 @@ public class Soundmanager : MonoBehaviour {
     /// </summary>
     public void PlayPoliceSound()
     {
-       if (managerdata.manager.getsetting() == 1)
+        if (managerdata.manager.getsetting() == 1)
         {
-            police.GetComponent<AudioSource>().Play();
-
+            if (MonkeyThiefController.Instance != null && MonkeyThiefController.Instance.monkeyChatter != null && MonkeyThiefController.Instance.audioSource != null)
+            {
+                MonkeyThiefController.Instance.audioSource.PlayOneShot(MonkeyThiefController.Instance.monkeyChatter);
+            }
+            else if (police != null)
+            {
+                police.GetComponent<AudioSource>().Play();
+            }
         }
     }
     /// <summary>

@@ -1,0 +1,31 @@
+{
+    "asset": "ea7f6070d18904ca89eb17ba78270d6b",
+    "fileName": "01a16571-918a-7648-9e0b-4a9161588948.jpg",
+    "prompt": "Full body stylized mischievous small cartoon monkey character standing 1.2 meters tall, head to toe in frame, strict front-facing neutral T-pose, both arms perfectly straight and horizontal at shoulder height forming a 90-degree angle from the torso, long arms, hands with fingers visible, expressive face with wide eyes and a sneaky mischievous grin, brown and orange fur, wearing a small leather satchel backpack with strap across chest and a colorful Nigerian Ankara patterned vest, legs and feet clearly visible, medium-short playful monkey tail visible behind curving slightly upward and dangling not too long, Subway Surfers 3D mobile game art style, clean low poly shapes, bright cheerful colors, plain solid white isolated background, no cropped limbs, no angle, no perspective distortion",
+    "negativePrompt": "",
+    "model": "flux-2-pro",
+    "modelName": "Flux 2 (Pro)",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelatePixelGridSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": []
+    },
+    "upscaleFactor": 0,
+    "dimensions": {
+        "width": 1024,
+        "height": 1024
+    },
+    "spriteSheet": false,
+    "duration": 0.0,
+    "dynamicParams": {
+        "serializedData": []
+    }
+}

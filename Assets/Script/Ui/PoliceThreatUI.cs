@@ -65,7 +65,7 @@ public class PoliceThreatUI : MonoBehaviour
 
         if (warningTitleText != null)
         {
-            warningTitleText.text = $"CHANGE LANE! ({currentDodgeIdx}/{totalDodgesCount})";
+            warningTitleText.text = $"DODGE MONKEY! ({currentDodgeIdx}/{totalDodgesCount})";
         }
 
         UpdateArrows(currentLane);
@@ -99,7 +99,7 @@ public class PoliceThreatUI : MonoBehaviour
         isRetargeting = true;
         if (warningTitleText != null)
         {
-            warningTitleText.text = "POLICE EVADED! ESCAPED!";
+            warningTitleText.text = "MONKEY OUTRUN! LETTERS SAFE!";
             warningTitleText.color = successGreenColor;
         }
 

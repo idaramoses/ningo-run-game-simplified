@@ -445,9 +445,9 @@ public class SimplePlayerController : MonoBehaviour
         maxDistanceTraveled = 0f;
         PlayState("run");
 
-        if (PoliceChaserController.Instance != null)
+        if (MonkeyThiefController.Instance != null)
         {
-            PoliceChaserController.Instance.StartChase();
+            MonkeyThiefController.Instance.StartChase();
         }
     }
 
@@ -460,9 +460,9 @@ public class SimplePlayerController : MonoBehaviour
         transform.SetPositionAndRotation(roadsideIdlePosition, Quaternion.Euler(roadsideIdleRotation));
         PlayState(HasAnimatorState(roadsideIdleAnimationName) ? roadsideIdleAnimationName : "idle");
 
-        if (PoliceChaserController.Instance != null)
+        if (MonkeyThiefController.Instance != null)
         {
-            PoliceChaserController.Instance.ResetChase();
+            MonkeyThiefController.Instance.ResetChase();
         }
     }
 
@@ -828,9 +828,9 @@ public class SimplePlayerController : MonoBehaviour
             laneChangeTimer = 0f;
             LaneChangeCount++;
 
-            if (PoliceChaserController.Instance != null)
+            if (MonkeyThiefController.Instance != null)
             {
-                PoliceChaserController.Instance.OnPlayerLaneChanged(currentLane);
+                MonkeyThiefController.Instance.OnPlayerLaneChanged(currentLane);
             }
 
             // Add hop/bounce when switching lanes while grounded
@@ -1030,9 +1030,9 @@ public class SimplePlayerController : MonoBehaviour
 
     private void HitObstacle()
     {
-        if (PoliceChaserController.Instance != null)
+        if (MonkeyThiefController.Instance != null)
         {
-            PoliceChaserController.Instance.TriggerBusted();
+            MonkeyThiefController.Instance.TriggerBusted();
         }
 
         if (SoundEffectsManager.Instance != null)

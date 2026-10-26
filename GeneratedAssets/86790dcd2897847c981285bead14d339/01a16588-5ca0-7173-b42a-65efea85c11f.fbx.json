@@ -1,0 +1,12 @@
+{
+    "asset": "86790dcd2897847c981285bead14d339",
+    "fileName": "01a16588-5ca0-7173-b42a-65efea85c11f.fbx",
+    "prompt": "Stylized mischievous monkey standing in neutral idle pose, breathing slightly, hands relaxed at sides, subtle swaying",
+    "negativePrompt": "",
+    "model": "uthana-text-to-motion-3",
+    "modelName": "Uthana Text to Motion 3.0",
+    "customSeed": 543283578,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "isTrimmed": false
+}

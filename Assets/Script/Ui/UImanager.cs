@@ -1627,9 +1627,9 @@ public class UImanager : MonoBehaviour
             }
         }
 
-        if (PoliceChaserController.Instance != null)
+        if (MonkeyThiefController.Instance != null)
         {
-            PoliceChaserController.Instance.ResetChase();
+            MonkeyThiefController.Instance.ResetChase();
         }
 
         SetMenuVehiclesActive(true);
@@ -2273,9 +2273,9 @@ public class UImanager : MonoBehaviour
 
         Debug.Log($"[UImanager] Fail() called. failPanel={failPanel != null}, highScorePanel={highScorePanel != null}");
 
-        if (PoliceChaserController.Instance != null && PoliceChaserController.Instance.CurrentState != PoliceChaserController.ChaseState.Busted)
+        if (MonkeyThiefController.Instance != null && MonkeyThiefController.Instance.CurrentState != MonkeyThiefController.ChaseState.Busted)
         {
-            PoliceChaserController.Instance.TriggerBusted();
+            MonkeyThiefController.Instance.TriggerBusted();
         }
 
         if (GameStateController.Instance != null)

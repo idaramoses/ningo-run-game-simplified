@@ -1,0 +1,15 @@
+{
+    "asset": "17368992a12c64613a82951698ddeb64",
+    "fileName": "01a16777-79b0-7690-a35f-2110f2bd3496.wav",
+    "prompt": "Playful mischievous cartoon monkey screech and laugh chuckle, chattering excitedly",
+    "negativePrompt": "",
+    "model": "elevenlabs-sound-effects-v2",
+    "modelName": "ElevenLabs Sound Effects V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 2.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": ""
+}

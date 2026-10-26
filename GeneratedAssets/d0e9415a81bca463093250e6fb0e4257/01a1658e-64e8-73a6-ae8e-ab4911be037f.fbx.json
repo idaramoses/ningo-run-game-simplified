@@ -1,0 +1,12 @@
+{
+    "asset": "d0e9415a81bca463093250e6fb0e4257",
+    "fileName": "01a1658e-64e8-73a6-ae8e-ab4911be037f.fbx",
+    "prompt": "Stylized cartoon monkey fast run loop, loopable, in-place, energetic, playful scamper running",
+    "negativePrompt": "",
+    "model": "uthana-text-to-motion-3",
+    "modelName": "Uthana Text to Motion 3.0",
+    "customSeed": 11248673,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "isTrimmed": false
+}

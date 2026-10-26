@@ -1,0 +1,12 @@
+{
+    "asset": "70a3b1284352c455bbca6805d1a8be13",
+    "fileName": "01a1659c-43ba-799e-9c63-1aade9947f70.fbx",
+    "prompt": "Sneaky cartoon monkey reaching forward with arm snatching and grabbing an object then putting it into backpack and giggling",
+    "negativePrompt": "",
+    "model": "uthana-text-to-motion-3",
+    "modelName": "Uthana Text to Motion 3.0",
+    "customSeed": 1123147063,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "isTrimmed": false
+}
