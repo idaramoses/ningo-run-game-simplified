@@ -70,12 +70,19 @@ public class MonkeyThiefController : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip monkeyChatter;
 
+    [Header("Pose Correction")]
+    [Tooltip("Rotates the spine upright after the animation runs - fixes the hunched run pose. 0 = off.")]
+    public float spineStraightenAngle = 20f;
+    public float modelYawOffset = 45f;
+    private Transform spineBone;
+
     // Internal trackers
     private int targetDodges = 3;
     private int completedDodges = 0;
     private int threatenedLane = -1;
     private float threatTimeRemaining = 0f;
     private float waveTimer = 35f;
+    private float pivotToFeetOffset = 0f;
 
     private Coroutine introRoutine;
     private Coroutine retargetRoutine;
@@ -98,6 +105,21 @@ public class MonkeyThiefController : MonoBehaviour
             animator = GetComponentInChildren<Animator>();
         if (audioSource == null)
             audioSource = GetComponent<AudioSource>();
+
+        CachePivotOffset();
+
+        if (animator != null && animator.avatar != null && animator.avatar.isHuman)
+            spineBone = animator.GetBoneTransform(HumanBodyBones.Spine);
+    }
+
+    // The model's pivot sits at its center, so the feet hang ~0.5m below transform.y.
+    // Cache that gap once so ground placement can lift the pivot and keep feet on the floor.
+    private void CachePivotOffset()
+    {
+        var rends = GetComponentsInChildren<Renderer>(true);
+        float minY = float.MaxValue;
+        foreach (var r in rends) minY = Mathf.Min(minY, r.bounds.min.y);
+        pivotToFeetOffset = (minY == float.MaxValue) ? 0f : transform.position.y - minY;
     }
 
     private void Start()
@@ -173,6 +195,15 @@ public class MonkeyThiefController : MonoBehaviour
         }
     }
 
+    // Runs after the Animator each frame - lifts the hunched run pose toward upright.
+    private void LateUpdate()
+    {
+        if (spineBone != null && spineStraightenAngle != 0f)
+        {
+            spineBone.rotation = Quaternion.AngleAxis(-spineStraightenAngle, Vector3.Cross(Vector3.up, GetCameraViewDir())) * spineBone.rotation;
+        }
+    }
+
     private void UpdateThreatCycle()
     {
         if (!enableChaseWaves || playerController == null || !playerController.IsMoving)
@@ -222,9 +253,9 @@ public class MonkeyThiefController : MonoBehaviour
         latOffset = Mathf.Lerp(latOffset, 0f, laneFollowSpeed * Time.deltaTime);
 
         Vector3 newPos = desiredPos + lateralDir * latOffset;
-        newPos.y = targetPlayer.position.y;
+        newPos.y = targetPlayer.position.y + pivotToFeetOffset;
         transform.position = newPos;
-        transform.rotation = Quaternion.LookRotation(viewDir);
+        transform.rotation = Quaternion.LookRotation(viewDir) * Quaternion.Euler(0f, modelYawOffset, 0f);
 
         if (animator != null)
         {
@@ -269,9 +300,9 @@ public class MonkeyThiefController : MonoBehaviour
 
         Vector3 viewDir = GetCameraViewDir();
         Vector3 newPos = targetPlayer.position - viewDir * followDistance;
-        newPos.y = targetPlayer.position.y;
+        newPos.y = targetPlayer.position.y + pivotToFeetOffset;
         transform.position = newPos;
-        transform.rotation = Quaternion.LookRotation(viewDir);
+        transform.rotation = Quaternion.LookRotation(viewDir) * Quaternion.Euler(0f, modelYawOffset, 0f);
 
         if (animator != null)
         {
@@ -306,12 +337,12 @@ public class MonkeyThiefController : MonoBehaviour
         currentDistance = introStartDistance;
         targetDistance = introStartDistance;
 
-        float groundY = targetPlayer.position.y;
+        float groundY = targetPlayer.position.y + pivotToFeetOffset;
         Vector3 viewDir = GetCameraViewDir();
         Vector3 startPos = targetPlayer.position - viewDir * currentDistance;
         startPos.y = groundY;
         transform.position = startPos;
-        transform.rotation = Quaternion.LookRotation(viewDir);
+        transform.rotation = Quaternion.LookRotation(viewDir) * Quaternion.Euler(0f, modelYawOffset, 0f);
 
         PlayMonkeySound();
 
@@ -357,9 +388,9 @@ public class MonkeyThiefController : MonoBehaviour
         targetDistance = surgeDistance;
         Vector3 viewDir = GetCameraViewDir();
         Vector3 spawnPos = targetPlayer.position - viewDir * currentDistance;
-        spawnPos.y = targetPlayer.position.y;
+        spawnPos.y = targetPlayer.position.y + pivotToFeetOffset;
         transform.position = spawnPos;
-        transform.rotation = Quaternion.LookRotation(viewDir);
+        transform.rotation = Quaternion.LookRotation(viewDir) * Quaternion.Euler(0f, modelYawOffset, 0f);
 
         PlayMonkeySound();
         StartDodgeThreat(1, targetDodges);
@@ -605,7 +636,7 @@ public class MonkeyThiefController : MonoBehaviour
 
         while (letter != null && Mathf.Abs(transform.position.z - letter.transform.position.z) > 1.2f)
         {
-            float groundY = targetPlayer != null ? targetPlayer.position.y : transform.position.y;
+            float groundY = targetPlayer != null ? targetPlayer.position.y + pivotToFeetOffset : transform.position.y;
             Vector3 targetPos = new Vector3(letterX, groundY, letter.transform.position.z);
             transform.position = Vector3.MoveTowards(transform.position, targetPos, 22f * Time.deltaTime);
             if (animator != null) animator.SetFloat("Speed", 1.5f);
