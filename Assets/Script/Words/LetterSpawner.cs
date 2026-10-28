@@ -399,6 +399,8 @@ public class LetterSpawner : MonoBehaviour
                 visual.SetCorrect(isCorrect);
             }
 
+            if (CurvedWorldManager.Instance != null)
+                CurvedWorldManager.Instance.ApplyCurvatureToGameObject(obj);
             spawned.Add(obj);
             TrackLetterLane(worldZ, laneIndex);
 
@@ -493,6 +495,16 @@ public class LetterSpawner : MonoBehaviour
                 spawned.RemoveAt(i);
             }
         }
+    }
+
+    public void RespawnStolenLetter(string letter)
+    {
+        EnsureRefs();
+        if (string.IsNullOrWhiteSpace(letter) || player == null) return;
+        missedLetterCount.Remove(letter);
+        correctLetterObjects.Remove(letter);
+        float worldZ = player.position.z + Mathf.Max(20f, respawnDistanceAhead);
+        SpawnLetter(letter, Random.Range(0, 3), worldZ, true);
     }
 
     private void RespawnMissedLetter(string letter)

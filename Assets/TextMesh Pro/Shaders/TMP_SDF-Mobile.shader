@@ -89,6 +89,7 @@ SubShader {
 
 		#pragma multi_compile __ UNITY_UI_CLIP_RECT
 		#pragma multi_compile __ UNITY_UI_ALPHACLIP
+		#pragma multi_compile __ NINGO_CURVED_WORLD
 
 		#include "UnityCG.cginc"
 		#include "UnityUI.cginc"
@@ -121,6 +122,9 @@ SubShader {
 		float _UIMaskSoftnessX;
         float _UIMaskSoftnessY;
         int _UIVertexColorAlwaysGammaSpace;
+		uniform float _CurveStrength;
+		uniform float _CurveStartOffset;
+		uniform float4 _CurveOrigin;
 
 		pixel_t VertShader(vertex_t input)
 		{
@@ -136,7 +140,14 @@ SubShader {
 			float4 vert = input.vertex;
 			vert.x += _VertexOffsetX;
 			vert.y += _VertexOffsetY;
+			#if defined(NINGO_CURVED_WORLD)
+			float4 worldPos = mul(unity_ObjectToWorld, vert);
+			float curveDistance = max(0.0, worldPos.z - _CurveOrigin.z - _CurveStartOffset);
+			worldPos.y -= curveDistance * curveDistance * _CurveStrength;
+			float4 vPosition = mul(UNITY_MATRIX_VP, worldPos);
+			#else
 			float4 vPosition = UnityObjectToClipPos(vert);
+			#endif
 
 			float2 pixelSize = vPosition.w;
 			pixelSize /= float2(_ScaleX, _ScaleY) * abs(mul((float2x2)UNITY_MATRIX_P, _ScreenParams.xy));

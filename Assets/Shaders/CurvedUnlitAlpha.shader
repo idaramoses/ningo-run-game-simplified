@@ -4,12 +4,13 @@ Shader "Unlit/CurvedUnlitAlpha"
     {
         _MainTex ("Base (RGB)", 2D) = "white" {}
         _Color ("Color", Color) = (1,1,1,1)
+        [Enum(UnityEngine.Rendering.BlendMode)] _DstBlend ("Destination Blend", Float) = 10
     }
     SubShader
     {
         Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" }
         LOD 100
-        Blend SrcAlpha OneMinusSrcAlpha
+        Blend SrcAlpha [_DstBlend]
         Cull Off
         Lighting Off
         ZWrite Off
@@ -25,6 +26,7 @@ Shader "Unlit/CurvedUnlitAlpha"
             struct appdata
             {
                 float4 vertex : POSITION;
+                fixed4 color : COLOR;
                 float2 uv : TEXCOORD0;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
             };
@@ -32,6 +34,7 @@ Shader "Unlit/CurvedUnlitAlpha"
             struct v2f
             {
                 float2 uv : TEXCOORD0;
+                fixed4 color : COLOR;
                 float4 vertex : SV_POSITION;
                 UNITY_VERTEX_OUTPUT_STEREO
             };
@@ -59,12 +62,13 @@ Shader "Unlit/CurvedUnlitAlpha"
 
                 o.vertex = mul(UNITY_MATRIX_VP, worldPos);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+                o.color = v.color;
                 return o;
             }
 
             fixed4 frag (v2f i) : SV_Target
             {
-                fixed4 col = tex2D(_MainTex, i.uv) * _Color;
+                fixed4 col = tex2D(_MainTex, i.uv) * _Color * i.color;
                 return col;
             }
             ENDCG

@@ -132,6 +132,7 @@ public class CurvedWorldManager : MonoBehaviour
     {
         if (r == null || r.sharedMaterials == null) return;
         if (r is CanvasRenderer) return;
+        if (r.GetComponentInParent<Canvas>() != null) return;
 
         // Never curve the player character, player models, or UI preview elements
         if (r.CompareTag("Player") ||
@@ -173,6 +174,9 @@ public class CurvedWorldManager : MonoBehaviour
         if (newMats != null)
         {
             r.sharedMaterials = newMats;
+            var text = r.GetComponent<TMPro.TextMeshPro>();
+            if (text != null && newMats.Length > 0)
+                text.fontSharedMaterial = newMats[0];
         }
     }
 
@@ -207,6 +211,24 @@ public class CurvedWorldManager : MonoBehaviour
     private Material ConvertMaterial(Material m)
     {
         string shaderName = m.shader.name;
+
+        if (shaderName == "TextMeshPro/Mobile/Distance Field")
+        {
+            if (m.IsKeywordEnabled("NINGO_CURVED_WORLD")) return m;
+            Material clone = new Material(m);
+            clone.EnableKeyword("NINGO_CURVED_WORLD");
+            return clone;
+        }
+
+        if (shaderName == "Mobile/Particles/Additive" || shaderName == "Legacy Shaders/Particles/Additive")
+        {
+            if (curvedUnlitAlphaShader == null) return m;
+            Material clone = new Material(m);
+            clone.shader = curvedUnlitAlphaShader;
+            clone.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.One);
+            clone.SetColor("_Color", m.HasProperty("_TintColor") ? m.GetColor("_TintColor") * 2f : Color.white);
+            return clone;
+        }
 
         // Handle Sprites/Default first before transparency check, since sprite shaders have transparent queues
         // but are not standard materials and would otherwise be skipped by the isTransparent block.

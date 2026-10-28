@@ -365,6 +365,34 @@ public class WordManager : MonoBehaviour
         }
     }
 
+    public bool TryStealCollectedLetter(out string stolenLetter)
+    {
+        stolenLetter = null;
+        if (isFailed || collectedLettersArray == null) return false;
+
+        for (int i = collectedLettersArray.Length - 1; i >= 0; i--)
+        {
+            string letter = collectedLettersArray[i];
+            if (string.IsNullOrWhiteSpace(letter) || letter == "_") continue;
+
+            stolenLetter = letter;
+            collectedLettersArray[i] = "_";
+            if (collectMode == CollectMode.InOrder)
+                expectedIndex = i;
+            else
+            {
+                string key = letter.ToUpperInvariant();
+                remainingCounts.TryGetValue(key, out int count);
+                remainingCounts[key] = count + 1;
+                remainingTotal++;
+            }
+            UpdateCollectedLettersUI();
+            if (letterSpawner != null) letterSpawner.RespawnStolenLetter(letter);
+            return true;
+        }
+        return false;
+    }
+
     private void OnWordCompleted()
     {
         // Record the completed pair for the level-complete panel
@@ -455,7 +483,24 @@ public class WordManager : MonoBehaviour
         if (isFailed) return;
         isFailed = true;
 
-        OnFailedRound?.Invoke();
+        if (OnFailedRound != null)
+        {
+            OnFailedRound.Invoke();
+            return;
+        }
+
+        if (SoundEffectsManager.Instance != null)
+            SoundEffectsManager.Instance.PlayObstacleHit();
+        var runner = SimplePlayerController.Instance;
+        if (runner != null) runner.TriggerFall();
+        if (UImanager.uimanager != null)
+            UImanager.uimanager.Fail();
+        else if (GameSceneController.Instance != null)
+            GameSceneController.Instance.Fail();
+        else if (GameFlowController.Instance != null)
+            GameFlowController.Instance.Fail();
+        else if (GameStateController.Instance != null)
+            GameStateController.Instance.SetPlaying(false);
     }
 
     /// <summary>

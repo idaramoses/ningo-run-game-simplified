@@ -14,6 +14,7 @@ using UnityEngine;
 public static class WebGLBuild
 {
     private const string OutputPath = "Builds/WebGL";
+    private static HashSet<string> currentBundleNames;
 
     [MenuItem("Build/WebGL")]
     public static void BuildWebGL()
@@ -29,12 +30,13 @@ public static class WebGLBuild
         PlayerSettings.WebGL.template = "PROJECT:Ningo";
 
         ApplyTextureCompression();
+        ApplyAudioCompression();
         ApplyMeshCompression();
         ApplyUITextureCap();
 
         // Streaming split: remote bundles (Home scene + deps) must exist
         // before the player build so the catalog is included.
-        AddressableAssetSettings.BuildPlayerContent();
+        BuildAddressablesContent();
 
         var options = new BuildPlayerOptions
         {
@@ -149,9 +151,10 @@ public static class WebGLBuild
     public static void BuildContentOnly()
     {
         ApplyTextureCompression();
+        ApplyAudioCompression();
         ApplyMeshCompression();
         ApplyUITextureCap();
-        AddressableAssetSettings.BuildPlayerContent();
+        BuildAddressablesContent();
         CopyServerDataIntoBuild();
     }
 
@@ -167,7 +170,11 @@ public static class WebGLBuild
         if (Directory.Exists(dst)) Directory.Delete(dst, true); // drop stale bundles
         Directory.CreateDirectory(dst);
         foreach (string f in Directory.GetFiles(src))
+        {
+            if (Path.GetExtension(f) == ".bundle" && currentBundleNames != null
+                && !currentBundleNames.Contains(Path.GetFileName(f))) continue;
             File.Copy(f, Path.Combine(dst, Path.GetFileName(f)), true);
+        }
         Debug.Log($"[Build] Copied remote bundles -> {dst}");
         WriteBundleManifest(dst);
         SyncCatalogIntoBuild();
@@ -214,7 +221,89 @@ public static class WebGLBuild
         Debug.Log($"[Build] Synced catalog + local bundles -> {dst}");
     }
 
-    private static readonly string[] Platforms = { "WebGL", "Android", "iPhone" };
+    public static void BuildAddressablesContent()
+    {
+        UnityEditor.AddressableAssets.Build.AddressablesPlayerBuildResult result;
+        AddressableAssetSettings.BuildPlayerContent(out result);
+        if (!string.IsNullOrEmpty(result.Error))
+            throw new System.InvalidOperationException(result.Error);
+        currentBundleNames = new HashSet<string>();
+        long bytes = 0;
+        foreach (var bundle in result.AssetBundleBuildResults)
+        {
+            currentBundleNames.Add(Path.GetFileName(bundle.FilePath));
+            if (File.Exists(bundle.FilePath)) bytes += new FileInfo(bundle.FilePath).Length;
+        }
+        string summary = $"[SizeAudit] WebGL Addressables: {bytes / (1024f * 1024f):F2} MB ({currentBundleNames.Count} bundles)";
+        SessionState.SetString("NingoSizeAuditResult", summary);
+        Debug.Log(summary);
+    }
+
+    private static readonly string[] Platforms = { "WebGL", "Android" };
+
+    [MenuItem("Build/Apply Size Optimizations (Android + WebGL)")]
+    public static void ApplySizeOptimizations()
+    {
+        ApplyTextureCompression();
+        ApplyAudioCompression();
+    }
+
+    private static string[] BuildAssetPaths()
+    {
+        var roots = new HashSet<string>();
+        foreach (var scene in EditorBuildSettings.scenes)
+            if (scene.enabled) roots.Add(scene.path);
+        var settings = UnityEditor.AddressableAssets.AddressableAssetSettingsDefaultObject.Settings;
+        if (settings != null)
+            foreach (var group in settings.groups)
+                if (group != null)
+                    foreach (var entry in group.entries)
+                        if (!string.IsNullOrEmpty(entry.AssetPath)) roots.Add(entry.AssetPath);
+        foreach (string path in AssetDatabase.GetAllAssetPaths())
+            if (path.StartsWith("Assets/") && path.Contains("/Resources/") && File.Exists(path))
+                roots.Add(path);
+        var paths = new List<string>(AssetDatabase.GetDependencies(new List<string>(roots).ToArray(), true));
+        paths.RemoveAll(path => !path.StartsWith("Assets/"));
+        return paths.ToArray();
+    }
+
+    public static void ApplyAudioCompression()
+    {
+        int changed = 0;
+        foreach (string path in BuildAssetPaths())
+        {
+            if (!(AssetImporter.GetAtPath(path) is AudioImporter importer)) continue;
+            var clip = AssetDatabase.LoadAssetAtPath<AudioClip>(path);
+            if (clip == null) continue;
+            float quality = clip.length >= 15f ? 0.7f : 0.85f;
+            var defaults = importer.defaultSampleSettings;
+            bool dirty = defaults.compressionFormat != AudioCompressionFormat.Vorbis || defaults.quality > quality;
+            if (dirty)
+            {
+                defaults.compressionFormat = AudioCompressionFormat.Vorbis;
+                defaults.quality = quality;
+                importer.defaultSampleSettings = defaults;
+            }
+            foreach (string platform in Platforms)
+            {
+                if (platform == "WebGL") continue;
+                var samples = importer.ContainsSampleSettingsOverride(platform)
+                    ? importer.GetOverrideSampleSettings(platform)
+                    : importer.defaultSampleSettings;
+                if (samples.compressionFormat == AudioCompressionFormat.Vorbis && samples.quality <= quality)
+                    continue;
+                samples.compressionFormat = AudioCompressionFormat.Vorbis;
+                samples.quality = quality;
+                if (!importer.SetOverrideSampleSettings(platform, samples))
+                    throw new System.InvalidOperationException($"Cannot set {platform} audio compression: {path}");
+                dirty = true;
+            }
+            if (!dirty) continue;
+            importer.SaveAndReimport();
+            changed++;
+        }
+        Debug.Log($"[Build] Platform audio compression applied to {changed} clips; channels and sample rates preserved");
+    }
 
     /// <summary>
     /// Size reduction WITHOUT touching resolution: keeps every texture at its
@@ -225,14 +314,13 @@ public static class WebGLBuild
     [MenuItem("Build/Apply Texture Compression (all platforms)")]
     public static void ApplyTextureCompression()
     {
-        var guids = AssetDatabase.FindAssets("t:Texture");
+        var paths = BuildAssetPaths();
         int changed = 0;
         AssetDatabase.StartAssetEditing();
         try
         {
-            foreach (var guid in guids)
+            foreach (string path in paths)
             {
-                string path = AssetDatabase.GUIDToAssetPath(guid);
                 if (!(AssetImporter.GetAtPath(path) is TextureImporter importer)) continue;
 
                 bool dirty = false;
@@ -254,11 +342,28 @@ public static class WebGLBuild
                         : importer.DoesSourceTextureHaveAlpha()
                             ? TextureImporterFormat.DXT5
                             : TextureImporterFormat.DXT1;
+                    if (platform == "Android" && importer.textureType != TextureImporterType.NormalMap)
+                        fmt = importer.DoesSourceTextureHaveAlpha()
+                            ? TextureImporterFormat.ETC2_RGBA8
+                            : TextureImporterFormat.ETC_RGB4;
+                    if (importer.textureType == TextureImporterType.SingleChannel)
+                        fmt = TextureImporterFormat.R8;
+                    int maxSize = Mathf.Min(s.maxTextureSize, importer.maxTextureSize);
+                    bool crunch = fmt == TextureImporterFormat.DXT1 || fmt == TextureImporterFormat.DXT5
+                        || fmt == TextureImporterFormat.ETC_RGB4 || fmt == TextureImporterFormat.ETC2_RGBA8;
+                    if (fmt == TextureImporterFormat.DXT1) fmt = TextureImporterFormat.DXT1Crunched;
+                    else if (fmt == TextureImporterFormat.DXT5) fmt = TextureImporterFormat.DXT5Crunched;
+                    else if (fmt == TextureImporterFormat.ETC_RGB4) fmt = TextureImporterFormat.ETC_RGB4Crunched;
+                    else if (fmt == TextureImporterFormat.ETC2_RGBA8) fmt = TextureImporterFormat.ETC2_RGBA8Crunched;
                     if (s.overridden && s.textureCompression == TextureImporterCompression.CompressedHQ
-                        && s.format == fmt) continue;
+                        && s.format == fmt && s.maxTextureSize == maxSize && s.crunchedCompression == crunch
+                        && s.compressionQuality == 100) continue;
 
                     s.overridden = true;
                     s.format = fmt;
+                    s.maxTextureSize = maxSize;
+                    s.crunchedCompression = crunch;
+                    s.compressionQuality = 100;
                     s.textureCompression = TextureImporterCompression.CompressedHQ;
                     importer.SetPlatformTextureSettings(s);
                     dirty = true;

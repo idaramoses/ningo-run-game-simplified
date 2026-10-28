@@ -190,7 +190,7 @@ public class MonkeyThiefController : MonoBehaviour
             if (letterStealTimer >= letterStealInterval)
             {
                 letterStealTimer = 0f;
-                TryFindAndStealLetter();
+                TryStartLetterThreat();
             }
         }
     }
@@ -229,7 +229,7 @@ public class MonkeyThiefController : MonoBehaviour
 
             if (threatTimeRemaining <= 0f)
             {
-                OnThreatFailedRamPlayer();
+                OnThreatFailedStealLetter();
             }
         }
     }
@@ -497,7 +497,7 @@ public class MonkeyThiefController : MonoBehaviour
         evadeRoutine = null;
     }
 
-    private void OnThreatFailedRamPlayer()
+    private void OnThreatFailedStealLetter()
     {
         if (retargetRoutine != null)
         {
@@ -510,33 +510,8 @@ public class MonkeyThiefController : MonoBehaviour
             PoliceThreatUI.Instance.HideThreat();
         }
 
-        currentState = ChaseState.Busted;
-        targetDistance = 0.5f;
-
-        if (animator != null)
-        {
-            animator.SetTrigger("Steal");
-        }
-
-        PlayMonkeySound();
-
-        if (SoundEffectsManager.Instance != null)
-        {
-            SoundEffectsManager.Instance.PlayObstacleHit();
-        }
-
-        if (playerController != null)
-        {
-            playerController.TriggerFall();
-            if (UImanager.uimanager != null)
-            {
-                UImanager.uimanager.Fail();
-            }
-            else if (GameStateController.Instance != null)
-            {
-                GameStateController.Instance.GameOver("Tackled from behind by Mischievous Monkey");
-            }
-        }
+        if (stealRoutine != null) StopCoroutine(stealRoutine);
+        stealRoutine = StartCoroutine(StealRoutine());
     }
 
     public void TriggerBusted()
@@ -600,73 +575,58 @@ public class MonkeyThiefController : MonoBehaviour
         }
     }
 
-    private void TryFindAndStealLetter()
+    private void TryStartLetterThreat()
     {
-        var letters = Object.FindObjectsByType<LetterPickup>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
-        LetterPickup best = null;
-        float bestDist = float.MaxValue;
-        Vector3 viewDir = GetCameraViewDir();
-
-        foreach (var l in letters)
+        var word = WordManager.Instance;
+        if (word == null) return;
+        foreach (char letter in word.GetCollectedLetters())
         {
-            if (l == null) continue;
-            float aheadDist = Vector3.Dot(l.transform.position - transform.position, viewDir);
-            if (aheadDist > 2f && aheadDist < 25f && aheadDist < bestDist)
+            if (!char.IsWhiteSpace(letter) && letter != '_')
             {
-                best = l;
-                bestDist = aheadDist;
+                StartChaseWave();
+                return;
             }
-        }
-
-        if (best != null)
-        {
-            if (stealRoutine != null) StopCoroutine(stealRoutine);
-            stealRoutine = StartCoroutine(StealRoutine(best));
         }
     }
 
-    private IEnumerator StealRoutine(LetterPickup letter)
+    private IEnumerator StealRoutine()
     {
         currentState = ChaseState.StealingLetter;
         SetMonkeyVisibility(true);
-        gameObject.SetActive(true);
-
-        float letterX = letter.transform.position.x;
-        float targetZ = letter.transform.position.z;
-
-        while (letter != null && Mathf.Abs(transform.position.z - letter.transform.position.z) > 1.2f)
+        string stolenLetter;
+        bool stolen = WordManager.Instance != null && WordManager.Instance.TryStealCollectedLetter(out stolenLetter);
+        if (stolen)
         {
-            float groundY = targetPlayer != null ? targetPlayer.position.y + pivotToFeetOffset : transform.position.y;
-            Vector3 targetPos = new Vector3(letterX, groundY, letter.transform.position.z);
-            transform.position = Vector3.MoveTowards(transform.position, targetPos, 22f * Time.deltaTime);
-            if (animator != null) animator.SetFloat("Speed", 1.5f);
+            if (animator != null) animator.SetTrigger("Steal");
+            PlayMonkeySound();
+            ToastManager.Show("Word Thief stole a letter! Collect it again ahead.");
+        }
+
+        yield return new WaitForSeconds(0.3f);
+        if (targetPlayer == null) yield break;
+        if (animator != null)
+        {
+            animator.ResetTrigger("Steal");
+            animator.Play("Run");
+            animator.SetFloat("Speed", 1.5f);
+        }
+        float elapsed = 0f;
+        Vector3 startOffset = transform.position - targetPlayer.position;
+        Vector3 endOffset = Vector3.forward * 18f;
+        while (elapsed < 2f && targetPlayer != null && playerController != null && playerController.IsMoving)
+        {
+            elapsed += Time.deltaTime;
+            Vector3 offset = Vector3.Lerp(startOffset, endOffset, Mathf.Clamp01(elapsed / 2f));
+            offset.y = pivotToFeetOffset;
+            transform.position = targetPlayer.position + offset;
+            transform.rotation = Quaternion.Euler(0f, modelYawOffset, 0f);
             yield return null;
         }
 
-        if (animator != null)
-        {
-            animator.SetTrigger("Steal");
-            animator.SetFloat("Speed", 0f);
-        }
-
-        PlayMonkeySound();
-
-        yield return new WaitForSeconds(0.4f);
-
-        if (letter != null)
-        {
-            Destroy(letter.gameObject);
-        }
-
-        if (animator != null)
-        {
-            animator.SetTrigger("Jump");
-        }
-
-        yield return new WaitForSeconds(0.8f);
-
         SetMonkeyVisibility(false);
         currentState = ChaseState.Inactive;
+        waveTimer = GetNextWaveInterval();
+        letterStealTimer = 0f;
         stealRoutine = null;
     }
 }

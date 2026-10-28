@@ -77,6 +77,8 @@ public class RoadPickupSpawner : MonoBehaviour
             }
         }
 
+        if (CurvedWorldManager.Instance != null)
+            CurvedWorldManager.Instance.ApplyCurvatureToGameObject(go);
         return go;
     }
 }
