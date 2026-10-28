@@ -329,6 +329,15 @@ public static class WebGLBuild
                     importer.textureCompression = TextureImporterCompression.CompressedHQ;
                     dirty = true;
                 }
+                // Crunch requires power-of-two dimensions; on NPOT textures
+                // Unity silently falls back to uncompressed RGBA32 (~4MB per
+                // 1024px sprite). Source PNGs are padded to POT / multiple-of-4
+                // by the padding script — here we only request crunch when the
+                // imported size really is POT, else plain DXT5 still applies.
+                var loaded = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+                bool isPot = loaded != null
+                    && (loaded.width & (loaded.width - 1)) == 0
+                    && (loaded.height & (loaded.height - 1)) == 0;
 
                 foreach (var platform in Platforms)
                 {
@@ -349,12 +358,15 @@ public static class WebGLBuild
                     if (importer.textureType == TextureImporterType.SingleChannel)
                         fmt = TextureImporterFormat.R8;
                     int maxSize = Mathf.Min(s.maxTextureSize, importer.maxTextureSize);
-                    bool crunch = fmt == TextureImporterFormat.DXT1 || fmt == TextureImporterFormat.DXT5
-                        || fmt == TextureImporterFormat.ETC_RGB4 || fmt == TextureImporterFormat.ETC2_RGBA8;
-                    if (fmt == TextureImporterFormat.DXT1) fmt = TextureImporterFormat.DXT1Crunched;
-                    else if (fmt == TextureImporterFormat.DXT5) fmt = TextureImporterFormat.DXT5Crunched;
-                    else if (fmt == TextureImporterFormat.ETC_RGB4) fmt = TextureImporterFormat.ETC_RGB4Crunched;
-                    else if (fmt == TextureImporterFormat.ETC2_RGBA8) fmt = TextureImporterFormat.ETC2_RGBA8Crunched;
+                    bool crunch = isPot && (fmt == TextureImporterFormat.DXT1 || fmt == TextureImporterFormat.DXT5
+                        || fmt == TextureImporterFormat.ETC_RGB4 || fmt == TextureImporterFormat.ETC2_RGBA8);
+                    if (crunch)
+                    {
+                        if (fmt == TextureImporterFormat.DXT1) fmt = TextureImporterFormat.DXT1Crunched;
+                        else if (fmt == TextureImporterFormat.DXT5) fmt = TextureImporterFormat.DXT5Crunched;
+                        else if (fmt == TextureImporterFormat.ETC_RGB4) fmt = TextureImporterFormat.ETC_RGB4Crunched;
+                        else if (fmt == TextureImporterFormat.ETC2_RGBA8) fmt = TextureImporterFormat.ETC2_RGBA8Crunched;
+                    }
                     if (s.overridden && s.textureCompression == TextureImporterCompression.CompressedHQ
                         && s.format == fmt && s.maxTextureSize == maxSize && s.crunchedCompression == crunch
                         && s.compressionQuality == 100) continue;

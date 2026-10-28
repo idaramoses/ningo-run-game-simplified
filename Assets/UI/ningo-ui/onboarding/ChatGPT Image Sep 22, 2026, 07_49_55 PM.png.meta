@@ -97,7 +97,7 @@ TextureImporter:
     buildTarget: Android
     maxTextureSize: 1024
     resizeAlgorithm: 0
-    textureFormat: 64
+    textureFormat: 65
     textureCompression: 2
     compressionQuality: 100
     crunchedCompression: 1
@@ -110,7 +110,7 @@ TextureImporter:
     buildTarget: WebGL
     maxTextureSize: 1024
     resizeAlgorithm: 0
-    textureFormat: 28
+    textureFormat: 29
     textureCompression: 2
     compressionQuality: 100
     crunchedCompression: 1
