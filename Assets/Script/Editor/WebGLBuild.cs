@@ -342,17 +342,16 @@ public static class WebGLBuild
                 foreach (var platform in Platforms)
                 {
                     var s = importer.GetPlatformTextureSettings(platform);
-                    // AutomaticCompressed resolves to RGBA32 when the project's
-                    // default WebGL compression format is unset — pin it to DXT
-                    // explicitly (Unity software-decompresses where s3tc is
-                    // missing, e.g. mobile Safari).
+                    // ETC2 for every target: it's hardware-decoded on Android
+                    // (GLES3 guarantees it) — s3tc/DXT is NOT supported by most
+                    // phone browsers, so Unity was CPU-decoding every texture as
+                    // it streamed in, which caused mid-run hangs on Android.
+                    // Desktop browsers without the ETC2 extension software-
+                    // decode instead, but desktop CPUs absorb it fine and the
+                    // audience is mobile-first.
                     var fmt = importer.textureType == TextureImporterType.NormalMap
                         ? TextureImporterFormat.Automatic
                         : importer.DoesSourceTextureHaveAlpha()
-                            ? TextureImporterFormat.DXT5
-                            : TextureImporterFormat.DXT1;
-                    if (platform == "Android" && importer.textureType != TextureImporterType.NormalMap)
-                        fmt = importer.DoesSourceTextureHaveAlpha()
                             ? TextureImporterFormat.ETC2_RGBA8
                             : TextureImporterFormat.ETC_RGB4;
                     if (importer.textureType == TextureImporterType.SingleChannel)
