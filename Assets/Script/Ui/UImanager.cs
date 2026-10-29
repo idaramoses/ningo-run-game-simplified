@@ -83,6 +83,7 @@ public class UImanager : MonoBehaviour
     public GameObject pausePanel;
     public GameObject failPanel;
     public GameObject highScorePanel;
+    public GameObject continuePanel;
 
     [Header("Countdown")]
     public TMPro.TMP_Text countdownText;
@@ -1600,6 +1601,8 @@ public class UImanager : MonoBehaviour
         if (pausePanel) pausePanel.SetActive(false);
         if (failPanel) failPanel.SetActive(false);
         if (highScorePanel) highScorePanel.SetActive(false);
+        if (continuePanel) continuePanel.SetActive(false);
+        ResetContinueCount();
         if (canvasHUD) canvasHUD.SetActive(false);
         if (canvasGame) canvasGame.SetActive(false);
 
@@ -2320,11 +2323,85 @@ public class UImanager : MonoBehaviour
                 canvasHUD.SetActive(false);
         }
 
-        // Show fail or high score panel
-        ShowFailOrHighScorePanel();
-
         // Freeze game simulation
         Time.timeScale = 0f;
+
+        // Offer a "Save Me" continue first (Subway Surfers style). The countdown
+        // uses unscaled time so it runs while the game is frozen.
+        ContinuePanelController controller = continuePanel != null
+            ? continuePanel.GetComponent<ContinuePanelController>()
+            : null;
+        if (controller == null)
+        {
+            // No designed panel assigned - build a functional default Canvas_Retry
+            controller = ContinuePanelController.CreateDefault();
+            continuePanel = controller.gameObject;
+        }
+        continuePanel.SetActive(true);
+        controller.Show(
+            onContinueCallback: OnContinueAfterFail,
+            onGiveUpCallback: OnGiveUpAfterFail
+        );
+        yield break;
+
+        // No continue panel available - go straight to the fail/high score panel
+        ShowFailOrHighScorePanel();
+    }
+
+    /// <summary>
+    /// Called when the player pays to continue (coins, gems or rewarded video).
+    /// Revives the runner in place with brief invulnerability.
+    /// </summary>
+    private void OnContinueAfterFail()
+    {
+        Debug.Log("[UImanager] Player continued after fail");
+
+        isFailed = false;
+        Time.timeScale = 1f;
+
+        WordManager wordManager = WordManager.Instance != null
+            ? WordManager.Instance
+            : Object.FindFirstObjectByType<WordManager>();
+        if (wordManager != null)
+            wordManager.ResetFailState();
+
+        if (canvasHUD) canvasHUD.SetActive(true);
+        if (canvasGame) canvasGame.SetActive(true);
+
+        GameObject runnerObj = FindRunnerObject();
+        if (runnerObj != null)
+        {
+            var sp = runnerObj.GetComponent<SimplePlayerController>();
+            if (sp != null)
+                sp.ReviveAfterContinue();
+        }
+        else if (SimplePlayerController.Instance != null)
+        {
+            SimplePlayerController.Instance.ReviveAfterContinue();
+        }
+
+        if (GameStateController.Instance != null)
+            GameStateController.Instance.SetPlaying(true);
+
+        if (BackgroundMusicManager.Instance != null)
+            BackgroundMusicManager.Instance.PlayGameplayMusic();
+    }
+
+    /// <summary>
+    /// Called when the player lets the Save Me countdown expire or taps give up.
+    /// </summary>
+    private void OnGiveUpAfterFail()
+    {
+        Debug.Log("[UImanager] Player gave up - showing fail panel");
+        ShowFailOrHighScorePanel();
+    }
+
+    private void ResetContinueCount()
+    {
+        if (continuePanel == null) return;
+        var controller = continuePanel.GetComponent<ContinuePanelController>();
+        if (controller != null)
+            controller.ResetContinueCount();
     }
 
     public float GetRunDistance()
@@ -2446,6 +2523,8 @@ public class UImanager : MonoBehaviour
         if (pausePanel) pausePanel.SetActive(false);
         if (failPanel) failPanel.SetActive(false);
         if (highScorePanel) highScorePanel.SetActive(false);
+        if (continuePanel) continuePanel.SetActive(false);
+        ResetContinueCount();
 
         // Reset coins
         PlayerPrefs.SetInt("RunCoins", 0);

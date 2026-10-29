@@ -1070,6 +1070,40 @@ public class SimplePlayerController : MonoBehaviour
         fallCoroutine = StartCoroutine(FallKnockbackCoroutine());
     }
 
+    /// <summary>
+    /// Revive the runner after the player pays to continue (Subway Surfers "Save Me").
+    /// Clears the fallen state, resumes running in place, and grants brief invulnerability.
+    /// </summary>
+    public void ReviveAfterContinue(float invulnerabilitySeconds = 3f)
+    {
+        if (fallCoroutine != null)
+        {
+            StopCoroutine(fallCoroutine);
+            fallCoroutine = null;
+        }
+
+        isFalling = false;
+        isMoving = true;
+        isSliding = false;
+        isGrounded = true;
+        verticalVelocity = 0f;
+
+        Vector3 pos = transform.position;
+        pos.y = 0f;
+        transform.position = pos;
+        yPosition = 0f;
+
+        if (animator != null && HasParameter(animator, "isGrounded")) animator.SetBool("isGrounded", true);
+        PlayState(isSkatingInternal ? skateAnimationName : "run");
+
+        if (MonkeyThiefController.Instance != null)
+        {
+            MonkeyThiefController.Instance.ResetChase();
+        }
+
+        MakeInvulnerable(invulnerabilitySeconds);
+    }
+
     private IEnumerator FallKnockbackCoroutine()
     {
         Vector3 startPos = transform.position;
