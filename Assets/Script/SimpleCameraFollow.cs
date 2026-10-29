@@ -45,6 +45,8 @@ public class SimpleCameraFollow : MonoBehaviour
 
     private Vector3 currentOffset;
     private float currentLookAtHeight;
+    private Vector3 lookTargetSmoothed;
+    private bool lookTargetInitialized;
     private SimplePlayerController targetPlayerController;
     private float idleTimer = 0f;
     private bool wasIdle = false;
@@ -182,9 +184,18 @@ public class SimpleCameraFollow : MonoBehaviour
             transform.position = new Vector3(newX, newY, newZ);
         }
 
-        // Make the camera look at the player
+        // Make the camera look at the player. The aim point is smoothed like
+        // the position: aiming at the raw player transform every frame passes
+        // any per-frame jitter (animation bob, movement steps at low fps) into
+        // the camera rotation, which reads as constant camera shake on device.
         Vector3 lookAtTarget = target.position + Vector3.up * currentLookAtHeight;
-        transform.LookAt(lookAtTarget);
+        if (!lookTargetInitialized)
+        {
+            lookTargetSmoothed = lookAtTarget;
+            lookTargetInitialized = true;
+        }
+        lookTargetSmoothed = Vector3.Lerp(lookTargetSmoothed, lookAtTarget, Time.deltaTime * smoothSpeed);
+        transform.LookAt(lookTargetSmoothed);
     }
 
     private bool IsIdle()
