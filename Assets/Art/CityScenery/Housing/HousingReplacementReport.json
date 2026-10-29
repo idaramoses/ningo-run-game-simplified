@@ -1,0 +1,2097 @@
+{
+    "changes": [
+        {
+            "city": "Lagos",
+            "asset": "Home/StarterRoads/Lagos",
+            "objectName": "water-tank+rooftop+house+3d+model",
+            "originalMesh": "Assets/glb files/models/water-tank+rooftop+house+3d+model.glb",
+            "originalPosition": {
+                "x": 13.6899995803833,
+                "y": 0.0,
+                "z": 6.679999828338623
+            },
+            "originalScale": {
+                "x": 10.915356636047364,
+                "y": 8.034531593322754,
+                "z": 12.63370418548584
+            },
+            "originalEuler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "oldTriangles": 4317,
+            "newTriangles": 1560
+        },
+        {
+            "city": "Lagos",
+            "asset": "Home/StarterRoads/Lagos",
+            "objectName": "water-tank+rooftop+house+3d+model (2)",
+            "originalMesh": "Assets/glb files/models/water-tank+rooftop+house+3d+model.glb",
+            "originalPosition": {
+                "x": 13.449999809265137,
+                "y": 0.0,
+                "z": 30.03689956665039
+            },
+            "originalScale": {
+                "x": 13.125885963439942,
+                "y": 8.603034973144532,
+                "z": 12.63370418548584
+            },
+            "originalEuler": {
+                "x": 0.0,
+                "y": 90.0,
+                "z": 0.0
+            },
+            "oldTriangles": 4317,
+            "newTriangles": 1560
+        },
+        {
+            "city": "Abuja",
+            "asset": "Home/StarterRoads/Abuja",
+            "objectName": "modern house 3d model",
+            "originalMesh": "Assets/Model/Abuja/modern house 3d model/modern house 3d model.fbx",
+            "originalPosition": {
+                "x": 9.699999809265137,
+                "y": 0.0,
+                "z": 5.699999809265137
+            },
+            "originalScale": {
+                "x": 2.1012628078460695,
+                "y": 2.0853962898254396,
+                "z": 1.6793999671936036
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 267.89996337890627,
+                "z": 0.0
+            },
+            "oldTriangles": 7446,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Home/StarterRoads/Abuja",
+            "objectName": "modern house 3d model (1)",
+            "originalMesh": "Assets/Model/Abuja/modern house 3d model/modern house 3d model.fbx",
+            "originalPosition": {
+                "x": 9.699999809265137,
+                "y": 0.0,
+                "z": 17.100000381469728
+            },
+            "originalScale": {
+                "x": 2.1012628078460695,
+                "y": 2.0853962898254396,
+                "z": 1.6793999671936036
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 267.89996337890627,
+                "z": 0.0
+            },
+            "oldTriangles": 7446,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Home/StarterRoads/Abuja",
+            "objectName": "modern house 3d model (5)",
+            "originalMesh": "Assets/Model/Abuja/modern house 3d model/modern house 3d model.fbx",
+            "originalPosition": {
+                "x": 21.100000381469728,
+                "y": 0.0,
+                "z": 29.399999618530275
+            },
+            "originalScale": {
+                "x": 2.1012628078460695,
+                "y": 2.0853962898254396,
+                "z": 1.6793999671936036
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 267.89996337890627,
+                "z": 0.0
+            },
+            "oldTriangles": 7446,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Home/StarterRoads/Abuja",
+            "objectName": "modern house 3d model (7)",
+            "originalMesh": "Assets/Model/Abuja/modern house 3d model/modern house 3d model.fbx",
+            "originalPosition": {
+                "x": 34.70000076293945,
+                "y": 0.0,
+                "z": 17.5
+            },
+            "originalScale": {
+                "x": 2.1012628078460695,
+                "y": 2.0853962898254396,
+                "z": 1.6793999671936036
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 267.89996337890627,
+                "z": 0.0
+            },
+            "oldTriangles": 7446,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Home/StarterRoads/Abuja",
+            "objectName": "residential house 3d model",
+            "originalMesh": "Assets/Model/Abuja/residential house 3d model/residential house 3d model.fbx",
+            "originalPosition": {
+                "x": -9.119999885559082,
+                "y": 0.0,
+                "z": 1.7699999809265137
+            },
+            "originalScale": {
+                "x": 1.7305188179016114,
+                "y": 1.4283907413482667,
+                "z": 1.676649808883667
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 90.10003662109375,
+                "z": 0.0
+            },
+            "oldTriangles": 8698,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Home/StarterRoads/Abuja",
+            "objectName": "residential house 3d model (2)",
+            "originalMesh": "Assets/Model/Abuja/residential house 3d model/residential house 3d model.fbx",
+            "originalPosition": {
+                "x": -9.119999885559082,
+                "y": 0.0,
+                "z": 1.7699999809265137
+            },
+            "originalScale": {
+                "x": 1.7305188179016114,
+                "y": 1.4283907413482667,
+                "z": 1.676649808883667
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 90.10003662109375,
+                "z": 0.0
+            },
+            "oldTriangles": 8698,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Home/StarterRoads/Abuja",
+            "objectName": "residential house 3d model (4)",
+            "originalMesh": "Assets/Model/Abuja/residential house 3d model/residential house 3d model.fbx",
+            "originalPosition": {
+                "x": -9.899999618530274,
+                "y": 0.0,
+                "z": 31.700000762939454
+            },
+            "originalScale": {
+                "x": 1.7305188179016114,
+                "y": 1.4283907413482667,
+                "z": 1.676649808883667
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 90.10003662109375,
+                "z": 0.0
+            },
+            "oldTriangles": 8698,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Home/StarterRoads/Abuja",
+            "objectName": "residential house 3d model (6)",
+            "originalMesh": "Assets/Model/Abuja/residential house 3d model/residential house 3d model.fbx",
+            "originalPosition": {
+                "x": -17.380001068115236,
+                "y": 0.0,
+                "z": 11.809999465942383
+            },
+            "originalScale": {
+                "x": 1.7305188179016114,
+                "y": 1.4283907413482667,
+                "z": 1.676649808883667
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 90.10003662109375,
+                "z": 0.0
+            },
+            "oldTriangles": 8698,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Home/StarterRoads/Abuja",
+            "objectName": "residential house 3d model (10)",
+            "originalMesh": "Assets/Model/Abuja/residential house 3d model/residential house 3d model.fbx",
+            "originalPosition": {
+                "x": -25.700000762939454,
+                "y": 0.0,
+                "z": 1.7999999523162842
+            },
+            "originalScale": {
+                "x": 1.7305188179016114,
+                "y": 1.4283907413482667,
+                "z": 1.676649808883667
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 90.10003662109375,
+                "z": 0.0
+            },
+            "oldTriangles": 8698,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Home/StarterRoads/Abuja",
+            "objectName": "residential house 3d model (12)",
+            "originalMesh": "Assets/Model/Abuja/residential house 3d model/residential house 3d model.fbx",
+            "originalPosition": {
+                "x": -25.700000762939454,
+                "y": 0.0,
+                "z": 1.7999999523162842
+            },
+            "originalScale": {
+                "x": 1.7305188179016114,
+                "y": 1.4283907413482667,
+                "z": 1.676649808883667
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 90.10003662109375,
+                "z": 0.0
+            },
+            "oldTriangles": 8698,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Home/StarterRoads/Abuja",
+            "objectName": "residential house 3d model (14)",
+            "originalMesh": "Assets/Model/Abuja/residential house 3d model/residential house 3d model.fbx",
+            "originalPosition": {
+                "x": -25.680002212524415,
+                "y": 0.0,
+                "z": 31.73000144958496
+            },
+            "originalScale": {
+                "x": 1.7305188179016114,
+                "y": 1.4283907413482667,
+                "z": 1.676649808883667
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 90.10003662109375,
+                "z": 0.0
+            },
+            "oldTriangles": 8698,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Home/StarterRoads/Abuja",
+            "objectName": "residential house 3d model (9)",
+            "originalMesh": "Assets/Model/Abuja/residential house 3d model/residential house 3d model.fbx",
+            "originalPosition": {
+                "x": -17.380001068115236,
+                "y": 0.0,
+                "z": 31.73000144958496
+            },
+            "originalScale": {
+                "x": 1.7305188179016114,
+                "y": 1.4283907413482667,
+                "z": 1.676649808883667
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 90.10003662109375,
+                "z": 0.0
+            },
+            "oldTriangles": 8698,
+            "newTriangles": 840
+        },
+        {
+            "city": "PortHarcourt",
+            "asset": "Home/StarterRoads/PortHarcourt",
+            "objectName": "house-2",
+            "originalMesh": "Assets/Model/Lagos/house-2/house-2.fbx",
+            "originalPosition": {
+                "x": 53.28350067138672,
+                "y": 0.008299999870359898,
+                "z": -14.63479995727539
+            },
+            "originalScale": {
+                "x": 145.2100067138672,
+                "y": 121.55000305175781,
+                "z": 177.4615020751953
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "oldTriangles": 4762,
+            "newTriangles": 422
+        },
+        {
+            "city": "PortHarcourt",
+            "asset": "Home/StarterRoads/PortHarcourt",
+            "objectName": "water-tank+rooftop+house+3d+model",
+            "originalMesh": "Assets/glb files/models/water-tank+rooftop+house+3d+model.glb",
+            "originalPosition": {
+                "x": 12.029999732971192,
+                "y": 0.0,
+                "z": 19.100000381469728
+            },
+            "originalScale": {
+                "x": 10.580660820007325,
+                "y": 8.838597297668457,
+                "z": 9.636526107788086
+            },
+            "originalEuler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "oldTriangles": 4317,
+            "newTriangles": 422
+        },
+        {
+            "city": "Lagos",
+            "asset": "Assets/Prefab/Road/Lagos/Road1.prefab",
+            "objectName": "house-2",
+            "originalMesh": "Assets/Model/Lagos/house-2/house-2.fbx",
+            "originalPosition": {
+                "x": 10.941300392150879,
+                "y": -0.26429998874664309,
+                "z": 26.799999237060548
+            },
+            "originalScale": {
+                "x": 165.84927368164063,
+                "y": 114.34000396728516,
+                "z": 108.61417388916016
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 4762,
+            "newTriangles": 1560
+        },
+        {
+            "city": "Lagos",
+            "asset": "Assets/Prefab/Road/Lagos/Road2.prefab",
+            "objectName": "beige two-story house 3d model",
+            "originalMesh": "Assets/Model/Lagos/beige two-story house 3d model/beige two-story house 3d model.fbx",
+            "originalPosition": {
+                "x": 13.038800239562989,
+                "y": -0.33000093698501589,
+                "z": 30.848800659179689
+            },
+            "originalScale": {
+                "x": 1.4328595399856568,
+                "y": 1.2375999689102173,
+                "z": 1.6671513319015504
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 269.9800109863281,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 1560
+        },
+        {
+            "city": "Lagos",
+            "asset": "Assets/Prefab/Road/Lagos/Road2.prefab",
+            "objectName": "beige two-story house 3d model (2)",
+            "originalMesh": "Assets/Model/Lagos/beige two-story house 3d model/beige two-story house 3d model.fbx",
+            "originalPosition": {
+                "x": 13.038800239562989,
+                "y": -0.33000093698501589,
+                "z": 9.9399995803833
+            },
+            "originalScale": {
+                "x": 1.4328595399856568,
+                "y": 1.2375999689102173,
+                "z": 1.6671513319015504
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 269.9800109863281,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 1560
+        },
+        {
+            "city": "Lagos",
+            "asset": "Assets/Prefab/Road/Lagos/Road2.prefab",
+            "objectName": "beige two-story house 3d model (4)",
+            "originalMesh": "Assets/Model/Lagos/beige two-story house 3d model/beige two-story house 3d model.fbx",
+            "originalPosition": {
+                "x": -13.489977836608887,
+                "y": -0.33000093698501589,
+                "z": 30.848800659179689
+            },
+            "originalScale": {
+                "x": 1.4328595399856568,
+                "y": 1.2375999689102173,
+                "z": 1.6671513319015504
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 269.9800109863281,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 1560
+        },
+        {
+            "city": "Lagos",
+            "asset": "Assets/Prefab/Road/Lagos/Road2.prefab",
+            "objectName": "beige two-story house 3d model (6)",
+            "originalMesh": "Assets/Model/Lagos/beige two-story house 3d model/beige two-story house 3d model.fbx",
+            "originalPosition": {
+                "x": -13.489999771118164,
+                "y": -0.33000093698501589,
+                "z": 9.9399995803833
+            },
+            "originalScale": {
+                "x": 1.4328595399856568,
+                "y": 1.2375999689102173,
+                "z": 1.6671513319015504
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 269.9800109863281,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 1560
+        },
+        {
+            "city": "Lagos",
+            "asset": "Assets/Prefab/Road/Lagos/Road3.prefab",
+            "objectName": "modern house",
+            "originalMesh": "Assets/Model/Abuja/modern high house/modern house.fbx",
+            "originalPosition": {
+                "x": 14.71310043334961,
+                "y": -0.27000001072883608,
+                "z": 28.762500762939454
+            },
+            "originalScale": {
+                "x": 2.694901943206787,
+                "y": 2.4043219089508058,
+                "z": 5.036846160888672
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 272.8000183105469,
+                "z": 0.0
+            },
+            "oldTriangles": 9056,
+            "newTriangles": 1560
+        },
+        {
+            "city": "Lagos",
+            "asset": "Assets/Prefab/Road/Lagos/Road3.prefab",
+            "objectName": "modern house (2)",
+            "originalMesh": "Assets/Model/Abuja/modern high house/modern house.fbx",
+            "originalPosition": {
+                "x": 14.800100326538086,
+                "y": -0.27000001072883608,
+                "z": 3.855799913406372
+            },
+            "originalScale": {
+                "x": 2.449089527130127,
+                "y": 2.4414145946502687,
+                "z": 4.281975746154785
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 272.8000183105469,
+                "z": 0.0
+            },
+            "oldTriangles": 9056,
+            "newTriangles": 1560
+        },
+        {
+            "city": "Lagos",
+            "asset": "Assets/Prefab/Road/Lagos/Road3.prefab",
+            "objectName": "modern house (10)",
+            "originalMesh": "Assets/Model/Abuja/modern high house/modern house.fbx",
+            "originalPosition": {
+                "x": -15.296697616577149,
+                "y": -0.27000001072883608,
+                "z": 15.544425964355469
+            },
+            "originalScale": {
+                "x": 2.662466526031494,
+                "y": 2.4416379928588869,
+                "z": 4.554277420043945
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 90.02999877929688,
+                "z": 0.0
+            },
+            "oldTriangles": 9056,
+            "newTriangles": 1560
+        },
+        {
+            "city": "Lagos",
+            "asset": "Assets/Prefab/Road/Lagos/Road3.prefab",
+            "objectName": "modern house (12)",
+            "originalMesh": "Assets/Model/Abuja/modern high house/modern house.fbx",
+            "originalPosition": {
+                "x": -25.78702163696289,
+                "y": -0.27000001072883608,
+                "z": 27.906726837158204
+            },
+            "originalScale": {
+                "x": 2.694901943206787,
+                "y": 2.4043219089508058,
+                "z": 5.036846160888672
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 90.02999877929688,
+                "z": 0.0
+            },
+            "oldTriangles": 9056,
+            "newTriangles": 1560
+        },
+        {
+            "city": "Lagos",
+            "asset": "Assets/Prefab/Road/Lagos/Road3.prefab",
+            "objectName": "modern house (14)",
+            "originalMesh": "Assets/Model/Abuja/modern high house/modern house.fbx",
+            "originalPosition": {
+                "x": -25.700000762939454,
+                "y": -0.27000001072883608,
+                "z": 3.0
+            },
+            "originalScale": {
+                "x": 2.449089527130127,
+                "y": 2.4414145946502687,
+                "z": 4.281975746154785
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 90.02999877929688,
+                "z": 0.0
+            },
+            "oldTriangles": 9056,
+            "newTriangles": 1560
+        },
+        {
+            "city": "Lagos",
+            "asset": "Assets/Prefab/Road/Lagos/Road3.prefab",
+            "objectName": "modern house (16)",
+            "originalMesh": "Assets/Model/Abuja/modern high house/modern house.fbx",
+            "originalPosition": {
+                "x": -36.70000076293945,
+                "y": -0.27000001072883608,
+                "z": 15.544425964355469
+            },
+            "originalScale": {
+                "x": 2.662466526031494,
+                "y": 2.4416379928588869,
+                "z": 4.554277420043945
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 90.02999877929688,
+                "z": 0.0
+            },
+            "oldTriangles": 9056,
+            "newTriangles": 1560
+        },
+        {
+            "city": "Lagos",
+            "asset": "Assets/Prefab/Road/Lagos/Road3.prefab",
+            "objectName": "modern house (3)",
+            "originalMesh": "Assets/Model/Abuja/modern high house/modern house.fbx",
+            "originalPosition": {
+                "x": 26.100000381469728,
+                "y": -0.27000001072883608,
+                "z": 28.762500762939454
+            },
+            "originalScale": {
+                "x": 2.694901943206787,
+                "y": 2.4043219089508058,
+                "z": 5.036846160888672
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 272.8000183105469,
+                "z": 0.0
+            },
+            "oldTriangles": 9056,
+            "newTriangles": 1560
+        },
+        {
+            "city": "Lagos",
+            "asset": "Assets/Prefab/Road/Lagos/Road3.prefab",
+            "objectName": "modern house (7)",
+            "originalMesh": "Assets/Model/Abuja/modern high house/modern house.fbx",
+            "originalPosition": {
+                "x": 37.30327606201172,
+                "y": -0.27000001072883608,
+                "z": 16.40019989013672
+            },
+            "originalScale": {
+                "x": 2.662466526031494,
+                "y": 2.4416379928588869,
+                "z": 4.554277420043945
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 272.8000183105469,
+                "z": 0.0
+            },
+            "oldTriangles": 9056,
+            "newTriangles": 1560
+        },
+        {
+            "city": "Lagos",
+            "asset": "Assets/Prefab/Road/Lagos/Road3.prefab",
+            "objectName": "modern house (4)",
+            "originalMesh": "Assets/Model/Abuja/modern high house/modern house.fbx",
+            "originalPosition": {
+                "x": 26.1903018951416,
+                "y": -0.27000001072883608,
+                "z": 16.40019989013672
+            },
+            "originalScale": {
+                "x": 2.662466526031494,
+                "y": 2.4416379928588869,
+                "z": 4.554277420043945
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 272.8000183105469,
+                "z": 0.0
+            },
+            "oldTriangles": 9056,
+            "newTriangles": 1560
+        },
+        {
+            "city": "Lagos",
+            "asset": "Assets/Prefab/Road/Lagos/Road junction.prefab",
+            "objectName": "modern house abuja",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 13.300000190734864,
+                "y": -0.07000000029802323,
+                "z": 0.07670000195503235
+            },
+            "originalScale": {
+                "x": 2.1933066844940187,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 1560
+        },
+        {
+            "city": "Lagos",
+            "asset": "Assets/Prefab/Road/Lagos/Road junction.prefab",
+            "objectName": "modern house abuja (2)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 13.300000190734864,
+                "y": -0.07000000029802323,
+                "z": 8.220000267028809
+            },
+            "originalScale": {
+                "x": 2.1933066844940187,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 1560
+        },
+        {
+            "city": "Lagos",
+            "asset": "Assets/Prefab/Road/Lagos/Road junction.prefab",
+            "objectName": "modern house abuja",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 13.299979209899903,
+                "y": -0.07000000029802323,
+                "z": 29.0
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 1560
+        },
+        {
+            "city": "Lagos",
+            "asset": "Assets/Prefab/Road/Lagos/Road junction.prefab",
+            "objectName": "modern house abuja (1)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 21.11907196044922,
+                "y": -0.07000000029802323,
+                "z": 1.2999999523162842
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 1560
+        },
+        {
+            "city": "Lagos",
+            "asset": "Assets/Prefab/Road/Lagos/Road junction.prefab",
+            "objectName": "modern house abuja (5)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 29.41905975341797,
+                "y": -0.07000000029802323,
+                "z": 1.2999999523162842
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 1560
+        },
+        {
+            "city": "Lagos",
+            "asset": "Assets/Prefab/Road/Lagos/Road junction.prefab",
+            "objectName": "modern house abuja (6)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 29.419078826904298,
+                "y": -0.07000000029802323,
+                "z": 9.469499588012696
+            },
+            "originalScale": {
+                "x": 1.7905704975128174,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 1560
+        },
+        {
+            "city": "Lagos",
+            "asset": "Assets/Prefab/Road/Lagos/Road junction.prefab",
+            "objectName": "modern house abuja (8)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 29.41905975341797,
+                "y": -0.07000000029802323,
+                "z": 29.0
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 1560
+        },
+        {
+            "city": "Lagos",
+            "asset": "Assets/Prefab/Road/Lagos/Road junction.prefab",
+            "objectName": "modern house abuja (4)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 21.11907196044922,
+                "y": -0.07000000029802323,
+                "z": 29.0
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 1560
+        },
+        {
+            "city": "Abuja",
+            "asset": "Assets/Prefab/Road/Abuja/Abuja Road1.prefab",
+            "objectName": "modern house 3d model",
+            "originalMesh": "Assets/Model/Abuja/modern house 3d model/modern house 3d model.fbx",
+            "originalPosition": {
+                "x": -8.529999732971192,
+                "y": 0.41999998688697817,
+                "z": 4.590000152587891
+            },
+            "originalScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "oldTriangles": 7446,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Assets/Prefab/Road/Abuja/Abuja Road1.prefab",
+            "objectName": "modern house 3d model (1)",
+            "originalMesh": "Assets/Model/Abuja/modern house 3d model/modern house 3d model.fbx",
+            "originalPosition": {
+                "x": -8.529999732971192,
+                "y": 0.41999998688697817,
+                "z": 4.590000152587891
+            },
+            "originalScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "oldTriangles": 7446,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Assets/Prefab/Road/Abuja/Abuja Road1.prefab",
+            "objectName": "modern house 3d model (3)",
+            "originalMesh": "Assets/Model/Abuja/modern house 3d model/modern house 3d model.fbx",
+            "originalPosition": {
+                "x": -8.529999732971192,
+                "y": 0.41999998688697817,
+                "z": 13.729999542236329
+            },
+            "originalScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "oldTriangles": 7446,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Assets/Prefab/Road/Abuja/Abuja Road1.prefab",
+            "objectName": "modern house 3d model (5)",
+            "originalMesh": "Assets/Model/Abuja/modern house 3d model/modern house 3d model.fbx",
+            "originalPosition": {
+                "x": -8.529999732971192,
+                "y": 0.41999998688697817,
+                "z": 22.8700008392334
+            },
+            "originalScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "oldTriangles": 7446,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Assets/Prefab/Road/Abuja/Abuja Road3.prefab",
+            "objectName": "modern house abuja",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 13.300000190734864,
+                "y": -0.07000000029802323,
+                "z": 1.2999999523162842
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Assets/Prefab/Road/Abuja/Abuja Road3.prefab",
+            "objectName": "modern house abuja",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 13.299979209899903,
+                "y": -0.07000000029802323,
+                "z": 21.200000762939454
+            },
+            "originalScale": {
+                "x": 2.533154249191284,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Assets/Prefab/Road/Abuja/Abuja Road3.prefab",
+            "objectName": "modern house abuja (1)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 21.11907196044922,
+                "y": -0.07000000029802323,
+                "z": 1.2999999523162842
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Assets/Prefab/Road/Abuja/Abuja Road3.prefab",
+            "objectName": "modern house abuja (5)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 29.41905975341797,
+                "y": -0.07000000029802323,
+                "z": 1.2999999523162842
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Assets/Prefab/Road/Abuja/Abuja Road3.prefab",
+            "objectName": "modern house abuja (7)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 29.41905975341797,
+                "y": -0.07000000029802323,
+                "z": 21.200000762939454
+            },
+            "originalScale": {
+                "x": 2.533154249191284,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Assets/Prefab/Road/Abuja/Abuja Road3.prefab",
+            "objectName": "modern house abuja (3)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 21.11907196044922,
+                "y": -0.07000000029802323,
+                "z": 21.200000762939454
+            },
+            "originalScale": {
+                "x": 2.533154249191284,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Assets/Prefab/Road/Abuja/Abuja Road3.prefab",
+            "objectName": "modern house abuja (9)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": -29.719093322753908,
+                "y": -0.07000000029802323,
+                "z": 1.3999755382537842
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Assets/Prefab/Road/Abuja/Abuja Road3.prefab",
+            "objectName": "modern house abuja (11)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": -29.719093322753908,
+                "y": -0.07000000029802323,
+                "z": 21.299976348876954
+            },
+            "originalScale": {
+                "x": 2.533154249191284,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Assets/Prefab/Road/Abuja/Abuja Road3.prefab",
+            "objectName": "modern house abuja (13)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": -21.900001525878908,
+                "y": -0.07000000029802323,
+                "z": 1.3999755382537842
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Assets/Prefab/Road/Abuja/Abuja Road3.prefab",
+            "objectName": "modern house abuja (15)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": -13.600013732910157,
+                "y": -0.07000000029802323,
+                "z": 1.3999755382537842
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Assets/Prefab/Road/Abuja/Abuja Road3.prefab",
+            "objectName": "modern house abuja (17)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": -13.600013732910157,
+                "y": -0.07000000029802323,
+                "z": 21.299976348876954
+            },
+            "originalScale": {
+                "x": 2.533154249191284,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Assets/Prefab/Road/Abuja/Abuja Road3.prefab",
+            "objectName": "modern house abuja (19)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": -21.899999618530275,
+                "y": -0.07000000029802323,
+                "z": 21.299999237060548
+            },
+            "originalScale": {
+                "x": 2.533154249191284,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Assets/Prefab/Road/Abuja/Abuja Road3 junction.prefab",
+            "objectName": "modern house abuja",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 13.300000190734864,
+                "y": -0.07000000029802323,
+                "z": 0.07670000195503235
+            },
+            "originalScale": {
+                "x": 2.1933066844940187,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Assets/Prefab/Road/Abuja/Abuja Road3 junction.prefab",
+            "objectName": "modern house abuja",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 13.299979209899903,
+                "y": -0.07000000029802323,
+                "z": 29.0
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Assets/Prefab/Road/Abuja/Abuja Road3 junction.prefab",
+            "objectName": "modern house abuja (5)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 29.41905975341797,
+                "y": -0.07000000029802323,
+                "z": 1.2999999523162842
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Assets/Prefab/Road/Abuja/Abuja Road3 junction.prefab",
+            "objectName": "modern house abuja (8)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 29.41905975341797,
+                "y": -0.07000000029802323,
+                "z": 29.0
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Assets/Prefab/Road/Abuja/Abuja Road3 junction.prefab",
+            "objectName": "modern house abuja (10)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": -29.719093322753908,
+                "y": -0.07000000029802323,
+                "z": 12.461600303649903
+            },
+            "originalScale": {
+                "x": 2.3738341331481935,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Assets/Prefab/Road/Abuja/Abuja Road3 junction.prefab",
+            "objectName": "modern house abuja (12)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": -29.719093322753908,
+                "y": -0.07000000029802323,
+                "z": 29.0999755859375
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Assets/Prefab/Road/Abuja/Abuja Road3 junction.prefab",
+            "objectName": "modern house abuja (16)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": -13.599994659423829,
+                "y": -0.07000000029802323,
+                "z": 12.459600448608399
+            },
+            "originalScale": {
+                "x": 2.375007390975952,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Assets/Prefab/Road/Abuja/Abuja Road3 junction.prefab",
+            "objectName": "modern house abuja (18)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": -13.600013732910157,
+                "y": -0.07000000029802323,
+                "z": 29.0999755859375
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 840
+        },
+        {
+            "city": "Abuja",
+            "asset": "Assets/Prefab/Road/Abuja/Abuja Road3 junction.prefab",
+            "objectName": "modern house abuja (20)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": -21.900001525878908,
+                "y": -0.07000000029802323,
+                "z": 29.0999755859375
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 840
+        },
+        {
+            "city": "PortHarcourt",
+            "asset": "Assets/Prefab/Road/PH/PH Road 2.prefab",
+            "objectName": "modern house abuja (1)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 21.11907196044922,
+                "y": -0.07000000029802323,
+                "z": 1.2999999523162842
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 422
+        },
+        {
+            "city": "PortHarcourt",
+            "asset": "Assets/Prefab/Road/PH/PH Road 2.prefab",
+            "objectName": "modern house abuja (2)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 21.11907958984375,
+                "y": -0.07000000029802323,
+                "z": 11.5
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 422
+        },
+        {
+            "city": "PortHarcourt",
+            "asset": "Assets/Prefab/Road/PH/PH Road 2.prefab",
+            "objectName": "modern house abuja (5)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 29.41905975341797,
+                "y": -0.07000000029802323,
+                "z": 1.2999999523162842
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 422
+        },
+        {
+            "city": "PortHarcourt",
+            "asset": "Assets/Prefab/Road/PH/PH Road 2.prefab",
+            "objectName": "modern house abuja (6)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 29.419078826904298,
+                "y": -0.07000000029802323,
+                "z": 11.5
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 422
+        },
+        {
+            "city": "PortHarcourt",
+            "asset": "Assets/Prefab/Road/PH/PH Road 2.prefab",
+            "objectName": "modern house abuja (7)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 29.41905975341797,
+                "y": -0.07000000029802323,
+                "z": 21.200000762939454
+            },
+            "originalScale": {
+                "x": 2.533154249191284,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 422
+        },
+        {
+            "city": "PortHarcourt",
+            "asset": "Assets/Prefab/Road/PH/PH Road 2.prefab",
+            "objectName": "modern house abuja (8)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 29.41905975341797,
+                "y": -0.07000000029802323,
+                "z": 29.0
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 422
+        },
+        {
+            "city": "PortHarcourt",
+            "asset": "Assets/Prefab/Road/PH/PH Road 2.prefab",
+            "objectName": "modern house abuja (3)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 21.11907196044922,
+                "y": -0.07000000029802323,
+                "z": 21.200000762939454
+            },
+            "originalScale": {
+                "x": 2.533154249191284,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 422
+        },
+        {
+            "city": "PortHarcourt",
+            "asset": "Assets/Prefab/Road/PH/PH Road 2.prefab",
+            "objectName": "modern house abuja (4)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 21.11907196044922,
+                "y": -0.07000000029802323,
+                "z": 29.0
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 422
+        },
+        {
+            "city": "PortHarcourt",
+            "asset": "Assets/Prefab/Road/PH/PH Road 2.prefab",
+            "objectName": "modern house abuja (9)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": -29.719093322753908,
+                "y": -0.07000000029802323,
+                "z": 1.3999755382537842
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 422
+        },
+        {
+            "city": "PortHarcourt",
+            "asset": "Assets/Prefab/Road/PH/PH Road 2.prefab",
+            "objectName": "modern house abuja (10)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": -29.719093322753908,
+                "y": -0.07000000029802323,
+                "z": 11.5999755859375
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 422
+        },
+        {
+            "city": "PortHarcourt",
+            "asset": "Assets/Prefab/Road/PH/PH Road 2.prefab",
+            "objectName": "modern house abuja (11)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": -29.719093322753908,
+                "y": -0.07000000029802323,
+                "z": 21.299976348876954
+            },
+            "originalScale": {
+                "x": 2.533154249191284,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 422
+        },
+        {
+            "city": "PortHarcourt",
+            "asset": "Assets/Prefab/Road/PH/PH Road 2.prefab",
+            "objectName": "modern house abuja (12)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": -29.719093322753908,
+                "y": -0.07000000029802323,
+                "z": 29.0999755859375
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 422
+        },
+        {
+            "city": "PortHarcourt",
+            "asset": "Assets/Prefab/Road/PH/PH Road 2.prefab",
+            "objectName": "modern house abuja (13)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": -21.900001525878908,
+                "y": -0.07000000029802323,
+                "z": 1.3999755382537842
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 422
+        },
+        {
+            "city": "PortHarcourt",
+            "asset": "Assets/Prefab/Road/PH/PH Road 2.prefab",
+            "objectName": "modern house abuja (14)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": -21.899993896484376,
+                "y": -0.07000000029802323,
+                "z": 11.5999755859375
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 422
+        },
+        {
+            "city": "PortHarcourt",
+            "asset": "Assets/Prefab/Road/PH/PH Road 2.prefab",
+            "objectName": "modern house abuja (19)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": -21.899999618530275,
+                "y": -0.07000000029802323,
+                "z": 21.299999237060548
+            },
+            "originalScale": {
+                "x": 2.533154249191284,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 422
+        },
+        {
+            "city": "PortHarcourt",
+            "asset": "Assets/Prefab/Road/PH/PH Road 2.prefab",
+            "objectName": "modern house abuja (20)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": -21.900001525878908,
+                "y": -0.07000000029802323,
+                "z": 29.0999755859375
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 422
+        },
+        {
+            "city": "PortHarcourt",
+            "asset": "Assets/Prefab/Road/PH/PH Road 2.prefab",
+            "objectName": "water-tank+rooftop+house+3d+model",
+            "originalMesh": "Assets/glb files/models/water-tank+rooftop+house+3d+model.glb",
+            "originalPosition": {
+                "x": 14.300000190734864,
+                "y": -0.1899999976158142,
+                "z": 3.265199899673462
+            },
+            "originalScale": {
+                "x": 9.018206596374512,
+                "y": 6.32245397567749,
+                "z": 14.143075942993164
+            },
+            "originalEuler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "oldTriangles": 4317,
+            "newTriangles": 422
+        },
+        {
+            "city": "PortHarcourt",
+            "asset": "Assets/Prefab/Road/PH/PH Road 2.prefab",
+            "objectName": "water-tank+rooftop+house+3d+model (2)",
+            "originalMesh": "Assets/glb files/models/water-tank+rooftop+house+3d+model.glb",
+            "originalPosition": {
+                "x": 14.300000190734864,
+                "y": -0.1899999976158142,
+                "z": 28.94420051574707
+            },
+            "originalScale": {
+                "x": 9.018206596374512,
+                "y": 6.693783760070801,
+                "z": 14.309747695922852
+            },
+            "originalEuler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "oldTriangles": 4317,
+            "newTriangles": 422
+        },
+        {
+            "city": "PortHarcourt",
+            "asset": "Assets/Prefab/Road/PH/PH Road 2.prefab",
+            "objectName": "mini+compound+house+3d+model (1)",
+            "originalMesh": "Assets/glb files/models/mini+compound+house+3d+model.glb",
+            "originalPosition": {
+                "x": -14.869999885559082,
+                "y": -0.07000000029802323,
+                "z": 19.940000534057618
+            },
+            "originalScale": {
+                "x": 9.746983528137207,
+                "y": 6.522844314575195,
+                "z": 9.839643478393555
+            },
+            "originalEuler": {
+                "x": 0.0,
+                "y": 181.07000732421876,
+                "z": 0.0
+            },
+            "oldTriangles": 4007,
+            "newTriangles": 422
+        },
+        {
+            "city": "PortHarcourt",
+            "asset": "Assets/Prefab/Road/PH/PH Road 2.prefab",
+            "objectName": "mini+compound+house+3d+model (3)",
+            "originalMesh": "Assets/glb files/models/mini+compound+house+3d+model.glb",
+            "originalPosition": {
+                "x": -14.869999885559082,
+                "y": -0.07000000029802323,
+                "z": 0.699999988079071
+            },
+            "originalScale": {
+                "x": 9.746983528137207,
+                "y": 6.522844314575195,
+                "z": 9.839643478393555
+            },
+            "originalEuler": {
+                "x": 0.0,
+                "y": 181.07000732421876,
+                "z": 0.0
+            },
+            "oldTriangles": 4007,
+            "newTriangles": 422
+        },
+        {
+            "city": "PortHarcourt",
+            "asset": "Assets/Prefab/Road/PH/PH Road junction.prefab",
+            "objectName": "modern house abuja",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 13.300000190734864,
+                "y": -0.07000000029802323,
+                "z": 0.07670000195503235
+            },
+            "originalScale": {
+                "x": 2.1933066844940187,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 422
+        },
+        {
+            "city": "PortHarcourt",
+            "asset": "Assets/Prefab/Road/PH/PH Road junction.prefab",
+            "objectName": "modern house abuja (2)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 13.300000190734864,
+                "y": -0.07000000029802323,
+                "z": 8.220000267028809
+            },
+            "originalScale": {
+                "x": 2.1933066844940187,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 422
+        },
+        {
+            "city": "PortHarcourt",
+            "asset": "Assets/Prefab/Road/PH/PH Road junction.prefab",
+            "objectName": "modern house abuja",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 13.299979209899903,
+                "y": -0.07000000029802323,
+                "z": 30.999900817871095
+            },
+            "originalScale": {
+                "x": 2.125168800354004,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 422
+        },
+        {
+            "city": "PortHarcourt",
+            "asset": "Assets/Prefab/Road/PH/PH Road junction.prefab",
+            "objectName": "modern house abuja (1)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 21.11907196044922,
+                "y": -0.07000000029802323,
+                "z": 1.2999999523162842
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 422
+        },
+        {
+            "city": "PortHarcourt",
+            "asset": "Assets/Prefab/Road/PH/PH Road junction.prefab",
+            "objectName": "modern house abuja (5)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 29.41905975341797,
+                "y": -0.07000000029802323,
+                "z": 1.2999999523162842
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 422
+        },
+        {
+            "city": "PortHarcourt",
+            "asset": "Assets/Prefab/Road/PH/PH Road junction.prefab",
+            "objectName": "modern house abuja (6)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 29.419078826904298,
+                "y": -0.07000000029802323,
+                "z": 9.469499588012696
+            },
+            "originalScale": {
+                "x": 1.7905704975128174,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 422
+        },
+        {
+            "city": "PortHarcourt",
+            "asset": "Assets/Prefab/Road/PH/PH Road junction.prefab",
+            "objectName": "modern house abuja (8)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 29.41905975341797,
+                "y": -0.07000000029802323,
+                "z": 29.0
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 422
+        },
+        {
+            "city": "PortHarcourt",
+            "asset": "Assets/Prefab/Road/PH/PH Road junction.prefab",
+            "objectName": "modern house abuja (4)",
+            "originalMesh": "Assets/Model/Lagos/modern villa 3d model/modern villa house.fbx",
+            "originalPosition": {
+                "x": 21.11907196044922,
+                "y": -0.07000000029802323,
+                "z": 29.0
+            },
+            "originalScale": {
+                "x": 2.804022789001465,
+                "y": 2.2439000606536867,
+                "z": 2.7651000022888185
+            },
+            "originalEuler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "oldTriangles": 8044,
+            "newTriangles": 422
+        }
+    ]
+}

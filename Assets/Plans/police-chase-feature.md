@@ -171,3 +171,84 @@ Use readable baked sign surfaces on props where practical; avoid introducing a c
 - Android: compare baseline and updated captures on the same device, same city/quality settings and similar run duration, including tile-spawn frames. Target 60 FPS where hardware permits; do not claim it from Editor inspection alone.
 - Acceptance: no new steady-state managed allocations from scenery logic, no added realtime lights, bounded geometry/material growth, and no repeatable frame-time regression beyond measurement noise. If the existing build already misses budget, report it and trim scenery rather than promise smoothness.
 - Final report: list new groups and edited tiles, show each city’s visual result, and distinguish tested Android performance from any unverified target.
+
+---
+
+# Current Extension: City-Specific Roadside Housing
+This housing extension is the next requested scope. Preserve the completed scenery pass; do not rerun its builder or implement the historical police-chase scope. User selected **Mix both**: reuse suitable existing models and author a few missing modular house styles.
+
+# Project Overview
+- Game Title: Ningo Run.
+- High-Level Concept: Replace unsuitable generic roadside residential buildings with varied city-inspired housing in Lagos, Abuja and Port Harcourt, retaining readable runner gameplay and established scenery.
+- Players: Single player.
+- Inspiration / Reference Games: Subway Surfers for stylized readable streets; Nigerian residential architecture for visual cues.
+- Tone / Art Direction: Stylized 3D matching surrounding streets. Each city includes multiple neighbourhood styles, not an exclusive architectural stereotype or exact geographic reconstruction.
+- Target Platform: Android; preserve other existing build compatibility.
+- Screen Orientation / Resolution: Preserve current settings; inspect the actual portrait gameplay camera and existing intro framing.
+- Render Pipeline: Built-in.
+
+# Game Mechanics
+## Core Gameplay Loop
+Unchanged: running, lane changes, jumping, sliding and collection. Housing reinforces place identity (MDA aesthetics) without changing obstacles, difficulty or collision rules.
+## Controls and Input Methods
+Preserve Legacy Input Manager and all existing controls. No movement or input changes.
+
+# UI
+No HUD/menu changes. Keep existing city selection and badges.
+```
+[city housing + existing scenery] [clear running lanes] [city housing + existing scenery]
+                                      runner
+                                 existing HUD
+```
+Facades face the road; silhouettes, balconies and roof shapes should read from the running camera rather than only in aerial views.
+
+# Key Asset & Context
+- CityManager selects four configured tiles per city and the corresponding Home starter group. Keep Lagos, Abuja and PortHarcourt identifiers and all selection references unchanged.
+- Scope: the 12 configured prefabs under Assets/Prefab/Road/Lagos/, Abuja/ and PH/, and StarterRoads/Lagos, Abuja, PortHarcourt in Assets/Scene/Home.unity.
+- Audit confirmed city-specific houses already exist alongside cross-city reuse: some Lagos/PH tiles have objects named modern house abuja. Names alone do not prove a model's appearance or suitability.
+- Objects anha and nha2 contain many renderers and may include road, sidewalk, furnishings or other shared structure. Never delete or replace these whole groups by name matching.
+- Existing reusable candidates include Assets/Model/Lagos/duplext house/new-duplex-house.prefab, Assets/Model/Lagos/duplex+house+3d+model/duplex+house+3d+model.prefab, Assets/Model/Abuja/modern house 3d model/modern house 3d model.prefab, and residential-house, beige-two-story and villa FBX assets. Inspect meshes, transforms, materials and geometry budgets before selection.
+- Create owned reusable housing prefabs under Assets/Prefab/CityScenery/{City}/Housing/ and required combined meshes/shared materials under Assets/Art/CityScenery/Housing/.
+- Author approximately one new modular house type per city initially, supplemented with suitable existing models; increase only if the initial visual review demonstrates a gap.
+- Housing direction: Lagos compact balcony apartment/courtyard blocks with water-tank details plus existing duplex variety; Abuja modern duplexes and walled compounds with spaced frontage; Port Harcourt pitched-roof bungalows, verandas and low-rise compounds with greenery. These are design cues shared across Nigeria, not claims of styles unique to a city.
+- Preserve all completed CityScenery props and markers. Do not modify imported source models or third-party materials globally; use owned variants when adaptation is needed.
+- An editor-only, idempotent housing authoring helper may be added under Assets/Editor/ if needed. No runtime house spawner or per-house Update scripts.
+
+# Implementation Steps
+1. **Detailed housing inventory and baseline.**
+   - Inspect residential mesh objects within all 12 tile prefabs and the three Home starter groups, including nested anha/nha2 contents; identify residential geometry separately from road and landmark content.
+   - Inspect suitable source assets and their dependencies/dependents; repeat impact checks for each asset before editing.
+   - Record exact replacement targets, frontage direction, ground elevation, bounds, triangle/render/material counts and any gameplay component dependencies. Avoid legacy Lagoss and recovery-scene edits.
+   - Dependency: approved housing extension.
+2. **Prepare three housing palettes and sample variants.**
+   - Reuse suitable low-cost models; author one missing modular style per city using combined low-poly geometry and shared materials, not stacks of individual renderer-heavy primitives.
+   - Prefer 1–3 renderers per new modular house, about 5,000 triangles or less per new house, and no net increase in whole-tile triangle/render counts where practical. Retained imported houses must be budgeted from actual geometry rather than these targets.
+   - No realtime lights, new animated residents, decorative colliders or runtime material clones. Avoid interiors that cannot be seen.
+   - Files: new Housing prefabs, owned meshes/materials, optional editor-only authoring helper.
+   - Dependency: Step 1.
+3. **Demonstrate one residential street segment per city.**
+   - Replace identified residential targets only; match reasonable footprint and height without distorting models. Adjust placement for road-facing frontages and grounded bases.
+   - Preserve road/sidewalk meshes, gameplay colliders, obstacles, landmarks, shops, greenery, signs and existing scenery. Remove only confirmed decorative house content and no referenced components.
+   - Inspect gameplay-camera screenshots and multi-angle scene views for scale, occlusion, seams, overlap and city identity. Limit capture-and-fix rounds to three; seek feedback if still unsatisfactory.
+   - Dependency: Step 2.
+4. **Roll out selected palettes across configured tiles and starters.**
+   - Replace unsuitable repeated residential buildings, not every building indiscriminately. Keep suitable houses and skyline/landmark diversity.
+   - Vary at least two suitable housing appearances per city using models or owned material/facade variants. Preserve believable spacing and unobstructed junctions.
+   - Keep deliberate house groups named CityHousing for traceability. Any scripted authoring must be idempotent and use explicit inspected targets, not destructive broad name searches.
+   - Do not automatically rerun NigerianCitySceneryBuilder.RefreshPlacement; it also sees marker children and is not a housing-placement tool.
+   - Dependencies: Step 3 and per-asset impact checks.
+5. **Validate and trim geometry.**
+   - Check city selection, spawned tiles, startup, restart, glider view, shaders and culling after the replacements.
+   - Compare before/after whole-tile geometry and materials, and profile representative Android runs if a device/capture is available. Report unavailable device testing explicitly.
+   - Files: only housing variants and directly affected scene/prefab content. No unrelated input, police, camera, package or global quality edits.
+   - Dependency: Step 4.
+
+# Verification & Testing
+- Static: CityManager retains all three entries, four tiles each, sprites and starter references. No missing materials/scripts or broken prefab dependencies.
+- Geometry safety: unchanged road and sidewalk structure, gameplay colliders and spawn markers; residential mesh bounds remain outside the full runner/pickup/jump envelope and side-road junctions.
+- Visual: inspect each city's ordinary and junction tiles plus starter intro, from actual gameplay framing. Houses must face the street, sit on the ground and avoid intersecting greenery, markets, markers or neighbouring houses. New detail must be visible rather than hidden far behind old buildings.
+- Curvature: use compatible shared shaders; check far facade deformation and culling without marking moving/recycled tiles as permanent static world geometry.
+- Play Mode: select each city, run through tile seams, change lanes, jump/slide, activate glider, fail/restart and switch cities. Use full game flow when validating HUD occlusion; identify isolated camera-only captures separately.
+- Performance: compare whole-tile renderer, material, triangle and collider counts with Step 1 baseline. Aim to replace rather than increase density. No new per-frame housing allocations or scripts; preserve lighting cost.
+- Android frame pacing: verify on the same device/quality settings if available. No 60-FPS guarantee based on Editor or static counts.
+- Final deliverable: list new housing variants and replaced targets by city, show before/after visuals, and distinguish completed static checks from runtime or Android checks that could not run.
