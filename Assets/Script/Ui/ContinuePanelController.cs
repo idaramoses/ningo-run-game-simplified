@@ -35,6 +35,12 @@ public class ContinuePanelController : MonoBehaviour
     public TMPro.TMP_Text watchAdButtonText;
     public UnityEngine.UI.Button giveUpButton;
 
+    [Header("Countdown Ring (optional)")]
+    [Tooltip("Image that swaps sprite each second instead of a text number.")]
+    public UnityEngine.UI.Image countdownImage;
+    [Tooltip("Sprites ordered [5s,4s,3s,2s,1s,0s] - swapped as the countdown ticks.")]
+    public Sprite[] countdownSprites;
+
     [Header("Continue Settings")]
     [SerializeField] private int baseCost = 20;
     [SerializeField] private int baseGemCost = 2;
@@ -189,28 +195,28 @@ public class ContinuePanelController : MonoBehaviour
             titleText.text = "SAVE ME !!!";
 
         if (subtitleText != null)
-            subtitleText.text = "WOULD U LIKE TO KEEP RUNNING";
+            subtitleText.text = "Your adventure is not over yet.";
 
         if (continueButtonText != null)
-            continueButtonText.text = $"CONTINUE  X {currentCost}";
+            continueButtonText.text = $"{currentCost} COINS";
 
         if (continueButton != null)
         {
             bool canAfford = playerCoins >= currentCost;
             continueButton.interactable = canAfford;
             if (continueButtonText != null && !canAfford)
-                continueButtonText.text = "NOT ENOUGH COINS";
+                continueButtonText.text = "NO COINS";
         }
 
         if (gemButtonText != null)
-            gemButtonText.text = $"GEMS  X {currentGemCost}";
+            gemButtonText.text = $"{currentGemCost} GEMS";
 
         if (gemButton != null)
         {
             bool canAffordGems = playerGems >= currentGemCost;
             gemButton.interactable = canAffordGems;
             if (gemButtonText != null && !canAffordGems)
-                gemButtonText.text = "NOT ENOUGH GEMS";
+                gemButtonText.text = "NO GEMS";
         }
 
         if (watchAdButton != null)
@@ -241,11 +247,17 @@ public class ContinuePanelController : MonoBehaviour
 
     private IEnumerator CountdownCoroutine()
     {
+        int lastShown = -1;
         while (isCountingDown && countdownTimer > 0)
         {
-            if (countdownText != null)
+            int s = Mathf.CeilToInt(countdownTimer);
+            if (s != lastShown)
             {
-                countdownText.text = Mathf.CeilToInt(countdownTimer).ToString();
+                lastShown = s;
+                if (countdownText != null)
+                    countdownText.text = s.ToString();
+                if (countdownImage != null && countdownSprites != null && countdownSprites.Length >= 6)
+                    countdownImage.sprite = countdownSprites[Mathf.Clamp(5 - s, 0, 5)];
             }
 
             countdownTimer -= Time.unscaledDeltaTime; // Use unscaled time so it works even when game is paused

@@ -1,0 +1,1 @@
+Reconstructed UI assets from the revive screen. Empty buttons allow editable text in Unity. Some assets retain soft glow around edges. These are generative extractions, not original layered source files.
