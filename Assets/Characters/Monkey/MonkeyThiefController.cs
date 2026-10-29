@@ -277,12 +277,24 @@ public class MonkeyThiefController : MonoBehaviour
         return dir.normalized;
     }
 
+    private Renderer[] monkeyRenderers;
+    private bool monkeyVisibleState = false;
+    private bool monkeyRenderersCached = false;
+
     public void SetMonkeyVisibility(bool visible)
     {
-        var renderers = GetComponentsInChildren<Renderer>(true);
-        foreach (var r in renderers)
+        if (!monkeyRenderersCached || monkeyRenderers == null)
         {
-            if (r != null) r.enabled = visible;
+            monkeyRenderers = GetComponentsInChildren<Renderer>(true);
+            monkeyRenderersCached = true;
+        }
+
+        if (monkeyVisibleState == visible) return;
+        monkeyVisibleState = visible;
+
+        for (int i = 0; i < monkeyRenderers.Length; i++)
+        {
+            if (monkeyRenderers[i] != null) monkeyRenderers[i].enabled = visible;
         }
     }
 
@@ -292,7 +304,7 @@ public class MonkeyThiefController : MonoBehaviour
         if (targetPlayer == null) return;
 
         if (!gameObject.activeSelf) gameObject.SetActive(true);
-        SetMonkeyVisibility(true);
+        if (!monkeyVisibleState) SetMonkeyVisibility(true);
 
         currentState = ChaseState.Inactive;
         currentDistance = followDistance;

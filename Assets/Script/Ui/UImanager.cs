@@ -134,6 +134,7 @@ public class UImanager : MonoBehaviour
 
     private int lastLocalCoins = -1;
     private int lastHighScore = -1;
+    private int lastRunCoinsHudDisplay = -1;
     private bool isTransitioning = false;
     private float uiRefreshTimer = 0f;
     private const float UI_REFRESH_INTERVAL = 0.5f;
@@ -636,20 +637,26 @@ public class UImanager : MonoBehaviour
         // in case the same text object is wired to UImanager instead of GameHUDController.
         if (canvasHUD != null && canvasHUD.activeInHierarchy)
         {
-            string runCoinsStr = PlayerPrefs.GetInt("RunCoins", 0).ToString("N0");
-            if (coinText != null) coinText.text = runCoinsStr;
-            if (coinsText != null) coinsText.text = runCoinsStr;
-
-            // Fallback: update the first TMP_Text under Canvas_HUD whose name contains "coin"
-            if (coinText == null && coinsText == null)
+            int currentRunCoins = PlayerPrefs.GetInt("RunCoins", 0);
+            if (currentRunCoins != lastRunCoinsHudDisplay || (coinText == null && coinsText == null))
             {
-                TMP_Text[] texts = canvasHUD.GetComponentsInChildren<TMP_Text>(true);
-                foreach (TMP_Text t in texts)
+                lastRunCoinsHudDisplay = currentRunCoins;
+                string runCoinsStr = currentRunCoins.ToString("N0");
+                if (coinText != null) coinText.text = runCoinsStr;
+                if (coinsText != null) coinsText.text = runCoinsStr;
+
+                // Fallback: update and cache the first TMP_Text under Canvas_HUD whose name contains "coin"
+                if (coinText == null && coinsText == null)
                 {
-                    if (t.gameObject.name.ToLowerInvariant().Contains("coin"))
+                    TMP_Text[] texts = canvasHUD.GetComponentsInChildren<TMP_Text>(true);
+                    foreach (TMP_Text t in texts)
                     {
-                        t.text = runCoinsStr;
-                        break;
+                        if (t.gameObject.name.ToLowerInvariant().Contains("coin"))
+                        {
+                            coinText = t; // Cache the reference so this search only runs once!
+                            t.text = runCoinsStr;
+                            break;
+                        }
                     }
                 }
             }

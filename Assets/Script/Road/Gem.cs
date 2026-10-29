@@ -55,8 +55,15 @@ public class Gem : MonoBehaviour
         }
 
         // Refresh UI
-        GameHUDController hud = Object.FindAnyObjectByType<GameHUDController>();
-        if (hud != null) hud.ForceRefreshCoins();
+        if (GameHUDController.Instance != null)
+        {
+            GameHUDController.Instance.ForceRefreshCoins();
+        }
+        else
+        {
+            GameHUDController hud = Object.FindAnyObjectByType<GameHUDController>();
+            if (hud != null) hud.ForceRefreshCoins();
+        }
 
         TopPanelController top = Object.FindAnyObjectByType<TopPanelController>();
         if (top != null) top.UpdateUI();

@@ -81,3 +81,93 @@ With the **Police Quick-Time Threat & Lane Change Mechanic**:
 - Test Success path: Swipe to an adjacent lane within the countdown; verify police car falls back, bonus/dodge message triggers, and threat ends.
 - Test Failure path: Stay in the same lane until countdown expires; verify police car rams runner from behind, trigger fall animation, and game over screen appears.
 - Test Edge cases: Pause game, hit an obstacle before threat expires, return to menu, and verify timers and UI reset cleanly.
+
+---
+
+# Current Extension: Nigerian City Scenery
+This extension is the current requested work. The police-chase scope above is retained for history and is not to be reimplemented or changed by this scenery pass.
+
+# Project Overview
+- Game Title: Ningo Run.
+- High-Level Concept: Strengthen the identity of Lagos, Abuja, and Port Harcourt with reusable, hand-authored street scenery on the existing endless-runner tiles. Preserve word collection, readable obstacles, and smooth running.
+- Players: Single player.
+- Inspiration / Reference Games: Subway Surfers for readable, vibrant scenery; Nigerian city streets for architectural and cultural cues.
+- Tone / Art Direction: Stylized arcade 3D; reuse existing project assets and materials, with city-specific composition rather than photorealistic reconstruction.
+- Target Platform: Android (current project target); retain compatibility with existing other builds.
+- Screen Orientation / Resolution: Preserve existing settings; verify gameplay-camera framing at the project's actual phone aspect ratio before placement.
+- Render Pipeline: Built-in; no pipeline conversion.
+
+# Game Mechanics
+## Core Gameplay Loop
+Unchanged: run, change lanes, jump, slide, collect letters and pickups. Decoration supports the MDA aesthetic of a recognisable place without increasing mechanical difficulty or hiding threats.
+
+## Controls and Input Methods
+Preserve Legacy Input Manager and current controls. No controller or input-backend changes in this scope.
+
+# UI
+No new menus or HUD. Keep CityLocationPanel and CityHeaderImage using the existing CityManager selection.
+Gameplay layout:
+```
+[distant city silhouettes / landmarks]
+[shops + trees] [three clear running lanes] [shops + furniture]
+                       [runner]
+                  existing HUD overlay
+```
+Use readable baked sign surfaces on props where practical; avoid introducing a canvas per sign. No extra crowd animation or new interactive obstacles.
+
+# Key Asset & Context
+## Verified architecture
+- Assets/Script/City/CityManager.cs: CityDefinition contains cityName, starterRoadGroup, roadTiles, plaqueSprite, headerSprite. ApplyCity activates the selected starter group and calls RoadSpawner.ReplaceActiveTiles; CityChanged notifies UI.
+- Home.unity contains three configured entries: Lagos, Abuja, PortHarcourt. Preserve the internal PortHarcourt identifier and saved selection key.
+- RoadSpawner already instantiates city-specific road tiles and applies CurvedWorldManager to them. Decorations should be nested prefab content, not a second runtime spawner.
+- StarterRoads has Lagos, Abuja, PortHarcourt groups with existing markets, monuments, housing, trees and roadside characters. Enhance gaps rather than duplicate everything.
+- Current configured tiles already contain 121–254 renderers and 108–226 colliders each. More detail must use a conservative budget; these counts are not measured runtime bottlenecks.
+
+## Assets to create or modify
+- Create reusable scenery-group prefabs under Assets/Prefab/CityScenery/Lagos/, Abuja/, PortHarcourt/, and Shared/.
+- Create only necessary shared materials or baked sign textures under Assets/Art/CityScenery/. Prefer existing assets; any missing landmark can be a simple low-poly city-inspired silhouette, not a claim of exact reproduction.
+- Modify the four configured tiles in each directory: Assets/Prefab/Road/Lagos/ (Road1, Road2, Road3, Road junction), Assets/Prefab/Road/Abuja/ (Abuja Road1, Abuja Road2, Abuja Road3, Abuja Road3 junction), Assets/Prefab/Road/PH/ (PH Road 1, PH Road 2, PH Road 3, PH Road junction).
+- Modify Assets/Scene/Home.unity only for matching starter-group decoration, retaining existing city links.
+- No CityManager or RoadSpawner code changes expected; make no unrelated police, UI or movement changes.
+- Reuse candidates: Lagos POS shop, corn/food stalls, kiosks, billboard, National Arts Theatre and stadium; Abuja city gate, modern homes, planters, suya stand and rock assets; Port Harcourt kiosks, houses, gas station and palms.
+
+## City-specific visual proposals
+- Lagos: lively but orderly market clusters, local storefront/transport signs, yellow transport-related colour accents, rooftop water tanks, and occasional theatre/stadium or lagoon-inspired background compositions.
+- Abuja: planned boulevard character, spaced modern facades, maintained planters, bus-stop furniture, city-gate framing, and an Aso Rock-inspired distant silhouette using suitable existing rocks.
+- Port Harcourt: leafy residential-commercial streets mixed with occasional port-inspired containers, warehouse silhouettes and waterfront accents; retain shops and homes so the city is not reduced to industry alone.
+- Target approximately three modular cluster types per city: storefront/market, landmark/background, and street-furniture/greenery. Rotate their placement across the four tiles instead of placing a landmark on every tile.
+
+# Implementation Steps
+1. Audit asset geometry, materials, tile bounds, camera framing and starter placement.
+   - Files: the 12 configured road prefabs, Home.unity, selected source scenery assets.
+   - Run dependency/dependent impact checks before every asset edit; avoid editing unrelated Lagoss legacy prefabs or recovery scenes.
+   - Record baseline renderer/material/triangle counts and Android frame timings in representative runs. Previous lag claims without a valid capture are not a baseline.
+   - Dependencies: approved extension.
+2. Author one small demonstration scenery cluster for each city using existing assets and low-poly additions only where needed.
+   - Files: new CityScenery prefab folders and any required owned shared materials/sign surfaces.
+   - Remove decorative colliders from new groups, not from existing gameplay geometry. Strip unnecessary movement, pickup and animation components from decorative copies.
+   - Use shared materials, economical mesh counts, no new realtime lights, no reflection probes and no per-frame scenery scripts.
+   - Initial budget: at most about 12 additional renderers per ordinary tile and 20 per occasional landmark tile; revise downward if profiling requires it.
+   - Dependencies: Step 1.
+3. Place and visually review the three demonstration clusters before broad rollout.
+   - Keep full decoration bounds outside the runner, jump, slide and pickup envelope, with additional buffer verified in gameplay view.
+   - Check contrast, scale, local signage and street composition; prefer existing cultural cues rather than generic clutter.
+   - Dependencies: Step 2.
+4. Roll the approved visual direction across all 12 configured road prefabs and the three Home starter groups.
+   - Keep additions under a clearly named CityScenery child; avoid duplicates between starter groups and tiles.
+   - Preserve road lengths, seams, obstacle tags, spawn positions and all CityManager references.
+   - Keep landmark silhouettes back from the track, vary sides and spacing, and preserve CurvedWorld shader behaviour and culling bounds.
+   - Dependencies: Step 3.
+5. Validate selection, endless spawning, restart and performance; reduce scenery if necessary.
+   - Files: affected scenery prefabs/materials only unless a directly attributable integration issue is discovered.
+   - Do not run global quality optimizers, clone materials per renderer, or change package source.
+   - Dependencies: Step 4.
+
+# Verification & Testing
+- Edit Mode: all three city entries retain their names, sprites, starter groups and four tile references; no missing scripts/materials and no duplicate decorative groups.
+- Visual: inspect gameplay views for Lagos, Abuja and Port Harcourt at the actual target aspect ratio, including home intro, ordinary tile and junction. Verify distinct identities, readable signs, grounded props, unobstructed lanes and no magenta shaders.
+- Play Mode: select each city, start running, cross multiple tile seams, collect letters, jump/slide, activate magnet/glider, fail/restart, switch city and reload saved selection. Decorative objects must not collide, collect, move unexpectedly, or leak across cities.
+- Curvature: far scenery bends consistently with roads and does not disappear prematurely because shader displacement exceeds renderer bounds.
+- Android: compare baseline and updated captures on the same device, same city/quality settings and similar run duration, including tile-spawn frames. Target 60 FPS where hardware permits; do not claim it from Editor inspection alone.
+- Acceptance: no new steady-state managed allocations from scenery logic, no added realtime lights, bounded geometry/material growth, and no repeatable frame-time regression beyond measurement noise. If the existing build already misses budget, report it and trim scenery rather than promise smoothness.
+- Final report: list new groups and edited tiles, show each city’s visual result, and distinguish tested Android performance from any unverified target.

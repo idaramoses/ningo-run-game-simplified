@@ -84,6 +84,7 @@ public class SimplePlayerController : MonoBehaviour
 
     private Animator animator;
     private Collider[] overlapResults;
+    private Collider[] magnetHits = new Collider[32];
     private int currentLane = 1; // 0 = Left, 1 = Center, 2 = Right
     private float startX = 0f;
     private float targetX = 0f;
@@ -559,10 +560,11 @@ public class SimplePlayerController : MonoBehaviour
             }
             else
             {
-                // Find all nearby coins and attract them towards player
-                Collider[] magnetHits = Physics.OverlapSphere(transform.position + Vector3.up * 0.8f, magnetRadius);
-                for (int i = 0; i < magnetHits.Length; i++)
+                // Find all nearby coins and attract them towards player without GC allocation
+                int magnetCount = Physics.OverlapSphereNonAlloc(transform.position + Vector3.up * 0.8f, magnetRadius, magnetHits);
+                for (int i = 0; i < magnetCount; i++)
                 {
+                    if (magnetHits[i] == null) continue;
                     Coin nearbyCoin = magnetHits[i].GetComponentInParent<Coin>();
                     if (nearbyCoin != null)
                     {
@@ -998,31 +1000,28 @@ public class SimplePlayerController : MonoBehaviour
     {
         if (col == null) return false;
 
-        // Direct tag match
-        if (col.CompareTag("Obstacle") || col.tag == "Obstacle") return true;
+        // Direct tag match (zero GC allocation)
+        if (col.CompareTag("Obstacle")) return true;
 
-        // Parent hierarchy tag match
+        // Parent hierarchy tag match (zero GC allocation)
         if (HasTagInHierarchy(col.transform, "Obstacle")) return true;
 
         // Root transform tag match
         Transform root = col.transform.root;
-        if (root != null && (root.CompareTag("Obstacle") || root.tag == "Obstacle")) return true;
+        if (root != null && root.CompareTag("Obstacle")) return true;
 
         // Moving vehicles (BRT, Danfo, Keke, Train, etc.) are always obstacles
-        if (col.GetComponentInParent<VehicleMover>() != null || col.GetComponentInChildren<VehicleMover>() != null) return true;
-        if (col.GetComponentInParent<TrainMover>() != null || col.GetComponentInChildren<TrainMover>() != null) return true;
+        if (col.GetComponentInParent<VehicleMover>() != null) return true;
+        if (col.GetComponentInParent<TrainMover>() != null) return true;
 
         return false;
     }
 
     private bool HasTagInHierarchy(Transform t, string tag)
     {
-        // Use a plain string comparison instead of CompareTag(): CompareTag() throws a
-        // UnityException if the tag isn't registered in the project's Tag Manager at all,
-        // whereas comparing the strings directly just safely returns false in that case.
         while (t != null)
         {
-            if (t.tag == tag) return true;
+            if (t.CompareTag(tag)) return true;
             t = t.parent;
         }
         return false;

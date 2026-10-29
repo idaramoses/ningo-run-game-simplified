@@ -73,10 +73,9 @@ public class CurvedWorldManager : MonoBehaviour
         // Continuously find/track the actual active running character
         if (referenceOrigin == null || referenceOrigin.name == "Player")
         {
-            var controller = FindFirstObjectByType<SimplePlayerController>();
-            if (controller != null)
+            if (SimplePlayerController.Instance != null)
             {
-                referenceOrigin = controller.transform;
+                referenceOrigin = SimplePlayerController.Instance.transform;
             }
             else if (RunnerManager.Instance != null && RunnerManager.Instance.GetCurrentRunnerInstance() != null)
             {
@@ -84,15 +83,23 @@ public class CurvedWorldManager : MonoBehaviour
             }
             else
             {
-                var playerObj = GameObject.Find("Player");
-                if (playerObj != null)
+                var controller = Object.FindAnyObjectByType<SimplePlayerController>();
+                if (controller != null)
                 {
-                    var anim = playerObj.GetComponentInChildren<Animator>();
-                    referenceOrigin = anim != null ? anim.transform : playerObj.transform;
+                    referenceOrigin = controller.transform;
                 }
-                else if (Camera.main != null)
+                else
                 {
-                    referenceOrigin = Camera.main.transform;
+                    var playerObj = GameObject.Find("Player");
+                    if (playerObj != null)
+                    {
+                        var anim = playerObj.GetComponentInChildren<Animator>();
+                        referenceOrigin = anim != null ? anim.transform : playerObj.transform;
+                    }
+                    else if (Camera.main != null)
+                    {
+                        referenceOrigin = Camera.main.transform;
+                    }
                 }
             }
         }

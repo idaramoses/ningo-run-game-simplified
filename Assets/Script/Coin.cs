@@ -86,8 +86,15 @@ public class Coin : MonoBehaviour
         MissionsController.ProgressMission(MissionData.MissionType.CollectCoins, 1);
 
         // Force UI refresh so the HUD updates immediately
-        GameHUDController hud = Object.FindFirstObjectByType<GameHUDController>();
-        if (hud != null) hud.ForceRefreshCoins();
+        if (GameHUDController.Instance != null)
+        {
+            GameHUDController.Instance.ForceRefreshCoins();
+        }
+        else
+        {
+            GameHUDController hud = Object.FindAnyObjectByType<GameHUDController>();
+            if (hud != null) hud.ForceRefreshCoins();
+        }
         if (autoscale.atsc != null) autoscale.atsc.toscale();
         
         if (ObjectPoolManager.Instance != null)

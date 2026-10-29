@@ -94,6 +94,8 @@ public class RoadSpawner : MonoBehaviour
     float nextSpawnZ;
     int lightGateFrames;
     Queue<GameObject> activeRoads = new Queue<GameObject>();
+    private bool pickupHeightsDirty = true;
+    private bool wasGliding = false;
 
     /// <summary>
     /// Swap the road tiles used for future spawns (called by CityManager when
@@ -375,46 +377,32 @@ public class RoadSpawner : MonoBehaviour
     void SpawnCoin(Vector3 position, Transform parent)
     {
         GameObject coin = Instantiate(coinPrefab, position, Quaternion.identity, parent);
-        coin.name = "Coin"; // keep name clean for object-pool lookup
-        coin.tag = "Coin";
+        coin.name = "Coin";
+        if (!coin.CompareTag("Coin")) coin.tag = "Coin";
 
-        // Make every collider a trigger so the player can run through the coin.
-        Collider[] allColliders = coin.GetComponentsInChildren<Collider>();
-        if (allColliders.Length == 0)
-        {
-            allColliders = new Collider[] { coin.AddComponent<SphereCollider>() };
-        }
-        foreach (Collider c in allColliders)
-        {
-            if (c != null) c.isTrigger = true;
-        }
-
-        // Ensure the coin has the pickup script on a GameObject with a trigger collider.
         Coin coinPickup = coin.GetComponent<Coin>();
-        if (coinPickup == null) coinPickup = coin.GetComponentInChildren<Coin>();
-        if (coinPickup == null)
-        {
-            coinPickup = coin.AddComponent<Coin>();
-            if (coin.GetComponent<Collider>() == null)
-            {
-                SphereCollider sc = coin.AddComponent<SphereCollider>();
-                sc.isTrigger = true;
-            }
-        }
-        else
-        {
-            Collider coinCol = coinPickup.GetComponent<Collider>();
-            if (coinCol == null) coinCol = coinPickup.gameObject.AddComponent<SphereCollider>();
-            coinCol.isTrigger = true;
-            coinPickup.gameObject.tag = "Coin";
-        }
+        if (coinPickup == null) coinPickup = coin.AddComponent<Coin>();
+
+        Collider col = coin.GetComponent<Collider>();
+        if (col == null) col = coin.AddComponent<SphereCollider>();
+        col.isTrigger = true;
     }
 
     void UpdatePickupHeights()
     {
         bool isGliding = SimplePlayerController.Instance != null && SimplePlayerController.Instance.IsGliding;
+        if (isGliding != wasGliding)
+        {
+            wasGliding = isGliding;
+            pickupHeightsDirty = true;
+        }
+
+        // Fast path: if not gliding and heights have already settled, do zero work
+        if (!pickupHeightsDirty && !isGliding) return;
+
         float targetCoinY = isGliding ? skyPickupAltitude : coinYOffset;
         float targetGemY = isGliding ? skyPickupAltitude : gemYOffset;
+        bool anyMoving = false;
 
         foreach (var road in activeRoads)
         {
@@ -428,6 +416,7 @@ public class RoadSpawner : MonoBehaviour
                 Vector3 p = coins[i].transform.position;
                 if (Mathf.Abs(p.y - targetCoinY) > 0.05f)
                 {
+                    anyMoving = true;
                     p.y = Mathf.MoveTowards(p.y, targetCoinY, 14f * Time.deltaTime);
                     coins[i].transform.position = p;
                 }
@@ -440,10 +429,16 @@ public class RoadSpawner : MonoBehaviour
                 Vector3 p = gems[i].transform.position;
                 if (Mathf.Abs(p.y - targetGemY) > 0.05f)
                 {
+                    anyMoving = true;
                     p.y = Mathf.MoveTowards(p.y, targetGemY, 14f * Time.deltaTime);
                     gems[i].transform.position = p;
                 }
             }
+        }
+
+        if (!anyMoving && !isGliding)
+        {
+            pickupHeightsDirty = false;
         }
     }
 

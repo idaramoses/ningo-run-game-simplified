@@ -20,8 +20,20 @@ public class GameHUDController : MonoBehaviour
     [Header("Formatting")]
     public string distanceSuffix = "m";
 
+    public static GameHUDController Instance { get; private set; }
+
     private int lastCoins = -1;
     private int lastDistance = -1;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
+    }
 
     private void Start()
     {
