@@ -273,6 +273,12 @@ public class SimplePlayerController : MonoBehaviour
 
         PlayState("glider");
         MakeInvulnerable(gliderTimer + 2f);
+
+        // Airborne - the monkey thief can't reach us; call off the chase
+        if (MonkeyThiefController.Instance != null)
+        {
+            MonkeyThiefController.Instance.ResetChase();
+        }
     }
 
     public int LaneChangeCount

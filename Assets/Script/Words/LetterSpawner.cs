@@ -386,10 +386,10 @@ public class LetterSpawner : MonoBehaviour
         else if (letterPrefab != null)
         {
             // Direct fallback: spawn the letter pickup at the world position.
+            // Letters always stay at ground height - while gliding the player is
+            // airborne and must not collect (or fail on) letters; only coins float.
             float laneX = (laneIndex - 1) * laneDistance;
-            bool isGliding = SimplePlayerController.Instance != null && SimplePlayerController.Instance.IsGliding;
-            float yPos = isGliding ? skyLetterHeight : spawnHeightOffset;
-            Vector3 pos = new Vector3(laneX, yPos, worldZ);
+            Vector3 pos = new Vector3(laneX, spawnHeightOffset, worldZ);
             GameObject obj = Instantiate(letterPrefab, pos, Quaternion.identity, lettersParent);
 
             var visual = obj.GetComponent<LetterVisual>();
