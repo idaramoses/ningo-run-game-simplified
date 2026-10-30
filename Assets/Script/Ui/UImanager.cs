@@ -2382,11 +2382,13 @@ public class UImanager : MonoBehaviour
             SimplePlayerController.Instance.ReviveAfterContinue();
         }
 
-        if (GameStateController.Instance != null)
-            GameStateController.Instance.SetPlaying(true);
-
         if (BackgroundMusicManager.Instance != null)
             BackgroundMusicManager.Instance.PlayGameplayMusic();
+
+        // 3-2-1-GO countdown before running resumes (game stays frozen meanwhile).
+        // The revive invulnerability only ticks down once time starts again.
+        Time.timeScale = 0f;
+        StartCoroutine(CountdownAndResume());
     }
 
     /// <summary>
