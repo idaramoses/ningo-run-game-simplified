@@ -74,8 +74,17 @@ public class SimplePlayerController : MonoBehaviour
     [Header("Coin Magnet")]
     public float magnetDuration = 10f;
     public float magnetRadius = 16f;
+    [Tooltip("Magnet model shown in the runner's right hand while the powerup is active (Subway Surfers style).")]
+    public GameObject magnetPrefab;
+    public Vector3 magnetAttachOffset = new Vector3(0f, 0.05f, 0f);
+    public Vector3 magnetAttachRotation = new Vector3(0f, 0f, 90f);
+    public Vector3 magnetAttachScale = new Vector3(0.15f, 0.15f, 0.15f);
+    [Tooltip("Raises the right arm while the magnet is active so it reads as held up in the air.")]
+    public float magnetArmRaiseAngle = 105f;
     private bool isMagnetActive = false;
     private float magnetTimer = 0f;
+    private GameObject activeMagnetInstance;
+    private Transform rightUpperArmBone;
 
     private bool isGliding = false;
     private float gliderTimer = 0f;
@@ -147,6 +156,61 @@ public class SimplePlayerController : MonoBehaviour
     {
         isMagnetActive = true;
         magnetTimer = duration > 0f ? duration : magnetDuration;
+        rightUpperArmBone = animator != null && animator.avatar.isHuman
+            ? animator.GetBoneTransform(HumanBodyBones.RightUpperArm)
+            : null;
+        ShowMagnetInHand();
+    }
+
+    private void LateUpdate()
+    {
+        // Lift the right arm after the Animator runs so the magnet looks held up
+        if (isMagnetActive && rightUpperArmBone != null)
+        {
+            rightUpperArmBone.localRotation *= Quaternion.Euler(0f, 0f, magnetArmRaiseAngle);
+        }
+    }
+
+    /// <summary>
+    /// Attaches the magnet model to the runner's right hand bone so it appears
+    /// held up while the magnet powerup is active (Subway Surfers style).
+    /// </summary>
+    private void ShowMagnetInHand()
+    {
+        HideMagnetInHand();
+        if (magnetPrefab == null || animator == null || !animator.avatar.isHuman) return;
+
+        Transform hand = animator.GetBoneTransform(HumanBodyBones.RightHand);
+        if (hand == null) return;
+
+        activeMagnetInstance = Instantiate(magnetPrefab, hand);
+        // Place the magnet just past the fingers along the forearm->hand direction
+        Transform forearm = animator.GetBoneTransform(HumanBodyBones.RightLowerArm);
+        Vector3 dir = forearm != null
+            ? (hand.position - forearm.position).normalized
+            : hand.forward;
+        activeMagnetInstance.transform.position = hand.position + dir * 0.07f + magnetAttachOffset;
+        activeMagnetInstance.transform.localRotation = Quaternion.Euler(magnetAttachRotation);
+        activeMagnetInstance.transform.localScale = magnetAttachScale;
+
+        // Strip pickup behaviour/collider so the held magnet is purely visual
+        foreach (var mono in activeMagnetInstance.GetComponentsInChildren<MonoBehaviour>(true))
+        {
+            Destroy(mono);
+        }
+        foreach (var col in activeMagnetInstance.GetComponentsInChildren<Collider>(true))
+        {
+            Destroy(col);
+        }
+    }
+
+    private void HideMagnetInHand()
+    {
+        if (activeMagnetInstance != null)
+        {
+            Destroy(activeMagnetInstance);
+            activeMagnetInstance = null;
+        }
     }
 
     public float SkateTimer => skateTimer;
@@ -563,6 +627,7 @@ public class SimplePlayerController : MonoBehaviour
             {
                 isMagnetActive = false;
                 magnetTimer = 0f;
+                HideMagnetInHand();
             }
             else
             {
