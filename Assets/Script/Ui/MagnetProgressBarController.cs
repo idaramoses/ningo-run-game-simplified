@@ -3,13 +3,18 @@ using UnityEngine.UI;
 using TMPro;
 
 /// <summary>
-/// Controller for the Magnet progress bar, indicating how many seconds are left.
+/// Controller for powerup progress bars, indicating how many seconds are left.
 /// Located at the bottom right of the GameHUD Canvas.
-/// Shows a segmented horizontal progress bar matching the reference image.
-/// Note: Magnet tracking requires re-wiring to the active player script.
+/// Shows a segmented horizontal progress bar.
+/// Works for Coin Magnet, Hang Glider and Skateboard - pick the type in the Inspector.
 /// </summary>
 public class MagnetProgressBarController : MonoBehaviour
 {
+    public enum PowerupType { Magnet, Glider, Skateboard }
+
+    [Header("Powerup")]
+    [SerializeField] private PowerupType powerupType = PowerupType.Magnet;
+
     [Header("UI References")]
     [SerializeField] private GameObject container;
     [SerializeField] private TMP_Text timerText;
@@ -33,20 +38,46 @@ public class MagnetProgressBarController : MonoBehaviour
     private void Update()
     {
         var player = SimplePlayerController.Instance;
-        if (player != null && player.IsMagnetActive && player.MagnetTimer > 0f)
+
+        bool active = false;
+        float timer = 0f;
+        float duration = 10f;
+
+        if (player != null)
+        {
+            switch (powerupType)
+            {
+                case PowerupType.Magnet:
+                    active = player.IsMagnetActive;
+                    timer = player.MagnetTimer;
+                    duration = player.magnetDuration > 0f ? player.magnetDuration : 10f;
+                    break;
+                case PowerupType.Glider:
+                    active = player.IsGliding;
+                    timer = player.GliderTimer;
+                    duration = player.gliderDuration > 0f ? player.gliderDuration : 10f;
+                    break;
+                case PowerupType.Skateboard:
+                    active = player.IsSkating;
+                    timer = player.SkateTimer;
+                    duration = player.skateboardDuration > 0f ? player.skateboardDuration : 10f;
+                    break;
+            }
+        }
+
+        if (active && timer > 0f)
         {
             if (container != null && !container.activeSelf)
             {
                 container.SetActive(true);
             }
 
-            float duration = player.magnetDuration > 0f ? player.magnetDuration : 10f;
-            float progress = Mathf.Clamp01(player.MagnetTimer / duration);
+            float progress = Mathf.Clamp01(timer / duration);
             UpdateSegments(progress);
 
             if (timerText != null)
             {
-                timerText.text = Mathf.CeilToInt(player.MagnetTimer).ToString() + "s";
+                timerText.text = Mathf.CeilToInt(timer).ToString() + "s";
             }
         }
         else
