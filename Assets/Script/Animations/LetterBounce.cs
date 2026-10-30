@@ -29,13 +29,8 @@ public class LetterBounce : MonoBehaviour
     
     private void Update()
     {
-        bool isGliding = SimplePlayerController.Instance != null && SimplePlayerController.Instance.IsGliding;
-        float targetY = isGliding ? 7.5f : 0.2f;
-        if (Mathf.Abs(startPosition.y - targetY) > 0.02f)
-        {
-            startPosition.y = Mathf.MoveTowards(startPosition.y, targetY, 14f * Time.deltaTime);
-        }
-
+        // Letters stay at ground height even while the player is gliding —
+        // only coins/gems float up to sky altitude.
         float yOffset = Mathf.Sin((Time.time * bounceSpeed) + timeOffset) * bounceHeight;
         transform.position = new Vector3(transform.position.x, startPosition.y + yOffset, transform.position.z);
     }
