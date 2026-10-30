@@ -2338,6 +2338,8 @@ public class UImanager : MonoBehaviour
             continuePanel = controller.gameObject;
         }
         continuePanel.SetActive(true);
+        var canvasAnimator = continuePanel.GetComponent<CanvasAnimator>();
+        if (canvasAnimator != null) canvasAnimator.Show();
         controller.Show(
             onContinueCallback: OnContinueAfterFail,
             onGiveUpCallback: OnGiveUpAfterFail
