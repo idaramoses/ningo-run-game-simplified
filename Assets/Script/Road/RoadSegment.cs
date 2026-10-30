@@ -539,8 +539,9 @@ public class RoadSegment : MonoBehaviour
             }
         }
 
-        // Spawn magnet powerup
-        if (magnetPrefab != null && Random.value < magnetSpawnChance)
+        // Spawn magnet powerup - skip while a magnet is already active
+        bool magnetActive = SimplePlayerController.Instance != null && SimplePlayerController.Instance.IsMagnetActive;
+        if (magnetPrefab != null && !magnetActive && Random.value < magnetSpawnChance)
         {
             float magnetStartZ, magnetEndZ;
             GetSpawnZRange(out magnetStartZ, out magnetEndZ);

@@ -482,8 +482,9 @@ public class RoadSpawner : MonoBehaviour
             SpawnPickup(gliderPrefab, pos, road.transform);
         }
 
-        // 4. Magnet pickup spawn
-        if (magnetPrefab != null && Random.value < magnetSpawnChance)
+        // 4. Magnet pickup spawn - skip while a magnet is already active
+        bool magnetActive = SimplePlayerController.Instance != null && SimplePlayerController.Instance.IsMagnetActive;
+        if (magnetPrefab != null && !magnetActive && Random.value < magnetSpawnChance)
         {
             int lane = Random.Range(0, coinLanes.Length);
             float laneX = coinLanes[lane];
