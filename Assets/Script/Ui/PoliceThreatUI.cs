@@ -20,6 +20,8 @@ public class PoliceThreatUI : MonoBehaviour
     [Header("UI Elements")]
     public GameObject container;
     public Image countdownBar;
+    [Tooltip("Optional: segmented bar like the powerup indicators. If set, replaces fillAmount bar.")]
+    public Transform segmentsParent;
     public Image countdownFillGlow;
     public TMP_Text warningTitleText;
     public TMP_Text countdownTimerText;
@@ -37,6 +39,7 @@ public class PoliceThreatUI : MonoBehaviour
     private int currentDodgeIdx = 1;
     private int totalDodgesCount = 3;
     private bool isRetargeting = false;
+    private Image[] segmentImages;
 
     private void Awake()
     {
@@ -51,6 +54,9 @@ public class PoliceThreatUI : MonoBehaviour
             container.SetActive(false);
         if (screenEdgeVignette != null)
             screenEdgeVignette.gameObject.SetActive(false);
+
+        if (segmentsParent != null)
+            segmentImages = segmentsParent.GetComponentsInChildren<Image>(true);
     }
 
     public void ShowThreat(float duration, int currentLane, int dodgeIndex, int totalDodges)
@@ -125,9 +131,24 @@ public class PoliceThreatUI : MonoBehaviour
     {
         if (isRetargeting) return;
 
-        if (countdownBar != null)
+        normalizedTime = Mathf.Clamp01(normalizedTime);
+
+        if (segmentImages != null && segmentImages.Length > 0)
         {
-            countdownBar.fillAmount = Mathf.Clamp01(normalizedTime);
+            // Segmented bar (same style as powerup indicators), red when urgent
+            int lit = Mathf.CeilToInt(normalizedTime * segmentImages.Length);
+            Color litColor = (normalizedTime < 0.35f) ? urgentColor : normalRedColor;
+            for (int i = 0; i < segmentImages.Length; i++)
+            {
+                if (segmentImages[i] == null) continue;
+                Color c = segmentImages[i].color;
+                c.a = i < lit ? 1f : 0.2f;
+                segmentImages[i].color = i < lit ? new Color(litColor.r, litColor.g, litColor.b, 1f) : new Color(1f, 1f, 1f, 0.2f);
+            }
+        }
+        else if (countdownBar != null)
+        {
+            countdownBar.fillAmount = normalizedTime;
             countdownBar.color = (normalizedTime < 0.35f) ? urgentColor : normalRedColor;
         }
 
