@@ -268,21 +268,8 @@ public class DailyGiftController : MonoBehaviour
     {
         if (card.backgroundImage == null) return;
 
-        if (isToday)
-        {
-            // Highlight today's card (pink/magenta tint)
-            card.backgroundImage.color = new Color(1f, 0.4f, 0.7f, 1f);
-        }
-        else if (isClaimed)
-        {
-            // Claimed cards (cyan/blue tint)
-            card.backgroundImage.color = new Color(0.4f, 0.8f, 1f, 1f);
-        }
-        else
-        {
-            // Future / Missed cards (normal blue)
-            card.backgroundImage.color = new Color(0.3f, 0.6f, 1f, 1f);
-        }
+        // Keep the card sprite at full color - no tint overlay
+        card.backgroundImage.color = Color.white;
     }
 
     private void UpdateClaimButton()
