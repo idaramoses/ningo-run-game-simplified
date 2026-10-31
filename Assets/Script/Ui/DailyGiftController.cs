@@ -28,11 +28,6 @@ public class DailyGiftController : MonoBehaviour
     [Header("Reward Settings")]
     [SerializeField] private int[] dailyRewards = { 50, 100, 150, 100, 150, 300, 500 };
 
-    [Header("Card Sprites (new UI - sprite swap instead of tint when set)")]
-    [SerializeField] private Sprite cardNormalSprite;
-    [SerializeField] private Sprite cardTodaySprite;
-    [SerializeField] private Sprite cardClaimedSprite;
-
     private bool hasClaimedToday = false;
     private DateTime lastClaimDate;
 
@@ -272,16 +267,6 @@ public class DailyGiftController : MonoBehaviour
     private void UpdateCardAppearance(DayCard card, bool isClaimed, bool isToday, bool isOther)
     {
         if (card.backgroundImage == null) return;
-
-        // New UI: swap the card sprite instead of tinting when sprites are assigned
-        if (cardNormalSprite != null)
-        {
-            card.backgroundImage.color = Color.white;
-            card.backgroundImage.sprite = isToday ? (cardTodaySprite != null ? cardTodaySprite : cardNormalSprite)
-                : isClaimed ? (cardClaimedSprite != null ? cardClaimedSprite : cardNormalSprite)
-                : cardNormalSprite;
-            return;
-        }
 
         if (isToday)
         {
