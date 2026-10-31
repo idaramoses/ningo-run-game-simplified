@@ -17,6 +17,9 @@ public class DailyGiftController : MonoBehaviour
     [SerializeField] private TMP_Text claimButtonText;
 
     [Header("Day Cards")]
+    [Tooltip("Reusable card prefab spawned per day, like MissionsController does with MissionCardItem.")]
+    [SerializeField] private GameObject dayCardPrefab;
+    [SerializeField] private Transform giftContent;
     [SerializeField] private DayCard[] dayCards = new DayCard[7];
 
     [Header("Reset Timer")]
@@ -44,6 +47,8 @@ public class DailyGiftController : MonoBehaviour
         public GameObject checkmark;
         public GameObject plusIcon;
         public RewardType rewardType;
+        [Tooltip("Icon sprite for this day's reward (coin, gem, chest, ...)")]
+        public Sprite rewardSprite;
         [Tooltip("If set, overrides the auto-generated reward label (e.g. \"3 Gems\")")]
         public string customRewardText;
         [Tooltip("If set, overrides the weekday/today label (e.g. \"DAY 1\")")]
@@ -140,8 +145,53 @@ public class DailyGiftController : MonoBehaviour
         SetupDayCards();
     }
 
+    private readonly System.Collections.Generic.List<GameObject> spawnedDayCards = new System.Collections.Generic.List<GameObject>();
+
+    /// <summary>
+    /// Spawns one card per day from the reusable prefab, the same pattern
+    /// MissionsController uses with MissionCardItem.
+    /// </summary>
+    private void SpawnDayCards()
+    {
+        if (dayCardPrefab == null || giftContent == null) return;
+
+        foreach (var go in spawnedDayCards)
+            if (go != null) Destroy(go);
+        spawnedDayCards.Clear();
+
+        int count = Mathf.Min(dayCards.Length, 7);
+        for (int i = 0; i < count; i++)
+        {
+            GameObject go = Instantiate(dayCardPrefab, giftContent);
+            go.name = $"Day{i + 1}";
+            spawnedDayCards.Add(go);
+
+            DayCard card = dayCards[i];
+            card.cardObject = go;
+            card.backgroundImage = go.GetComponent<Image>();
+            card.rewardImage = go.transform.Find("RewardIcon")?.GetComponent<Image>();
+            card.rewardText = go.transform.Find("AmountPill")?.GetComponentInChildren<TMP_Text>();
+            card.dayLabel = go.transform.Find("DayLabel")?.GetComponent<TMP_Text>();
+            var cm = go.transform.Find("Checkmark");
+            card.checkmark = cm != null ? cm.gameObject : null;
+
+            if (card.rewardImage != null && card.rewardSprite != null)
+                card.rewardImage.sprite = card.rewardSprite;
+
+            int index = i;
+            var btn = go.GetComponent<UnityEngine.UI.Button>();
+            if (btn != null)
+            {
+                btn.onClick.RemoveAllListeners();
+                btn.onClick.AddListener(() => OnDayCardPressed(index));
+            }
+        }
+    }
+
     private void SetupDayCards()
     {
+        SpawnDayCards();
+
         int todayIndex = (int)DateTime.Today.DayOfWeek;
         string[] weekDays = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
 
