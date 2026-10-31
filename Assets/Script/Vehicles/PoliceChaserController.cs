@@ -122,6 +122,10 @@ public class PoliceChaserController : MonoBehaviour
     public ChaseState CurrentState => currentState;
     public int CompletedDodges => completedDodges;
     public int TargetDodges => targetDodges;
+    public bool IsThreatActive => currentState == ChaseState.Threatening;
+    public float ThreatTimeRemaining => threatTimeRemaining;
+    public float ThreatProgress => threatReactionTime > 0f
+        ? Mathf.Clamp01(threatTimeRemaining / threatReactionTime) : 0f;
 
     private void Awake()
     {

@@ -10,7 +10,7 @@ using TMPro;
 /// </summary>
 public class MagnetProgressBarController : MonoBehaviour
 {
-    public enum PowerupType { Magnet, Glider, Skateboard }
+    public enum PowerupType { Magnet, Glider, Skateboard, MonkeyThreat }
 
     [Header("Powerup")]
     [SerializeField] private PowerupType powerupType = PowerupType.Magnet;
@@ -63,6 +63,14 @@ public class MagnetProgressBarController : MonoBehaviour
                     timer = player.SkateTimer;
                     duration = player.skateboardDuration > 0f ? player.skateboardDuration : 10f;
                     break;
+            }
+
+            if (powerupType == PowerupType.MonkeyThreat && PoliceChaserController.Instance != null)
+            {
+                active = PoliceChaserController.Instance.IsThreatActive;
+                timer = PoliceChaserController.Instance.ThreatTimeRemaining;
+                duration = PoliceChaserController.Instance.threatReactionTime > 0f
+                    ? PoliceChaserController.Instance.threatReactionTime : 3f;
             }
         }
 
