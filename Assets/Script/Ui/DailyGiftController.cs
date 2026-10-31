@@ -185,6 +185,12 @@ public class DailyGiftController : MonoBehaviour
                 btn.onClick.RemoveAllListeners();
                 btn.onClick.AddListener(() => OnDayCardPressed(index));
             }
+            var claimBtn = go.transform.Find("ClaimButton")?.GetComponent<UnityEngine.UI.Button>();
+            if (claimBtn != null)
+            {
+                claimBtn.onClick.RemoveAllListeners();
+                claimBtn.onClick.AddListener(() => OnDayCardPressed(index));
+            }
         }
     }
 
