@@ -21,6 +21,7 @@ public class MagnetProgressBarController : MonoBehaviour
     [SerializeField] private Transform segmentsParent;
 
     private UnityEngine.UI.Image[] segmentImages;
+    private int lastShownSeconds = -1;
 
     private void Start()
     {
@@ -77,7 +78,12 @@ public class MagnetProgressBarController : MonoBehaviour
 
             if (timerText != null)
             {
-                timerText.text = Mathf.CeilToInt(timer).ToString() + "s";
+                int secs = Mathf.CeilToInt(timer);
+                if (secs != lastShownSeconds)
+                {
+                    lastShownSeconds = secs;
+                    timerText.text = secs + "s";
+                }
             }
         }
         else
