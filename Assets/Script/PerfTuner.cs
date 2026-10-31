@@ -28,6 +28,14 @@ public static class PerfTuner
             QualitySettings.globalTextureMipmapLimit = 1; // halve texture memory/bandwidth
             QualitySettings.anisotropicFiltering = AnisotropicFiltering.Disable;
             Application.targetFrameRate = 30;
+            Time.fixedDeltaTime = 1f / 30f; // match physics rate to frame rate
+
+            // Render at 75% resolution - biggest single GPU win on fill-rate
+            // limited phones; the frame gets upscaled slightly softer
+            Screen.SetResolution(
+                Mathf.RoundToInt(Screen.width * 0.75f),
+                Mathf.RoundToInt(Screen.height * 0.75f),
+                Screen.fullScreen);
         }
         else if (lowEnd)
         {
@@ -39,6 +47,11 @@ public static class PerfTuner
             QualitySettings.lodBias = 0.7f;
             QualitySettings.anisotropicFiltering = AnisotropicFiltering.Disable;
             Application.targetFrameRate = 60;
+
+            Screen.SetResolution(
+                Mathf.RoundToInt(Screen.width * 0.85f),
+                Mathf.RoundToInt(Screen.height * 0.85f),
+                Screen.fullScreen);
         }
 
         if (lowEnd)
