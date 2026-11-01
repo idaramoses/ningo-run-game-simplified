@@ -511,6 +511,10 @@ public class SimplePlayerController : MonoBehaviour
     {
         isInRoadsideIdlePose = false;
         isFalling = false;
+        // Clear the held magnet so a fresh run never starts with it
+        isMagnetActive = false;
+        magnetTimer = 0f;
+        HideMagnetInHand();
         isMoving = true;
         initialZ = transform.position.z;
         maxDistanceTraveled = 0f;
@@ -1158,6 +1162,11 @@ public class SimplePlayerController : MonoBehaviour
         isSliding = false;
         isGrounded = true;
         verticalVelocity = 0f;
+
+        // Clear the held magnet - powerups don't survive a crash/revive
+        isMagnetActive = false;
+        magnetTimer = 0f;
+        HideMagnetInHand();
 
         Vector3 pos = transform.position;
         pos.y = 0f;
