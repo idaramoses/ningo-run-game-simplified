@@ -44,7 +44,26 @@ public class MagnetProgressBarController : MonoBehaviour
         float timer = 0f;
         float duration = 10f;
 
-        if (player != null)
+        if (powerupType == PowerupType.MonkeyThreat)
+        {
+            // Monkey chase - reads MonkeyThiefController (falls back to the
+            // police chaser variant in older scenes)
+            if (MonkeyThiefController.Instance != null)
+            {
+                active = MonkeyThiefController.Instance.IsThreatActive;
+                timer = MonkeyThiefController.Instance.ThreatTimeRemaining;
+                duration = MonkeyThiefController.Instance.threatReactionTime > 0f
+                    ? MonkeyThiefController.Instance.threatReactionTime : 3f;
+            }
+            else if (PoliceChaserController.Instance != null)
+            {
+                active = PoliceChaserController.Instance.IsThreatActive;
+                timer = PoliceChaserController.Instance.ThreatTimeRemaining;
+                duration = PoliceChaserController.Instance.threatReactionTime > 0f
+                    ? PoliceChaserController.Instance.threatReactionTime : 3f;
+            }
+        }
+        else if (player != null)
         {
             switch (powerupType)
             {
@@ -63,14 +82,6 @@ public class MagnetProgressBarController : MonoBehaviour
                     timer = player.SkateTimer;
                     duration = player.skateboardDuration > 0f ? player.skateboardDuration : 10f;
                     break;
-            }
-
-            if (powerupType == PowerupType.MonkeyThreat && MonkeyThiefController.Instance != null)
-            {
-                active = MonkeyThiefController.Instance.IsThreatActive;
-                timer = MonkeyThiefController.Instance.ThreatTimeRemaining;
-                duration = MonkeyThiefController.Instance.threatReactionTime > 0f
-                    ? MonkeyThiefController.Instance.threatReactionTime : 3f;
             }
         }
 

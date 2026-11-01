@@ -45,6 +45,7 @@ public class ToastManager : MonoBehaviour
     /// <summary>Show a toast for <paramref name="duration"/> seconds.</summary>
     public static void Show(string message, float duration = 2.5f)
     {
+        if (_instance == null) AutoBootstrap();
         if (_instance != null)
             _instance.StartCoroutine(_instance.ShowOverlay(message, duration));
         else
