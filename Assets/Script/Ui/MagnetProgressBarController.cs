@@ -65,12 +65,12 @@ public class MagnetProgressBarController : MonoBehaviour
                     break;
             }
 
-            if (powerupType == PowerupType.MonkeyThreat && PoliceChaserController.Instance != null)
+            if (powerupType == PowerupType.MonkeyThreat && MonkeyThiefController.Instance != null)
             {
-                active = PoliceChaserController.Instance.IsThreatActive;
-                timer = PoliceChaserController.Instance.ThreatTimeRemaining;
-                duration = PoliceChaserController.Instance.threatReactionTime > 0f
-                    ? PoliceChaserController.Instance.threatReactionTime : 3f;
+                active = MonkeyThiefController.Instance.IsThreatActive;
+                timer = MonkeyThiefController.Instance.ThreatTimeRemaining;
+                duration = MonkeyThiefController.Instance.threatReactionTime > 0f
+                    ? MonkeyThiefController.Instance.threatReactionTime : 3f;
             }
         }
 

@@ -30,6 +30,10 @@ public class MonkeyThiefController : MonoBehaviour
     [Header("State")]
     [SerializeField] private ChaseState currentState = ChaseState.Inactive;
     public ChaseState CurrentState => currentState;
+    public bool IsThreatActive => currentState == ChaseState.Threatening;
+    public float ThreatTimeRemaining => threatTimeRemaining;
+    public float ThreatProgress => threatReactionTime > 0f
+        ? Mathf.Clamp01(threatTimeRemaining / threatReactionTime) : 0f;
 
     [Header("Targeting & Distances")]
     public Transform targetPlayer;
@@ -413,6 +417,7 @@ public class MonkeyThiefController : MonoBehaviour
         currentState = ChaseState.Threatening;
         threatenedLane = playerController.CurrentLane;
         threatTimeRemaining = threatReactionTime; // 3.0 seconds
+        ToastManager.Show("CHANGE LANE!", threatReactionTime);
         targetDistance = surgeDistance;
 
         if (PoliceThreatUI.Instance != null)
