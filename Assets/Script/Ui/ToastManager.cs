@@ -94,80 +94,32 @@ public class ToastManager : MonoBehaviour
             }
         }
 
-        if (messageBackground != null && messageText != null)
+        if (messageBackground == null || messageText == null)
         {
-            messageBackground.color = messageBackgroundColor;
-            messageText.text = message;
-            messageBackground.gameObject.SetActive(true);
-
-            if (messageCanvasGroup != null)
-                messageCanvasGroup.alpha = 1f;
-
-            yield return new WaitForSecondsRealtime(Mathf.Max(0f, duration - 0.4f));
-
-            if (messageCanvasGroup != null)
-            {
-                float fadeTime = 0f;
-                while (fadeTime < 0.4f)
-                {
-                    fadeTime += Time.unscaledDeltaTime;
-                    messageCanvasGroup.alpha = 1f - (fadeTime / 0.4f);
-                    yield return null;
-                }
-            }
-
-            messageBackground.gameObject.SetActive(false);
+            Debug.LogWarning($"[ToastManager] No ToastUI_Background found - skipping toast: {message}");
             yield break;
         }
 
-        // Build a simple full-screen-safe overlay canvas
-        var canvasGo = new GameObject("Toast_Canvas");
-        var canvas = canvasGo.AddComponent<Canvas>();
-        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvas.sortingOrder = 9999;
-        canvasGo.AddComponent<CanvasScaler>().uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        canvasGo.AddComponent<GraphicRaycaster>();
+        messageBackground.color = messageBackgroundColor;
+        messageText.text = message;
+        messageBackground.gameObject.SetActive(true);
 
-        // Background button
-        var bgGo = new GameObject("ToastUI_Background");
-        bgGo.transform.SetParent(canvas.transform, false);
-        var bg = bgGo.AddComponent<Image>();
-        bg.color = messageBackgroundColor;
-        var button = bgGo.AddComponent<Button>();
-        button.targetGraphic = bg;
-        var rect = bgGo.GetComponent<RectTransform>();
-        rect.anchorMin = new Vector2(0f, 0f);
-        rect.anchorMax = new Vector2(1f, 0f);
-        rect.pivot = new Vector2(0.5f, 0f);
-        rect.offsetMin = new Vector2(24f, 72f);
-        rect.offsetMax = new Vector2(-24f, 124f);
+        if (messageCanvasGroup != null)
+            messageCanvasGroup.alpha = 1f;
 
-        // Button text
-        var labelGo = new GameObject("ToastUI_Text");
-        labelGo.transform.SetParent(bgGo.transform, false);
-        var label = labelGo.AddComponent<TextMeshProUGUI>();
-        label.text = message;
-        label.fontSize = 32;
-        label.alignment = TextAlignmentOptions.Center;
-        label.color = Color.white;
-        label.GetComponent<RectTransform>().anchorMin = Vector2.zero;
-        label.GetComponent<RectTransform>().anchorMax = Vector2.one;
-        label.GetComponent<RectTransform>().offsetMin = new Vector2(20, 10);
-        label.GetComponent<RectTransform>().offsetMax = new Vector2(-20, -10);
+        yield return new WaitForSecondsRealtime(Mathf.Max(0f, duration - 0.4f));
 
-        // Hold
-        yield return new WaitForSecondsRealtime(duration - 0.4f);
-
-        // Fade out
-        float t = 0f;
-        var canvasGroup = bgGo.AddComponent<CanvasGroup>();
-        while (t < 0.4f)
+        if (messageCanvasGroup != null)
         {
-            t += Time.unscaledDeltaTime;
-            canvasGroup.alpha = 1f - (t / 0.4f);
-            yield return null;
+            float fadeTime = 0f;
+            while (fadeTime < 0.4f)
+            {
+                fadeTime += Time.unscaledDeltaTime;
+                messageCanvasGroup.alpha = 1f - (fadeTime / 0.4f);
+                yield return null;
+            }
         }
 
-        Destroy(canvasGo);
+        messageBackground.gameObject.SetActive(false);
     }
 }
