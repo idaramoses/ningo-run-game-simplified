@@ -586,6 +586,8 @@ public class MonkeyThiefController : MonoBehaviour
 
     private void PlayMonkeySound()
     {
+        // Respect the music mute toggle - silent when music is off
+        if (PlayerPrefs.GetInt("MusicMuted", 0) == 1) return;
         if (audioSource != null && monkeyChatter != null)
         {
             audioSource.PlayOneShot(monkeyChatter, 0.7f);
