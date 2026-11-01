@@ -46,6 +46,14 @@ public class ContinuePanelController : MonoBehaviour
     [SerializeField] private int baseGemCost = 2;
     [SerializeField] private float countdownDuration = 5f;
 
+    [Header("Countdown Animation")]
+    [SerializeField] private float countdownPopDuration = 0.22f;
+    [SerializeField] private float countdownPopScale = 1.16f;
+
+    private RectTransform countdownTransform;
+    private Vector3 countdownOriginalScale;
+    private Coroutine countdownPopCoroutine;
+
     private int currentCost;
     private int currentGemCost;
     private int continueCount = 0;
@@ -56,6 +64,12 @@ public class ContinuePanelController : MonoBehaviour
 
     private void Awake()
     {
+        countdownTransform = countdownImage != null
+            ? countdownImage.rectTransform
+            : countdownText != null ? countdownText.rectTransform : null;
+        if (countdownTransform != null)
+            countdownOriginalScale = countdownTransform.localScale;
+
         if (continueButton != null)
             continueButton.onClick.AddListener(OnContinuePressed);
 
@@ -258,6 +272,12 @@ public class ContinuePanelController : MonoBehaviour
                     countdownText.text = s.ToString();
                 if (countdownImage != null && countdownSprites != null && countdownSprites.Length >= 6)
                     countdownImage.sprite = countdownSprites[Mathf.Clamp(5 - s, 0, 5)];
+                // Let the panel's existing entrance animation finish before pulsing.
+                if (s < Mathf.CeilToInt(countdownDuration) && countdownTransform != null)
+                {
+                    if (countdownPopCoroutine != null) StopCoroutine(countdownPopCoroutine);
+                    countdownPopCoroutine = StartCoroutine(CountdownPop());
+                }
             }
 
             countdownTimer -= Time.unscaledDeltaTime; // Use unscaled time so it works even when game is paused
@@ -270,6 +290,30 @@ public class ContinuePanelController : MonoBehaviour
             Debug.Log("[ContinuePanel] Countdown expired - auto give up");
             OnGiveUpPressed();
         }
+    }
+
+    private IEnumerator CountdownPop()
+    {
+        float elapsed = 0f;
+        while (elapsed < countdownPopDuration)
+        {
+            float t = Mathf.Clamp01(elapsed / countdownPopDuration);
+            float scale = 1f + (countdownPopScale - 1f) * Mathf.Sin(t * Mathf.PI);
+            countdownTransform.localScale = countdownOriginalScale * scale;
+            elapsed += Time.unscaledDeltaTime;
+            yield return null;
+        }
+        countdownTransform.localScale = countdownOriginalScale;
+        countdownPopCoroutine = null;
+    }
+
+    private void OnDisable()
+    {
+        StopAllCoroutines();
+        countdownPopCoroutine = null;
+        isCountingDown = false;
+        if (countdownTransform != null)
+            countdownTransform.localScale = countdownOriginalScale;
     }
 
     private void OnContinuePressed()
