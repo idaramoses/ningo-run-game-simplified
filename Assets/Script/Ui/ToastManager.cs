@@ -76,6 +76,24 @@ public class ToastManager : MonoBehaviour
 
     private IEnumerator ShowOverlay(string message, float duration)
     {
+        // Self-heal: find the ToastUI_Background in the HUD if refs were never
+        // assigned (e.g. the bootstrapped instance won the singleton race)
+        if (messageBackground == null || messageText == null)
+        {
+            foreach (var t in FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                if (t.name != "ToastUI_Background") continue;
+                messageBackground = t.GetComponent<Image>();
+                messageText = t.GetComponentInChildren<TMP_Text>(true);
+                if (messageCanvasGroup == null)
+                {
+                    messageCanvasGroup = t.GetComponent<CanvasGroup>();
+                    if (messageCanvasGroup == null) messageCanvasGroup = t.gameObject.AddComponent<CanvasGroup>();
+                }
+                break;
+            }
+        }
+
         if (messageBackground != null && messageText != null)
         {
             messageBackground.color = messageBackgroundColor;
