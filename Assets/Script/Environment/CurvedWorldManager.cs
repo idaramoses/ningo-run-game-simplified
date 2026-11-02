@@ -15,6 +15,86 @@ public class CurvedWorldManager : MonoBehaviour
     [Tooltip("Transform used as reference origin for curvature (typically Player). If null, Camera is used.")]
     public Transform referenceOrigin;
 
+    [Header("Sideways Bend")]
+    [SerializeField] private bool _sideBendEnabled;
+    [Tooltip("Maximum horizontal quadratic coefficient. Zero retains the original road.")]
+    [SerializeField, Range(0f, 0.001f)] private float _sideBendStrength = 0.00025f;
+    [Tooltip("Distance ahead of the player that remains visually straight sideways.")]
+    [SerializeField, Min(0f)] private float _sideBendStart = 25f;
+    [Tooltip("Seconds of running for a full right-left cycle.")]
+    [SerializeField, Min(1f)] private float _sideBendCycleSeconds = 40f;
+    [SerializeField, Min(0f)] private float _sideBendMaxOffset = 4f;
+    [SerializeField, Min(0.1f)] private float _sideBendTransitionSeconds = 2f;
+    private static readonly int SideStrengthID = Shader.PropertyToID("_SideBendStrength");
+    private static readonly int SideStartID = Shader.PropertyToID("_SideBendStart");
+    private static readonly int SideLimitID = Shader.PropertyToID("_SideBendLimit");
+    private float _sidePhase;
+    private float _sideEnvelope;
+    private float _currentSideStrength;
+    private bool _bendFocused = true;
+    private bool _bendApplicationPaused;
+    private string _bendCity;
+    private Transform _bendRunner;
+
+    private void OnApplicationFocus(bool focused) { _bendFocused = focused; }
+    private void OnApplicationPause(bool paused) { _bendApplicationPaused = paused; }
+
+    private void OnDisable()
+    {
+        if (Instance != this) return;
+        ResetSideBend();
+        Shader.SetGlobalFloat(SideStrengthID, 0f);
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance != this) return;
+        Shader.SetGlobalFloat(SideStrengthID, 0f);
+        Instance = null;
+    }
+
+    private void ResetSideBend()
+    {
+        _sidePhase = 0f;
+        _sideEnvelope = 0f;
+        _currentSideStrength = 0f;
+    }
+
+    private void UpdateSideBend()
+    {
+        var runner = SimplePlayerController.Instance;
+        var game = GameStateController.Instance;
+        var ui = UImanager.uimanager;
+        var city = CityManager.Instance;
+        string cityName = city != null ? city.CurrentCityName : "";
+        Transform runnerTransform = runner != null ? runner.transform : null;
+        if (_bendRunner != runnerTransform || _bendCity != cityName)
+        {
+            ResetSideBend();
+            _bendRunner = runnerTransform;
+            _bendCity = cityName;
+        }
+        bool frozen = !_bendFocused || _bendApplicationPaused || Time.timeScale <= 0f ||
+            (ui != null && ui.IsCountingDown);
+        bool running = !frozen && _sideBendEnabled && runner != null &&
+            runner.isActiveAndEnabled && runner.IsMoving && !runner.IsInRoadsideIdlePose &&
+            game != null && game.IsPlaying();
+        if (!frozen)
+        {
+            float transition = Mathf.Max(0.1f, _sideBendTransitionSeconds);
+            _sideEnvelope = Mathf.MoveTowards(_sideEnvelope, running ? 1f : 0f, Time.deltaTime / transition);
+            if (running)
+                _sidePhase = Mathf.Repeat(_sidePhase + Time.deltaTime / Mathf.Max(1f, _sideBendCycleSeconds), 1f);
+            else if (_sideEnvelope <= 0f) _sidePhase = 0f;
+            _currentSideStrength = Mathf.Sin(_sidePhase * Mathf.PI * 2f) *
+                Mathf.Max(0f, _sideBendStrength) * Mathf.SmoothStep(0f, 1f, _sideEnvelope);
+        }
+        if (!_sideBendEnabled) _currentSideStrength = 0f;
+        Shader.SetGlobalFloat(SideStrengthID, _currentSideStrength);
+        Shader.SetGlobalFloat(SideStartID, Mathf.Max(0f, _sideBendStart));
+        Shader.SetGlobalFloat(SideLimitID, Mathf.Max(0f, _sideBendMaxOffset));
+    }
+
     [Header("Shaders")]
     public Shader curvedDiffuseShader;
     public Shader curvedStandardShader;
@@ -111,6 +191,7 @@ public class CurvedWorldManager : MonoBehaviour
             origin = new Vector4(pos.x, pos.y, pos.z, 0f);
         }
 
+        UpdateSideBend();
         Shader.SetGlobalFloat(curveStrengthID, curveStrength);
         Shader.SetGlobalFloat(curveStartOffsetID, curveStartOffset);
         Shader.SetGlobalVector(curveOriginID, origin);

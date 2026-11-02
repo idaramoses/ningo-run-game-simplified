@@ -670,3 +670,99 @@ Settings
 - Regression: radio retains 10-second post-clip gaps, first-play delay, one voice at a time, existing city shuffle, ducking and compressed audio import settings.
 - Final report: list exact edited files, active caption coverage, timing-review limitations and tests actually run. Android playback/layout/performance require real-device checks; do not claim them from Editor inspection.
 
+---
+
+# Current Extension: Gentle Alternating Sideways Road Bend
+This is the current requested scope. User chose a slowly alternating right/left visual bend. The subtitle extension above was cancelled by the user and must NOT be implemented. Preserve all existing audio, HUD, scenery, traffic and controller behavior.
+
+# Project Overview
+- Game Title: Ningo Run.
+- High-Level Concept: Make the distant road and streetscape gently sway between right and left using the existing curved-world rendering system, while keeping nearby running lanes and collision gameplay straight.
+- Players: Single player.
+- Inspiration / Reference Games: Existing Ningo curved horizon and stylized endless-runner road presentation.
+- Tone / Art Direction: Subtle stylized 3D bend, not sharp turns or camera shake.
+- Target Platform: Android; preserve other build compatibility.
+- Screen Orientation / Resolution: Preserve current portrait-responsive gameplay framing and resolution; test narrow/tall phone aspects.
+- Render Pipeline: Built-in, existing owned curved shaders.
+
+# Game Mechanics
+## Core Gameplay Loop
+- Existing run, lane switching, jump/slide and collection remain unchanged. Visual variation reinforces MDA atmosphere without adding steering demands or obscuring hazard reaction windows.
+- Preserve downward curvature. Add a bounded horizontal vertex displacement beyond a separate near-player straight zone; all supported road/scenery/vehicles/pickups/world-space letter shaders use identical global parameters.
+- Start at neutral and smoothly increase to right, return through neutral to left, then repeat. Proposed full right/left cycle: 40 seconds (20 seconds between opposite peaks); expose cycle duration and strength in Inspector.
+- Initial proposed horizontal coefficient: 0.00025, with bend onset around 25 metres ahead and a smoothly bounded maximum displacement around 4 metres. These are starting tuning values, not final appearance claims. With quadratic distance shaping, displacement at 50m ahead is about 0.16m and at 100m about 1.4m before bounding.
+- Keep local gameplay geometry/colliders and player/camera transforms unchanged. Near zone must cover the collision/reaction envelope at increased runner speeds; extend onset if high-speed testing requires it.
+- Advance phase only during actual eligible running: moving active runner, active game, no countdown, positive time scale and focus. Freeze through pause/backgrounding; reset neutral on a new run/city/disable without causing a visible jump during an active run. Smoothly settle toward neutral outside gameplay where the street remains visible.
+## Controls and Input Methods
+- Preserve Legacy Input Manager and existing controls. No new steering controls, packages or input changes.
+
+# UI
+No new UI. Do not bend Canvas HUD, previews, counters or the radio indicator.
+```
+   distant road gently bends right / left
+   shops, trees, vehicles and letters follow
+               straight near lanes
+                     runner
+                unchanged HUD
+```
+
+# Key Asset & Context
+## Verified context
+- Assets/Script/Environment/CurvedWorldManager.cs uploads _CurveStrength, _CurveStartOffset and _CurveOrigin; Home has curveStrength=0.00047, curveStartOffset=15, referenceOrigin=Player. Preserve these scene values rather than replacing them with class defaults (0.0006).
+- Current five owned shaders only change worldPos.y quadratically. Sideways curvature does not exist yet.
+- CurvedStandard has generated surface-shader shadow support (addshadow); other shaders require pass-specific inspection. All vertex/shadow paths must remain coherent.
+- RoadSpawner calls ApplyCurvatureToGameObject for new/replaced tiles. Manager caches shared material variants and excludes Canvas/player/preview objects. Preserve material sharing and GPU instancing.
+- Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile.shader is an Assets-owned shader already containing NINGO_CURVED_WORLD and downward curvature for world-space letters. Its opt-in path must receive the sideways offset; UI without the keyword stays untouched. No package-source edits.
+- Manager reference-origin selection can retain an old character after runner changes; verify active runner binding for this feature and correct only if a demonstrated integration fault requires it.
+- Manager is referenced by Home and recovery scenes. Modify Home configuration only, not recovery scene assets. Shader impacts are potentially project-wide; default new horizontal strength to zero in code so other scenes retain prior appearance until enabled.
+- Dependency tool was unavailable in this planning turn; AssetDatabase reads inspected manager scene dependents. Before implementation edits, inspect dependencies/reverse dependents for each shader, include and Home; do not presume shader use is limited to roads.
+## Approaches
+- Selected: common shader-space bend driven by manager globals. Reuses current system, is lightweight and does not require rebuilding lane/collision architecture. Risks: shader coverage, displaced-renderer culling, mesh tessellation and visual/physics mismatch far ahead.
+- Alternative: truly curved world paths and rotated road tiles. Provides physical turns but requires coordinated spawner, player, camera, vehicle and collision changes. Not selected for a subtle visual effect.
+## Files to modify/create
+- Modify Assets/Script/Environment/CurvedWorldManager.cs: Inspector enable/strength/start distance/cycle/max displacement controls; cached shader IDs, bounded phase and lifecycle handling; zero globals on disable/destroy without a duplicate manager clearing the active manager's globals.
+- Create Assets/Shaders/CurvedWorldBend.cginc for shared downward and horizontal displacement math. Preserve original vertical expression exactly; use a smooth bounded horizontal expression with zero displacement and derivative at onset. Avoid hard distance clamps that produce a visible kink.
+- Modify Assets/Shaders/CurvedDiffuse.shader, CurvedStandard.shader, CurvedStandardAlpha.shader, CurvedUnlit.shader and CurvedUnlitAlpha.shader to use shared math while preserving rendering, transparency, instancing and shadow semantics.
+- Modify Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile.shader only within its existing opted-in world-curvature path; keep mask/UI/font behavior unchanged.
+- Modify Assets/Scene/Home.unity only to enable/tune this effect on its existing manager; no new scene or replacement manager.
+- If required by demonstrated culling: add narrowly scoped renderer-bounds handling in manager or a small owned companion. Use the inspected Unity 6000.4.6f1-supported bounds API, preserve original bounds, cover both lateral extrema and existing vertical displacement, handle pooled/moving/skinned objects explicitly and restore on cleanup. Do not mutate shared mesh bounds or disable culling globally.
+- No planned player, collision, road-spawner, traffic, lighting, audio or package changes. Additional shader/material compatibility issues require an explicit targeted plan refinement rather than broad material conversion.
+
+# Implementation Steps
+1. **Audit dependencies, shader coverage and baseline view.**
+   - Files: manager, five curved shaders, opted-in TMP shader, Home; read-only RoadSpawner/player/game/UI/city lifecycle and actual camera.
+   - Inspect dependencies/dependents before each edit. Capture actual gameplay views across cities and examine visible materials, world-space letters, renderer bounds and road tessellation. Record current downward bend and material sharing baseline.
+   - Dependency: approval of this extension.
+2. **Implement common displacement and safe manager controls.**
+   - Files: new CurvedWorldBend.cginc and CurvedWorldManager.cs.
+   - Cache new global IDs. Compute one slow phase per frame, not per renderer. Use sine or equivalent smooth cycle with bounded elapsed phase and gradual run transition envelope; clamp invalid cycle duration and amplitude inputs.
+   - New effect disabled by default for existing scenes. Keep vertical global values unchanged; safe zero horizontal globals on active manager cleanup. No per-frame allocations, material clones, scene-wide searches or renderer rescans.
+   - Dependencies: Step 1.
+3. **Integrate all owned curved rendering paths.**
+   - Files: five owned shaders and opted-in TMP shader.
+   - Apply identical world-space offsets before converting to object/clip coordinates. Preserve existing properties, texture sampling, blending, masking, shader targets and instancing. Ensure shadow caster deformation is consistent where supported.
+   - Compile in current Built-in target and check transparent foliage/glass, particle effects, road meshes, vehicles, pickups and world-space letters. Inspect lighting distortion before adding any normal correction; avoid unrelated rendering overhaul.
+   - Dependencies: Step 2 and shader impact checks.
+4. **Enable subtle Home configuration and validate extremes.**
+   - File: Home.unity and, only if necessary, scoped bounds handling.
+   - Start with 40-second cycle, coefficient 0.00025, 25m straight-zone onset and approximately 4m smooth maximum displacement; preserve vertical strength 0.00047 and onset 15m.
+   - Preview right/neutral/left extremes and tune for readability at standard/increased speeds and glider camera. Avoid discontinuities at tile seams, collapsing visibility, hard edge kinks and noticeable deformation near collision range.
+   - Test culling at both lateral extremes; if objects disappear, implement measured bounded overrides rather than marking everything visible or expanding shared meshes. If road topology looks angular, reduce bend before proposing mesh reauthoring.
+   - Dependencies: Steps 2–3.
+5. **Test lifecycle, fairness, visual result and device cost.**
+   - Files: scoped manager/shaders/Home only; temporary supported verification harness if available, clean up afterwards.
+   - Full actual Home run per city; inspect spawned and replaced tiles, collisions, moving junction taxis, letters and pickups. Test pauses/countdowns, backgrounding, crash/retry/continue, city/runner switching and scene reload.
+   - Compare baseline/updated material counts and frame timings; test Android if a device is available. Show actual gameplay captures, not only shader-global values.
+   - Dependencies: Step 4.
+
+# Verification & Testing
+- Mathematical checks: zero horizontal strength reproduces prior rendering; horizontal displacement zero at/before onset, smooth first derivative, bounded at configured maximum; opposite phase extrema give symmetric left/right offsets; invalid durations cannot divide by zero.
+- Phase: slow continuous alternation, one full cycle around 40 seconds of active running; no phase accumulation while paused/backgrounded/counting down; gradual start/settle and neutral reset without a visible jump in eligible running.
+- Rendering: correct downward curve preserved, all supported environment/pickups/letters move consistently, no seam tears or disconnected roadside objects; no shader errors/magenta objects. Test solid/transparent objects and shadows at both extremes.
+- Culling: no road/scenery/vehicle/letter pop-out at extreme offsets; conservative overrides if needed do not leak across pooling or scene cleanup or mutate shared source meshes.
+- Gameplay: player, camera, lane spacing, collision transforms, tile positions and traffic routes unchanged. Road stays visually straight in reaction/collision zone at increased speeds; no misleading nearby obstacle positions or hidden escape lanes.
+- UI: HUD/previews/radio unchanged and uncurved; no subtitles added.
+- Lifecycle: run, pause, resume countdown, hit/fail, revive/retry, completion, city/runner switch, app background and repeated reload; no stale origin, duplicate manager, leaked shared variants or nonzero globals after cleanup.
+- Performance: constant-size shader-global updates, no new steady-state managed allocations/materials, no realtime lights; compare actual Android frame/culling cost if device available. Do not claim device performance from Editor checks.
+- Deliverable: list exact files/Inspector tuning controls, show neutral/right/left gameplay views and distinguish static, Play Mode and Android verification actually completed.
+

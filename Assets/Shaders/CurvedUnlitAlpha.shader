@@ -42,9 +42,7 @@ Shader "Unlit/CurvedUnlitAlpha"
             sampler2D _MainTex;
             float4 _MainTex_ST;
             fixed4 _Color;
-            uniform float _CurveStrength;
-            uniform float _CurveStartOffset;
-            uniform float4 _CurveOrigin;
+            #include "CurvedWorldBend.cginc"
 
             v2f vert (appdata v)
             {
@@ -53,12 +51,7 @@ Shader "Unlit/CurvedUnlitAlpha"
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
                 float4 worldPos = mul(unity_ObjectToWorld, v.vertex);
-                float distZ = (worldPos.z - _CurveOrigin.z) - _CurveStartOffset;
-
-                if (distZ > 0.0)
-                {
-                    worldPos.y -= distZ * distZ * _CurveStrength;
-                }
+                worldPos = NingoBendWorld(worldPos);
 
                 o.vertex = mul(UNITY_MATRIX_VP, worldPos);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);

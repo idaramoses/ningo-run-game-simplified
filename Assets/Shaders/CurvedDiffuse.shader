@@ -16,9 +16,7 @@ Shader "Custom/CurvedDiffuse"
 
         sampler2D _MainTex;
         fixed4 _Color;
-        uniform float _CurveStrength;
-        uniform float _CurveStartOffset;
-        uniform float4 _CurveOrigin;
+        #include "CurvedWorldBend.cginc"
 
         struct Input
         {
@@ -28,13 +26,7 @@ Shader "Custom/CurvedDiffuse"
         void vert(inout appdata_full v)
         {
             float4 worldPos = mul(unity_ObjectToWorld, v.vertex);
-            // Distance ahead along the track (+Z) relative to player/origin
-            float distZ = (worldPos.z - _CurveOrigin.z) - _CurveStartOffset;
-
-            if (distZ > 0.0)
-            {
-                worldPos.y -= distZ * distZ * _CurveStrength;
-            }
+            worldPos = NingoBendWorld(worldPos);
 
             v.vertex = mul(unity_WorldToObject, worldPos);
         }

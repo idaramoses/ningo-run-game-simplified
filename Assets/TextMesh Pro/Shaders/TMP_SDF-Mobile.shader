@@ -1,4 +1,4 @@
-﻿// Simplified SDF shader:
+// Simplified SDF shader:
 // - No Shading Option (bevel / bump / env map)
 // - No Glow Option
 // - Softness is applied on both side of the outline
@@ -122,9 +122,7 @@ SubShader {
 		float _UIMaskSoftnessX;
         float _UIMaskSoftnessY;
         int _UIVertexColorAlwaysGammaSpace;
-		uniform float _CurveStrength;
-		uniform float _CurveStartOffset;
-		uniform float4 _CurveOrigin;
+		#include "Assets/Shaders/CurvedWorldBend.cginc"
 
 		pixel_t VertShader(vertex_t input)
 		{
@@ -142,8 +140,7 @@ SubShader {
 			vert.y += _VertexOffsetY;
 			#if defined(NINGO_CURVED_WORLD)
 			float4 worldPos = mul(unity_ObjectToWorld, vert);
-			float curveDistance = max(0.0, worldPos.z - _CurveOrigin.z - _CurveStartOffset);
-			worldPos.y -= curveDistance * curveDistance * _CurveStrength;
+			worldPos = NingoBendWorld(worldPos);
 			float4 vPosition = mul(UNITY_MATRIX_VP, worldPos);
 			#else
 			float4 vPosition = UnityObjectToClipPos(vert);

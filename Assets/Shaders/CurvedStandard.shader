@@ -23,9 +23,7 @@ Shader "Custom/CurvedStandard"
         half _Glossiness;
         half _Metallic;
         fixed4 _Color;
-        uniform float _CurveStrength;
-        uniform float _CurveStartOffset;
-        uniform float4 _CurveOrigin;
+        #include "CurvedWorldBend.cginc"
 
         struct Input
         {
@@ -36,12 +34,7 @@ Shader "Custom/CurvedStandard"
         void vert(inout appdata_full v)
         {
             float4 worldPos = mul(unity_ObjectToWorld, v.vertex);
-            float distZ = (worldPos.z - _CurveOrigin.z) - _CurveStartOffset;
-
-            if (distZ > 0.0)
-            {
-                worldPos.y -= distZ * distZ * _CurveStrength;
-            }
+            worldPos = NingoBendWorld(worldPos);
 
             v.vertex = mul(unity_WorldToObject, worldPos);
         }
