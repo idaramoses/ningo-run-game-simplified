@@ -1,0 +1,15 @@
+{
+    "asset": "f87f30f28a25448afb797303569322c7",
+    "fileName": "01a19ae4-3e1c-7901-b1fc-cc065f7ffc32.wav",
+    "prompt": "Ningo Lay-goss Radio! At a bookshop, you open one novel just to check the first page. Next thing, you are standing there for twenty minutes. My friend, that story has caught you. Put the book on your reading list!",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Chris"
+}

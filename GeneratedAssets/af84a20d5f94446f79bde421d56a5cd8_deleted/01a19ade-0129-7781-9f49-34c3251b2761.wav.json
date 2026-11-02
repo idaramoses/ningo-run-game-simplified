@@ -1,0 +1,15 @@
+{
+    "asset": "af84a20d5f94446f79bde421d56a5cd8",
+    "fileName": "01a19ade-0129-7781-9f49-34c3251b2761.wav",
+    "prompt": "Lagos gist! At the salon, you came for a fresh hairstyle and left with three film recommendations. Nobody spoiled the ending, thankfully! Now your weekend watch list is longer than your appointment. That one na bonus service!",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Sarah"
+}

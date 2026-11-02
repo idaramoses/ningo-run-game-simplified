@@ -1,0 +1,15 @@
+{
+    "asset": "edcea19e18bf84cea98f62624088a17e",
+    "fileName": "01a1998c-b447-7ac7-a4b3-adff4d84596d.wav",
+    "prompt": "Ningo Port Harcourt Radio! Garden City people know the value of a little greenery. A shady tree, a bright garden, a peaceful corner. No be only big adventures that count. Small everyday joys matter too.",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Chris"
+}

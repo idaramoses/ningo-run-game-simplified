@@ -1,0 +1,15 @@
+{
+    "asset": "585e720b62e524e76ace82c72db67bb0",
+    "fileName": "01a1998c-e3dd-7f39-9eea-ada99bcb1b9b.wav",
+    "prompt": "Port Harcourt, shout out to the neighbourhood storytellers! You ask one small question and get a whole cheerful history lesson. No rush, we are listening! Good gist and a warm welcome make a place feel like home.",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Chris"
+}

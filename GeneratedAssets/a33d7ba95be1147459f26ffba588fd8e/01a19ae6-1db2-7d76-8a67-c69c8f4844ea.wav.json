@@ -1,0 +1,15 @@
+{
+    "asset": "a33d7ba95be1147459f26ffba588fd8e",
+    "fileName": "01a19ae6-1db2-7d76-8a67-c69c8f4844ea.wav",
+    "prompt": "Abuja, a greeting for the home bakers! Your first cake leaned to one side, but your family cheered anyway. They remember the effort as much as the taste. Try again, make notes, and leave room for a happy mistake.",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Sarah"
+}

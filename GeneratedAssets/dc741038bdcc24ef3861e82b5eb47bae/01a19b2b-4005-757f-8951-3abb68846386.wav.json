@@ -1,0 +1,15 @@
+{
+    "asset": "dc741038bdcc24ef3861e82b5eb47bae",
+    "fileName": "01a19b2b-4005-757f-8951-3abb68846386.wav",
+    "prompt": "LAY-goss gist! Everybody has their own favourite jollof spot, and everybody thinks their own wins. No wahala! Share a plate, share a laugh, and let the friendly food debate continue.",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Chris"
+}

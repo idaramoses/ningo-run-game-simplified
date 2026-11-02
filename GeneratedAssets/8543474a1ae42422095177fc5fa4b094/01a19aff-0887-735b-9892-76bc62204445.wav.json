@@ -1,0 +1,15 @@
+{
+    "asset": "8543474a1ae42422095177fc5fa4b094",
+    "fileName": "01a19aff-0887-735b-9892-76bc62204445.wav",
+    "prompt": "Ah-BOO-jah shoe repair gist! Your favourite pair has travelled plenty, but the repairer says there is life in it yet. A little careful work, a proper polish, and your old companion is ready again. Useful skills deserve a big salute!",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Sarah"
+}

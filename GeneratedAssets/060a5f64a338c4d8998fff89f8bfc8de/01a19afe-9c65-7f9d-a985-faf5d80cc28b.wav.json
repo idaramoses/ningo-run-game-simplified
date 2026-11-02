@@ -1,0 +1,15 @@
+{
+    "asset": "060a5f64a338c4d8998fff89f8bfc8de",
+    "fileName": "01a19afe-9c65-7f9d-a985-faf5d80cc28b.wav",
+    "prompt": "Ningo Ah-BOO-jah Radio here! Our boulevards and neighbourhood corners all have their own character. Maybe your favourite place is not a famous landmark at all. Maybe na that little spot where everybody knows your name.",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Chris"
+}

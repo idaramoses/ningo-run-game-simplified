@@ -1,0 +1,15 @@
+{
+    "asset": "69a57ac0d59d844269f05e46b8373d49",
+    "fileName": "01a19ae6-fc47-7c83-a447-400dfd25d32e.wav",
+    "prompt": "Garden City photography gist! You set out to photograph a tree and notice its tiny flowers for the first time. Familiar places still have surprises. Slow down when you are safely out exploring, and give small details a chance.",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Chris"
+}

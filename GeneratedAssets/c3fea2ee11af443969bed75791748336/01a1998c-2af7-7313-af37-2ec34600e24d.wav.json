@@ -1,0 +1,15 @@
+{
+    "asset": "c3fea2ee11af443969bed75791748336",
+    "fileName": "01a1998c-2af7-7313-af37-2ec34600e24d.wav",
+    "prompt": "Lagos gist! Everybody has their own favourite jollof spot, and everybody thinks their own wins. No wahala! Share a plate, share a laugh, and let the friendly food debate continue.",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Chris"
+}

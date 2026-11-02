@@ -1,0 +1,15 @@
+{
+    "asset": "ffba359782afa49c8ad643dfad05cf5c",
+    "fileName": "01a19b05-8582-7c52-b31b-5cd585e45c82.wav",
+    "prompt": "Garden City, school reunion gist! One familiar laugh and suddenly you remember the whole classroom. People have changed, but the memories still connect you. Catch up kindly, celebrate different journeys, and let everyone tell their own story.",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Sarah"
+}

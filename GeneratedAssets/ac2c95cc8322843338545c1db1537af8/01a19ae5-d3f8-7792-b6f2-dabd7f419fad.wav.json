@@ -1,0 +1,15 @@
+{
+    "asset": "ac2c95cc8322843338545c1db1537af8",
+    "fileName": "01a19ae5-d3f8-7792-b6f2-dabd7f419fad.wav",
+    "prompt": "Abuja craft fair gist! One handmade bracelet catches your eye, then the maker explains every colour. Suddenly it is more than an accessory. It is somebody's thoughtful work. Ask about the story, and appreciate the hands behind it.",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Sarah"
+}

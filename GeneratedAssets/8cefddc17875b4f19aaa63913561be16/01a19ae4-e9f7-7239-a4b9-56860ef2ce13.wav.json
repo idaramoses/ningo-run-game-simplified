@@ -1,0 +1,15 @@
+{
+    "asset": "8cefddc17875b4f19aaa63913561be16",
+    "fileName": "01a19ae4-e9f7-7239-a4b9-56860ef2ce13.wav",
+    "prompt": "Lay-goss, a shout out to the people learning new words! A neighbour teaches you a greeting, and you practise until you get it right. Ask kindly and listen carefully. Our many languages give ordinary conversations extra colour.",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Sarah"
+}

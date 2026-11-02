@@ -1,0 +1,15 @@
+{
+    "asset": "44c00f123ed564726878c98ec7026be3",
+    "fileName": "01a19afe-89a2-7045-9b30-50ed34bc0b7d.wav",
+    "prompt": "Ah-BOO-jah gist! A picnic sounds simple until everybody brings enough food for a whole neighbourhood. No problem! Find some shade, pass the snacks, and enjoy good company. Na so small plans become sweet memories.",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Chris"
+}

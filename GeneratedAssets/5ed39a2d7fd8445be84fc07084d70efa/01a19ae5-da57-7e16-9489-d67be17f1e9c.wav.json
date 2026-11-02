@@ -1,0 +1,15 @@
+{
+    "asset": "5ed39a2d7fd8445be84fc07084d70efa",
+    "fileName": "01a19ae5-da57-7e16-9489-d67be17f1e9c.wav",
+    "prompt": "This is Ningo Abuja Radio! A community clean up begins with a few neighbours and a shared plan. Little by little, the corner looks cared for. Do your part safely, and thank the people who help keep shared spaces welcoming.",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Sarah"
+}

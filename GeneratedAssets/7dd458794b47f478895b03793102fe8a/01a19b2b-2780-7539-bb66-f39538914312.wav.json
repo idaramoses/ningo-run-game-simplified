@@ -1,0 +1,15 @@
+{
+    "asset": "7dd458794b47f478895b03793102fe8a",
+    "fileName": "01a19b2b-2780-7539-bb66-f39538914312.wav",
+    "prompt": "LAY-goss, make we talk markets! You went for one thing and came home with three extra treasures. A bright fabric, fresh fruit, and a story for your friends. That shopping list got a surprise ending!",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Chris"
+}

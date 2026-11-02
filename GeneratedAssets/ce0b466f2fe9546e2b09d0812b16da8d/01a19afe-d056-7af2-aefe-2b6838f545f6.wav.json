@@ -1,0 +1,15 @@
+{
+    "asset": "ce0b466f2fe9546e2b09d0812b16da8d",
+    "fileName": "01a19afe-d056-7af2-aefe-2b6838f545f6.wav",
+    "prompt": "Ah-BOO-jah library gist! You arrive looking for one answer and discover a whole shelf of new questions. That is a good kind of surprise! Borrow a book, respect the quiet, and let curiosity take you somewhere new.",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Chris"
+}

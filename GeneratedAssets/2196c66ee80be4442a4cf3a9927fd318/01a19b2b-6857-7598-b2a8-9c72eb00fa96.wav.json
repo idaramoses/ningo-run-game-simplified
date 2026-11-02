@@ -1,0 +1,15 @@
+{
+    "asset": "2196c66ee80be4442a4cf3a9927fd318",
+    "fileName": "01a19b2b-6857-7598-b2a8-9c72eb00fa96.wav",
+    "prompt": "Ningo LAY-goss Radio checking in! By the lagoon, sometimes the best plan is simple: enjoy the view and good company. Big city energy is lovely, but a quiet moment? That one sweet too.",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Chris"
+}

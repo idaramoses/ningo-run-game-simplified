@@ -1,0 +1,15 @@
+{
+    "asset": "a2855bea7f7d546d78f4a74f2b78befa",
+    "fileName": "01a1998c-1ca9-7129-9f98-5b64cfe94275.wav",
+    "prompt": "Ningo Lagos Radio checking in! By the lagoon, sometimes the best plan is simple: enjoy the view and good company. Big city energy is lovely, but a quiet moment? That one sweet too.",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Chris"
+}

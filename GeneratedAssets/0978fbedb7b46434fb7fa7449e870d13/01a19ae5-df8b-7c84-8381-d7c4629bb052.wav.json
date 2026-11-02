@@ -1,0 +1,15 @@
+{
+    "asset": "0978fbedb7b46434fb7fa7449e870d13",
+    "fileName": "01a19ae5-df8b-7c84-8381-d7c4629bb052.wav",
+    "prompt": "Abuja shoe repair gist! Your favourite pair has travelled plenty, but the repairer says there is life in it yet. A little careful work, a proper polish, and your old companion is ready again. Useful skills deserve a big salute!",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Sarah"
+}

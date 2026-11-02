@@ -374,3 +374,299 @@ The diagram is conceptual: the inspected side-road strips are offset longitudina
 - Rendering: no tipped/flipped taxis, floating wheels, sideways longitudinal cruising, magenta materials or curvature/culling regression.
 - Performance: no new steady-state managed allocations from traffic controllers, no per-frame scene searches, no extra realtime lights or materials. Device capture required for Android performance claims.
 - Final report: list exact modified targets/files, show gameplay-camera turning behavior, describe tunable timing/speed settings, and distinguish automated, manual and Android checks actually run from unverified tests.
+
+---
+
+# Current Extension: City Radio Gist During Runs
+This is the current requested scope. Preserve completed character accessories, scenery, housing and traffic; do not rerun historical implementations. User selected pre-generated offline speech, English with light Nigerian Pidgin, and short spaced segments.
+
+# Project Overview
+- Game Title: Ningo Run.
+- High-Level Concept: Add a playful fictional local radio station to each Nigerian city. Random short presenter segments reinforce the current city's identity while the player runs, without distracting from obstacles or warning sounds.
+- Players: Single player.
+- Inspiration / Reference Games: Existing Ningo Run arcade gameplay; fictional in-world radio presenters and Nigerian city life, not licensed broadcasts or impersonations.
+- Tone / Art Direction: Warm, family-friendly English/Pidgin banter; compact emerald-accent HUD styling matching the existing game. No celebrity voice imitation.
+- Target Platform: Android (current target); retain existing build compatibility.
+- Screen Orientation / Resolution: Preserve existing orientation, CanvasScaler and safe-area setup; check actual gameplay aspect ratios rather than impose a new resolution.
+- Render Pipeline: Built-in; no conversion.
+
+# Game Mechanics
+## Core Gameplay Loop
+- Existing running, jumping, sliding, pickups and lane changes remain unchanged. Radio supplies MDA atmosphere/place identity, not a gameplay advantage or a required interaction.
+- Select clips only from the currently selected city's bank: Lagos, Abuja, or internal identifier PortHarcourt.
+- Start a first short segment approximately 2–4 seconds after genuine running begins. Target 8–15-second segments followed by randomized 15–25-second quiet gaps, tunable in the Inspector. Countdown and paused time do not advance the scheduler.
+- Shuffle each city's usable clips without immediate repetition; refill when exhausted. Handle zero/one-clip banks safely, skipping null clips.
+- Strict eligibility: valid active runner with IsMoving, GameStateController.IsPlaying(), visible active gameplay HUD, no opening/resume countdown, positive time scale, and application focus. Do not infer running from HUD visibility alone.
+- Jumping/sliding and existing run powerups remain part of the active run. Intro motion, falling/end-of-run presentation, menus, pause, resume countdown, failure, completion and backgrounded app are silent.
+- Stop current audio immediately whenever eligibility becomes false; do not allow an old segment to leak across state transitions. Restart scheduling with a short delay when eligible again. City changes cancel old-city speech and clear pending selection before selecting the new bank.
+- One dedicated 2D voice AudioSource; never overlapping presenters. No live TTS, runtime requests, credentials, microphone permissions or streamed real-world station.
+
+## Controls and Input Methods
+- Preserve verified Legacy Input Manager controls. No movement or backend changes.
+- Radio indicator is informational in this scope, not a new interactive control. Respect the existing SoundEnabled/SFXVolume preferences and SoundEffectsManager's live state; Music mute remains independent. No new mute menu is required.
+
+# UI
+Create a small RadioIndicator child under Canvas_HUD. Place it in an inspected free area below the existing top HUD, outside the center track and current pickup/progress bars; final placement depends on actual safe area and gameplay screenshot review.
+```
+[existing pause / counters / distance]
+             [radio icon  LAGOS RADIO  | equalizer]
+                   clear track view
+          [existing powerup indicators unchanged]
+```
+- Show during eligible running only. Idle between segments uses a steady icon; animate a restrained equalizer only while voice is playing. Hide/reset outside running.
+- Display current city station name; use Port Harcourt as the human-readable label while retaining PortHarcourt as the data key.
+- Reuse existing font/material and UI style, disable raycast targets, and avoid per-frame text rebuilding. No large scrolling text, new screen, or subtitles in this initial scope.
+- Use a simple authored icon/equalizer from uGUI shapes or an owned sprite; no external asset-generation dependency for the icon.
+
+# Key Asset & Context
+## Verified integration
+- Assets/Scene/Home.unity contains Canvas_HUD with Canvas, CanvasScaler, GraphicRaycaster, GameHUDController and CoinPickupEffectManager. Children include TopPanel, Countdown, ToastUI_Background and four named pickup progress bars.
+- Assets/Script/City/CityManager.cs exposes CurrentCityName and CityChanged; city selection replaces road tiles. Keep its saved keys, identifiers and road references unchanged.
+- Assets/Script/GameStateController.cs exposes IsPlaying()/SetPlaying(); false is used during non-gameplay, but is not sufficient alone for countdown/runner readiness.
+- Assets/Script/Ui/UImanager.cs exposes IsCountingDown and static OnLevelReady. Pause hides canvasHUD, sets playing false and freezes time; Resume shows HUD before CountdownAndResume completes. Radio must not start just because OnEnable fires.
+- Assets/Script/SimplePlayerController.cs exposes IsMoving and IsInRoadsideIdlePose; StartRunning enables movement after the intro. Rebind when the selected runner changes, without hot-path scene searches.
+- Assets/Script/Audio/SoundEffectsManager.cs exposes IsSoundEnabled and maintains SFXVolume. Assets/Script/Ui/SimpleAudioToggle.cs writes SoundEnabled and changes that manager live.
+- Assets/Script/Audio/BackgroundMusicManager.cs creates two crossfading AudioSources and applies music preferences. No AudioMixer asset was found; existing scene sources are unrouted. No mixer creation or broad audio rerouting is authorized by this scope.
+- No radio/TTS assets or scripts were found by targeted filename search. A supported speech synthesis tool/provider and pronunciation quality have NOT yet been verified.
+
+## Files to create or modify
+- Create Assets/Script/Audio/CityRadioBank.cs: city key, display label, entries with stable ID, transcript and AudioClip reference.
+- Create Assets/Script/Audio/CityRadioController.cs: scheduling, shuffle selection, state eligibility, audio control, city subscription, settings and cleanup.
+- Create Assets/Script/Ui/CityRadioIndicator.cs: presentation-only binding to radio status and city display.
+- Create three bank assets under Assets/Audio/Radio/Banks/ and owned voice clips under Assets/Audio/Radio/{Lagos,Abuja,PortHarcourt}/.
+- Store reviewed transcripts and production/provenance notes under Assets/Audio/Radio/Content/. Initial target: six varied segments per city (18 total), one consistent warm presenter voice. Produce one sample per city before bulk synthesis to validate cadence and pronunciation.
+- Modify Assets/Scene/Home.unity only to add/wire the radio controller, dedicated non-looping playOnAwake=false AudioSource, bank references and RadioIndicator. Keep controller on an active scene service object, not solely on the hidden HUD, so it can observe lifecycle transitions.
+- Existing CityManager, player, GameStateController, UImanager, GameHUDController and sound systems are integration references; no edits expected. If true falling/completion gates cannot be observed reliably, propose the smallest explicit lifecycle hook and revise this plan before expanding edits.
+- Add tests under existing compatible test assemblies if present, otherwise document manual checks; do not overwrite unrelated verification scripts.
+
+## Content direction and production boundary
+- Lagos: transport banter, neighbourhood food/markets, mainland/island everyday life and coastal atmosphere.
+- Abuja: boulevards, parks, everyday neighbourhood life, food and city landmarks.
+- Port Harcourt: Garden City greenery, food, rain-ready everyday life, waterfront/port culture without reducing the city to industry.
+- Original fictional entertainment, not live news or claims about current traffic/weather. Avoid politics, insults, unsafe running advice, stereotypes and real-person gossip.
+- Speech must be intelligible with music and existing SFX. Do not assume an accent/language is supported just because a generator produces audio.
+- Before synthesis verify an actual text-to-speech-capable provider/tool, permitted voice usage and offline distribution. If unavailable, report the blocker and request approved external voice clips/provider; do not substitute generic sound effects or claim placeholder clips are finished.
+- Preserve existing music initially and tune voice level in context. If speech needs music ducking, obtain approval for a narrowly scoped music-manager change rather than manipulating its crossfade sources or setting up mixers silently.
+
+# Implementation Steps
+1. **Confirm scene lifecycle, placement and asset impact.**
+   - Inspect Home HUD rectangles, safe-area hierarchy, live runner selection, completion/falling flows and existing tests. Use AssetDatabase dependencies/reverse references where dependency tooling is unavailable, and repeat impact checks before every edited asset.
+   - Confirm the strict eligibility gate against actual intro, start, pause/resume, death and completion sequences.
+   - Dependencies: approval of this extension.
+2. **Implement bank and deterministic scheduler with temporary test clips.**
+   - Files: CityRadioBank.cs and CityRadioController.cs.
+   - Implement eligibility, delayed initial playback, one voice at a time, shuffled city pools, gaps, settings, focus handling and cleanup. Cache references; subscribe/unsubscribe to city events; fail silently with a one-time diagnostic for missing data.
+   - Stop voice in OnDisable/OnDestroy and on invalid eligibility even when time is frozen (AudioSource does not inherently stop with timeScale). Reset on run/city transitions and avoid per-frame allocations/LINQ.
+   - Dependencies: Step 1. Temporary fixtures are for testing only, not final voice assets.
+3. **Author radio content and validate speech production.**
+   - Files: Content transcripts, sample clips and three bank assets.
+   - Verify provider capabilities; synthesize one sample per city, listen for pronunciation, pacing, distortion and understandable Pidgin, then complete the six-segment banks if samples are acceptable. Keep exact text and provenance for replacements.
+   - Import compressed mono voice with sensible Android settings; choose loading based on measured memory/startup cost rather than placing everything in Resources. Validate real nonempty audio, duration and references.
+   - Dependencies: Step 2, verified speech provider. Missing synthesis capability blocks final voiced delivery, not silently waived.
+4. **Create and wire the HUD indicator.**
+   - Files: CityRadioIndicator.cs, Home.unity, optional owned icon sprite.
+   - Add the compact named UI group; reuse existing text font and scaling; set all informational graphics to non-raycasting; connect playing/waiting/city states. Keep existing HUD and touch controls unchanged.
+   - Wire scene service controller, single AudioSource, actual HUD and city banks. No persistent duplicate radio service across scene reloads.
+   - Dependencies: Steps 1–3; refreshed scene dependency impact check.
+5. **Verify full gameplay and tune clarity.**
+   - Files: controller/data/UI and directly related voice clips only.
+   - Test each city's actual gameplay run, silence gates and lifecycle, shuffle behavior, music/SFX clarity and UI placement. Adjust intervals/levels and clip content rather than suppressing critical warning effects.
+   - Compare memory and frame timing on Android if available; inspect offline operation and application backgrounding. Remove temporary fixtures and preview objects.
+   - Dependencies: Steps 2–4.
+
+# Verification & Testing
+- Pure scheduling tests: city-specific pool only; all usable clips visited before refill; no adjacent duplicate when bank has more than one usable clip; zero/null/single entries safe; randomized delays within configured bounds.
+- Gating tests: no voice in menu, intro, opening or resume countdown, pause, fail, complete, disabled HUD, missing/stopped runner, timeScale=0 or backgrounded app. Immediate stop on transitions; no delayed coroutine revives old audio.
+- Full Play Mode: select Lagos/Abuja/Port Harcourt, start after intro/countdown, hear appropriate segments, jump/slide/use powerups, pause during speech and quiet gap, resume, fail/retry/continue, complete, return home and switch city. Only one radio source speaks and the indicator matches its state.
+- Settings: Sound off silences voice live and after reload; Sound on permits new segments only during running; SFXVolume adjusts voice consistently; Music mute does not enable/disable radio. Test missing managers without crashes.
+- Content/audio: listen to every produced segment, verify transcripts/duration and regional pronunciations, original fictional framing, usable English/Pidgin, no loudness jumps or clipping, and critical SFX remain audible.
+- HUD: actual gameplay camera/screens at target aspect ratios and safe areas; radio does not cover counters, pause control, pickups, warnings or lane view; no raycast interception and no equalizer motion when waiting/silent.
+- Lifecycle/performance: repeated reload/retry creates no duplicate sources/listeners or stale city subscriptions; no runtime network calls; no steady-state scheduling allocations; check memory and audio load spikes, report unavailable Android testing honestly.
+- Acceptance/report: identify generated/reused assets and exact edited files, distinguish complete voice clips from blocked or placeholder production, and report what was tested in Play Mode and on device. Do not claim the feature works solely from serialized references.
+
+---
+
+# Current Extension: 15 Additional Gist per City and Two Fixed Presenters
+This supersedes the proposed runtime TTS migration. User explicitly chose the previous pre-generated offline method, 15 additional distinct gist per city, and both male and female voices. Do not install a TTS plugin or implement cloud/runtime synthesis. Earlier radio instructions are historical where they conflict with this extension.
+
+# Project Overview
+- Game Title: Ningo Run.
+- High-Level Concept: Expand the fictional city radio with varied original English/Pidgin entertainment delivered by two consistent presenters. Preserve the established runner gameplay and offline playback.
+- Players: Single player.
+- Inspiration / Reference Games: Existing Ningo city radio and Nigerian everyday city life; no licensed broadcast reuse or presenter impersonation.
+- Tone / Art Direction: Friendly, family-safe, city-specific English with light Nigerian Pidgin. Keep existing emerald HUD.
+- Target Platform: Android; preserve other existing build support.
+- Screen Orientation / Resolution: Preserve current CanvasScaler, orientation and layout.
+- Render Pipeline: Built-in.
+
+# Game Mechanics
+## Core Gameplay Loop
+- Verified six clips per city; append exactly 15 new distinct transcripts/clips each to Lagos, Abuja and PortHarcourt. Final count: 21 each, 63 total, including 18 preserved original clips and 45 new clips. This replaces the earlier request for 50 per city.
+- Retain random shuffle without immediate clip repeats, current 2–4-second opening delay and 15–25-second gaps. One presenter speaks per segment; no overlapping speech or two-host dialogue required. Random shuffle does not promise strict voice alternation.
+- Keep original male presenter Chris. Use one fixed stock female voice across all cities, proposed Sarah subject to current provider availability and user listening approval. Do not synthesize a claimed Nigerian accent without auditioning it.
+- Balanced proposed allocation per city: preserve six original male clips, add four male and eleven female clips, giving ten male and eleven female segments. Each transcript has one fixed presenter assignment; do not double-produce every transcript in both voices.
+- Preserve current eligibility: actual running, enabled/unmuted BackgroundMusicManager, visible HUD, no countdown, positive time scale and app focus. Music off hides the radio and stops speech. Sound preferences still silence voice independently.
+- Preserve music ducking while speech plays, smooth restoration during gaps/stops, city-change cancellation and clean scene lifecycle. No soundtrack or SFX volume changes in this content pass.
+## Controls and Input Methods
+- Legacy Input Manager controls unchanged. No new buttons, voice-selection menus or input systems.
+
+# UI
+No layout changes. Retain Canvas_HUD/RadioIndicator, station label and speaking equalizer.
+```
+[existing counters and word panel]
+[radio icon | CURRENT CITY RADIO | equalizer]
+[unobstructed running track]
+```
+The equalizer reflects actual speech, regardless of presenter. No host portraits or new font assets.
+
+# Key Asset & Context
+- Verified Assets/Script/Audio/CityRadioBank.cs entries contain id, transcript and AudioClip; banks each contain six valid referenced clips. Add serialized presenter/voice provenance metadata without breaking existing entries or IDs.
+- Existing bank assets: Assets/Audio/Radio/Banks/Lagos.asset, Abuja.asset and PortHarcourt.asset. AssetDatabase dependency inspection confirms each depends on CityRadioBank.cs and its six clips; CityRadioBank.cs has three direct asset dependents, CityRadioController.cs has Home as one direct asset dependent.
+- New clips: Assets/Audio/Radio/{Lagos,Abuja,PortHarcourt}/{City}_07.wav through {City}_21.wav, keeping existing _01 through _06 untouched. Prefer entries _07–_10 for the four new male clips and _11–_21 for the eleven female clips; shuffle retains mixed playback.
+- Modify Assets/Script/Audio/CityRadioBank.cs only if needed for stable presenter/voice metadata; initialize existing entries as Chris/male. No expected controller, BackgroundMusicManager or scene edits.
+- Modify the three banks in place, preserving GUIDs and Home references. Record exact transcripts, speaker assignments and provenance under Assets/Audio/Radio/Content/; update RadioSamples.md without replacing its original transcripts.
+- Current CityRadioController uses AudioClip playback and already requests music ducking through BackgroundMusicManager.SetRadioSpeaking. Keep this integration intact, including existing volume/settings gates.
+- At implementation time verify the actual generation model/tool and both stock voices. Generation tooling is not verified for this planning turn; no promise of generated output until it is available. If unavailable, report the blocker and request supplied clips rather than fabricate silent placeholders.
+- Generation account commercial/distribution rights remain a release prerequisite; user approval of a voice sample does not establish licensing.
+
+# Implementation Steps
+1. **Recheck assets and finalize 45 transcripts with fixed speaker assignments.**
+   - Files: three banks, CityRadioBank.cs, existing Content notes and new reviewed transcript manifest.
+   - Read all existing transcripts; avoid paraphrased duplicates. Cover varied everyday topics: Lagos neighbourhoods/markets/coast/creative life, Abuja parks/boulevards/communities/food, Port Harcourt greenery/waterfront/neighbourhoods/food. Avoid unverifiable live news/weather, stereotypes, unsafe running advice and celebrity voices.
+   - Recheck dependencies and reverse dependents before each edit. Confirm stock voice availability and generation account usage rights status.
+   - Dependency: approval of this extension.
+2. **Audition one new female sample before bulk production.**
+   - File: one intended female clip from the planned 45, with its final ID/transcript, not an additional duplicate asset.
+   - Use the proposed stock voice consistently; verify nonempty waveform/duration and offer a listening preview to the user. Target approximately 8–15 seconds and clarity with the existing male voice/music. Stop for sample feedback before producing the remaining female batch; use a different fixed female voice if requested.
+   - Dependency: Step 1 and available speech generation provider. Existing Chris samples remain the approved male reference.
+3. **Generate the other 44 new clips and retain provenance.**
+   - Files: _07–_21 clips in each city's folder and Content manifest/notes.
+   - Generate twelve male and thirty-three female additions total, counting the female sample from Step 2. Use independent generation batches where supported; never overwrite existing clips. Record failed/unfinished jobs and retry only missing outputs.
+   - Check duration, channel count, nonzero signal, peaks/clipping and relative loudness. Listen/review regional words and Pidgin; do not label waveform checks as listening approval. Keep compressed mono import settings appropriate for Android and measure expanded memory/load cost.
+   - Dependencies: Steps 1–2; approval of female sample.
+4. **Append new entries to the three existing banks.**
+   - Files: three bank assets, optional CityRadioBank.cs metadata addition and Content notes.
+   - Preserve six original entries, their IDs/transcripts/clips and GUIDs. Append 15 complete new entries, each with its final transcript, clip and fixed presenter assignment; do not register missing clips as complete.
+   - Keep runtime shuffle behavior unchanged; metadata is for traceability, not strict host alternation. No new Resources loading, runtime TTS, packages, scene layout or mixer changes.
+   - Dependencies: Step 3 and per-asset impact checks.
+5. **Verify expanded radio and report.**
+   - Files: new audio/data/metadata only unless a directly attributable issue warrants revised scope.
+   - Check all counts and unique IDs/transcripts, audition both voices and verify city-specific playback in separate fresh runs. Rebind test references after Home scene reload rather than reuse destroyed AudioSources, which limited earlier multi-city tests.
+   - Exercise music mute/unmute, Sound off, pause/resume countdown, failure/retry, home/reload and city selection; verify speech stops, icon hides as appropriate and ducking releases. Preserve gap timings and no overlap.
+   - Dependencies: Step 4.
+
+# Verification & Testing
+- Data: exactly 21 complete entries per city and 63 total; 45 new audio files; each bank has ten male and eleven female assignments under the proposed allocation. Original 18 clips/references remain untouched.
+- Content: unique city-relevant original transcripts, no repeat by light rewording; consistent two fixed voices, pronunciation review and clear relative loudness. No missing/empty clips, accidental doubled presenters or clipped peaks.
+- Shuffle: all 21 usable entries appear before refill; no adjacent clip repeats across refills; correct-city pool only. Voice order remains shuffled, not strictly alternating.
+- Runtime: observe a male and female clip during eligible runs; no audio outside running, no overlapping sources, music mute hides sign and stops voice, ducking restores after clips/stops. Test each city in a fresh Home run and reacquire references after reloads.
+- Performance: compare audio memory/build size and first-play hitches before/after. No Android performance claim without a device capture; avoid loading all expanded uncompressed audio unnecessarily if measured costs require a narrowly scoped import change.
+- Final report: list added clips/presenter allocation and actual verification. Distinguish generation complete, waveform checks, listening approval, Play Mode tests and Android checks. Report generation/licensing blockers explicitly.
+
+---
+
+# Current Extension: Optional Timed Radio Subtitles
+This is the current requested scope. User selected **Short timed phrases** rather than estimated timing or whole-clip captions. Preserve historical work; do not rerun older builders or regenerate audio. This extension supersedes earlier no-subtitle UI constraints only.
+
+# Project Overview
+- Game Title: Ningo Run.
+- High-Level Concept: Add readable optional captions for the fictional city radio during actual speech, allowing players to follow English/Pidgin dialogue without a large block of text distracting from running.
+- Players: Single player.
+- Inspiration / Reference Games: Existing Ningo radio/HUD; compact dialogue captions in action games.
+- Tone / Art Direction: Existing emerald-accent uGUI styling, white text on a subtle dark backdrop; preserve the recorded English/Pidgin wording.
+- Target Platform: Android; preserve other build compatibility.
+- Screen Orientation / Resolution: Preserve existing portrait-responsive CanvasScaler and safe-area behavior; validate actual narrow/tall phone layouts.
+- Render Pipeline: Built-in.
+
+# Game Mechanics
+## Core Gameplay Loop
+- Running, lane switching, jumping, sliding and collection remain unchanged. Short caption phrases support accessibility and MDA atmosphere while minimizing interference with challenge and obstacle readability.
+- Show only the cue belonging to the currently playing entry, based on the AudioSource playback position. Cue intervals are manually authored and listening-verified, not proportional word-count estimates.
+- Preserve the scene's verified 10-second post-clip gaps, initial 2–4-second delay, shuffle, music ducking and existing audio eligibility/mute rules.
+- Hide subtitles in quiet gaps, when disabled, when no valid cue exists, and immediately on stop, pause, countdown, failure, completion, backgrounding, city change or scene disable.
+- This is captions for existing playback, not a new silent-radio scheduler. Sound/music mute currently stops radio; subtitles stop with it. Caption-only playback while muted is outside scope.
+## Controls and Input Methods
+- Preserve Legacy Input Manager and existing touch/swipe and keyboard controls.
+- Add one Settings button-style pill toggle, Radio Subtitles. Persist RadioSubtitlesEnabled with an enabled default for new users; disabling captions must not change audio or other preferences.
+
+# UI
+```
+Gameplay HUD (bottom portion)
+  [ Short spoken phrase, at most two lines ]
+  [ radio icon | CURRENT CITY RADIO | bars ]
+  [ existing power-up progress bars       ]
+
+Settings
+  existing Sound / Music / Vibration rows
+  [ Radio Subtitles             ON / OFF ]
+  existing Language / other controls
+```
+- Add Canvas_HUD/RadioSubtitles above the existing bottom-center RadioIndicator (currently 220x30, bottom anchor/pivot .5/0, position 0/100). Begin with bottom-center placement above its top plus a small gap; use parent-width margins rather than a fixed oversized width.
+- Inspect toast overlap: ToastUI_Background exists lower in the HUD. Move only the new caption panel to an inspected free band if needed; do not relocate unrelated HUD elements silently.
+- Reuse a suitable existing TMP font/shared material; choose fixed readable font size, disable runtime AutoSize, wrap to at most two lines. Split long cues during authoring rather than truncate dialogue or shrink text excessively.
+- Use non-raycasting graphics and CanvasGroup blocksRaycasts/interactable=false. Keep hidden by default outside speech. Update TMP text only on cue changes, never rebuild the same string every frame.
+- Reuse existing Settings pill on/off sprites and row styling. Inspect row dimensions, fit and modal layering before adding/re-spacing a row. No Settings rebuild or new menus.
+
+# Key Asset & Context
+## Verified current state
+- Assets/Script/Audio/CityRadioBank.cs has CityRadioEntry fields id, transcript, clip; there are no cue timings.
+- Actual loaded bank assets each contain **6 entries**, 18 active clips total. Historical 21-entry claims do not match current serialized data. Additional _07–_21 WAV files are not in the current playlist. Do not append them as an incidental subtitle change.
+- CityRadioController exposes IsRunning, IsSpeaking, StationLabel, CityKey and StatusChanged, but no current entry/playback-position accessor. It stops the AudioSource on ineligibility and mutes, and uses music ducking.
+- Home scene _quietGap is (10,10); script default remains (15,25). Preserve actual scene timing rather than overwrite it from class defaults.
+- Canvas_Settings uses SettingsController with direct SoundRow, MusicRow, VibrationRow, LanguageRow, GuestRow and other buttons. Existing NingoPillToggle uses a Button and Kind enum Sound/Music/Vibration with PlayerPrefs persistence.
+- NingoPillToggle is also referenced by recovery scenes. Append a new enum value without changing existing numeric values; do not edit recovery scenes.
+- Dependency/dependent inspection via AssetDatabase confirmed the three banks depend on CityRadioBank and their six clips; Home references the banks/controller. Recheck impact before each asset edit. No test assembly definitions found in Assets.
+## Files to create/modify
+- Modify Assets/Script/Audio/CityRadioBank.cs: serializable RadioSubtitleCue with startSeconds, endSeconds, text, and an optional cue array on each entry. Preserve existing IDs/transcripts/clip GUIDs and entry order.
+- Modify Assets/Script/Audio/CityRadioController.cs minimally: expose read-only CurrentEntry and PlaybackTimeSeconds; clear entry on stop/city change/finished speech before notifying listeners, including Sound-off paths. Do not alter scheduler or music behavior.
+- Create Assets/Script/Ui/CityRadioSubtitles.cs: cached references, cue lookup from actual source time, setting and status binding, immediate cleanup and text-on-change presentation.
+- Modify Assets/Script/Ui/NingoPillToggle.cs: append RadioSubtitles kind, explicit preference mapping and a narrowly scoped setting-change notification. Preserve existing Sound/Music/Vibration behavior and serialization.
+- Modify Assets/Scene/Home.unity: wire caption panel/controller and add RadioSubtitlesRow to existing Settings; keep indicator and all audio references/settings intact.
+- Modify Assets/Audio/Radio/Banks/Lagos.asset, Abuja.asset, PortHarcourt.asset only to add verified subtitle cue arrays for their currently referenced 18 clips.
+- Add Assets/Audio/Radio/Content/RadioSubtitles.md: per-clip cue provenance, listening verification status and timing-maintenance instructions. Additional unused clips remain explicitly outside coverage.
+## Timing production boundary
+- Manually audition each **current final recording**, including regenerated Abuja files; derive phrase start/end times from listening, supported waveform/audio review and optional supplied timestamped SRT/VTT.
+- Automated duration/waveform checks cannot establish speech alignment. If available tools cannot audition or obtain verified timestamped audio, report the blocker and request user-supplied reviewed cues or an approved review workflow. Do not mark estimated timing as manually synchronized.
+- Keep city spelling Abuja in visible captions; the speech-generation spelling Ah-BOO-jah is a pronunciation aid, not display text. No translation or Localization package installation in this scope.
+
+# Implementation Steps
+1. **Recheck integration, layout and cue-authoring capability.**
+   - Files: Home, radio scripts/banks, NingoPillToggle, active recordings and Settings/HUD font references.
+   - Recheck dependency impact, exact active playlist, source playback/load behavior, Settings layout, toast/powerup rectangles, TMP glyph coverage and test tooling. Establish an actual listening/timestamp review route before claiming synchronized captions.
+   - Dependency: approval of this extension.
+2. **Add cue schema and playback accessors.**
+   - Files: CityRadioBank.cs and CityRadioController.cs.
+   - Add backward-compatible cue data with positive sorted non-overlapping ranges bounded by clip duration. Expose current entry/time without exposing mutable AudioSource controls; reset state on every stop path, including completed playback and Sound-off.
+   - Preserve scheduling, scene 10-second gaps, shuffle, volume, eligibility and ducking. Empty cue arrays safely mean no caption.
+   - Dependency: Step 1.
+3. **Implement optional subtitle presentation and preference.**
+   - Files: new CityRadioSubtitles.cs, NingoPillToggle.cs.
+   - Cache references; subscribe/unsubscribe cleanly. Initialize saved preference on enable; live setting changes clear/show the current valid cue without restarting audio.
+   - Look up cues using actual PlaybackTimeSeconds; reset cue cursor on entry changes or backward playback time. Handle missing data, gaps between cues, stopped playback and disabled UI safely. No per-frame LINQ, string splitting, PlayerPrefs writes, scene searches or allocations.
+   - Dependency: Step 2.
+4. **Author and approve a synchronized sample, then complete the active playlist.**
+   - Files: three banks and RadioSubtitles.md.
+   - Begin with one actual Abuja clip to review phrase length, spelling, readability and alignment. Obtain listening/visual feedback before completing all 18 active entries.
+   - Manually verify remaining cue timings against final clips. Reconstruct normalized cue text and compare against transcript for omissions/duplicates. Record unverified clips honestly; do not ship fabricated precise timestamps.
+   - Dependencies: Steps 1–3 and working timing review route.
+5. **Wire compact gameplay panel and Settings row.**
+   - File: Home.unity.
+   - Add caption panel above indicator with appropriate anchors/padding and existing TMP font; add saved toggle using existing pill assets and stable enum assignment. Adjust only necessary Settings spacing after checking fit.
+   - Confirm Canvas/EventSystem/raycaster wiring for the toggle, non-interactive captions, hidden lifecycle state, safe-area fit, two-line readability and no toast/progress-bar overlap.
+   - Dependencies: Steps 3–4, refreshed scene impact check.
+6. **Verify full gameplay and report coverage.**
+   - Files: scoped subtitle/data/settings assets; tests only if existing supported infrastructure is available. Otherwise use documented read-only and manual verification without introducing unrelated test packages.
+   - Run each city in fresh Home flows; reacquire scene references after reload. Review timing against actual speech and test all lifecycle/settings transitions.
+   - Dependencies: Steps 2–5.
+
+# Verification & Testing
+- Data: every active clip has sorted valid cue ranges, no unintended overlap or negative/zero durations, range end within clip duration, matching stable entry ID and reviewed wording. Confirm coverage is 18 current entries, not the 63 files on disk.
+- Alignment: listen/view every covered recording, both start/end and phrase transitions; validate to roughly 0.2-second alignment where practical. Report exact listening-reviewed coverage separately from static validation. Any regenerated recording invalidates prior cue timing until re-reviewed.
+- Presentation: cue changes once at boundary; silence between cues hides text, no last-phrase carryover into the 10-second gap; no whole-transcript block, truncation or mid-word wrapping caused by overflow.
+- Lifecycle: stop/pause/resume countdown/fail/complete/home/scene disable/background/city change immediately clears captions. New clips cannot show old-city text; no duplicate event listeners after reload.
+- Preferences: enabled default when key absent, persistent on/off across restart, live toggle behavior, existing Sound/Music/Vibration unchanged. Muted radio does not show fabricated captions or start its own timer.
+- Layout: inspect narrow/tall portrait and safe-area layouts in actual gameplay; no track-critical, toast, powerup or counter obstruction; captions never intercept swipes. Settings row and modals fit and remain clickable.
+- Performance: no steady-state managed allocations from subtitle logic; text changes only when necessary, fixed font size and shared font material. Verify cue lookup costs and Canvas rebuilds; only introduce a dedicated child Canvas if measured rebuild cost warrants it.
+- Regression: radio retains 10-second post-clip gaps, first-play delay, one voice at a time, existing city shuffle, ducking and compressed audio import settings.
+- Final report: list exact edited files, active caption coverage, timing-review limitations and tests actually run. Android playback/layout/performance require real-device checks; do not claim them from Editor inspection.
+

@@ -1,0 +1,15 @@
+{
+    "asset": "cc6ba88548ab74a849e4f26b9b367323",
+    "fileName": "01a19b05-9afd-749c-8b32-33bdc2aabbb1.wav",
+    "prompt": "Ningo Port Harcourt Radio! A family plans a potluck, and two people bring the very same dish. No panic! Compare the recipes and enjoy both versions. Even a duplicated menu can produce a brand new conversation.",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Sarah"
+}

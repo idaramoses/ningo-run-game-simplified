@@ -1,0 +1,15 @@
+{
+    "asset": "960fa507210544d60be6e8055013f575",
+    "fileName": "01a19ae4-84fc-7f33-98fc-1f45b71be444.wav",
+    "prompt": "Lay-goss, whose slippers are these? At a family gathering, everybody leaves a pair by the door. Going home becomes a small detective story. Your own pair has suddenly moved! Check carefully, my people. Borrowed footwear is not a party souvenir!",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Sarah"
+}

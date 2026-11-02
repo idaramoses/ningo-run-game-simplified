@@ -1,0 +1,15 @@
+{
+    "asset": "df118f5ad947c46188a7936a29ec995d",
+    "fileName": "01a1998c-d335-747f-877c-1253cafb4b76.wav",
+    "prompt": "Garden City, this is your Ningo Radio! Waterfront stories remind us how many journeys connect our city. People, goods, and fresh ideas all find their way here. Every arrival can bring another story to share.",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Chris"
+}

@@ -1,0 +1,15 @@
+{
+    "asset": "d690858ca738843629393b38f34ef5d0",
+    "fileName": "01a19984-6b73-71cd-8a78-23372bc5dd00.wav",
+    "prompt": "Welcome to Ningo Abuja Radio! Wide roads, green parks, and plenty good company. No be every outing that needs a big budget. Sometimes, a quiet picnic and good conversation na the real enjoyment.",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Chris"
+}

@@ -1,0 +1,15 @@
+{
+    "asset": "e416895db607a4debabb3969e6940646",
+    "fileName": "01a19b2b-3e91-7586-beb5-bfc6b2d96670.wav",
+    "prompt": "This is Ningo LAY-goss Radio! Yellow buses, colourful shop signs, and greetings from every corner. Our city has plenty stories. Which small neighbourhood memory always makes you smile? That one na your own LAY-goss.",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Chris"
+}

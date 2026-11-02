@@ -1,0 +1,15 @@
+{
+    "asset": "cb29bba72341849b1815236b35d2c52b",
+    "fileName": "01a19aff-765a-7dc0-9419-11936d670a87.wav",
+    "prompt": "Ah-BOO-jah plant swap gist! One neighbour brings a cutting, another brings an empty pot, and everyone brings advice. Label those plants, my people! Today you share a small leaf; later you might share a whole garden story.",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Sarah"
+}

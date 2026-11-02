@@ -1,0 +1,15 @@
+{
+    "asset": "8be030ad153e44b9dad6626113e5daeb",
+    "fileName": "01a19ae5-a531-7d13-9c37-cef0d7caf63c.wav",
+    "prompt": "Ningo Abuja Radio! At a neighbourhood basketball court, the youngest player has the loudest encouragement. Every basket gets a celebration. You do not have to win a trophy to enjoy a game. Make room for everybody, and keep it friendly.",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Chris"
+}

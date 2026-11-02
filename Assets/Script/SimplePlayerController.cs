@@ -1102,10 +1102,13 @@ public class SimplePlayerController : MonoBehaviour
         return false;
     }
 
+    public static event System.Action ObstacleHit;
+
     private void HitObstacle()
     {
+        ObstacleHit?.Invoke();
         if (MonkeyThiefController.Instance != null)
-        {
+{
             MonkeyThiefController.Instance.TriggerBusted();
         }
 

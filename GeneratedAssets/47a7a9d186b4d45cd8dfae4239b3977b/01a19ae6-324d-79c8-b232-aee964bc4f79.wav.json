@@ -1,0 +1,15 @@
+{
+    "asset": "47a7a9d186b4d45cd8dfae4239b3977b",
+    "fileName": "01a19ae6-324d-79c8-b232-aee964bc4f79.wav",
+    "prompt": "Abuja plant swap gist! One neighbour brings a cutting, another brings an empty pot, and everyone brings advice. Label those plants, my people! Today you share a small leaf; later you might share a whole garden story.",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Sarah"
+}

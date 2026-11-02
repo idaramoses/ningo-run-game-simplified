@@ -1,0 +1,15 @@
+{
+    "asset": "3571e6b7d41984bb1bbe1a650853d175",
+    "fileName": "01a19ae7-4b3f-7e03-a0e2-4bab2a868005.wav",
+    "prompt": "Port Harcourt chess gist! A friend pauses over one move for so long that everybody holds their breath. Let them think! A thoughtful game is not a shouting contest. Shake hands at the end and share what you learned.",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Sarah"
+}

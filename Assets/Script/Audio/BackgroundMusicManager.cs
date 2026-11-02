@@ -24,6 +24,15 @@ public class BackgroundMusicManager : MonoBehaviour
     [Header("Crossfade Settings")]
     public float crossfadeDuration = 1.5f;
     
+    [Header("Radio Ducking")]
+    [Range(0f, 1f)] [SerializeField] private float _radioMusicMultiplier = 0.2f;
+    [SerializeField] private float _radioDuckFadeSeconds = 0.2f;
+    [SerializeField] private float _radioRestoreFadeSeconds = 0.7f;
+    private bool _radioSpeaking;
+    private float _radioGain = 1f;
+    private float _currentMusicGain;
+    private float _nextMusicGain;
+
     private AudioSource audioSource1;
     private AudioSource audioSource2;
     private AudioSource currentAudioSource;
@@ -176,30 +185,36 @@ public class BackgroundMusicManager : MonoBehaviour
     private IEnumerator CrossfadeToTrack(AudioClip newClip, MusicTrack trackType)
     {
         nextAudioSource.clip = newClip;
+        _nextMusicGain = 0f;
         nextAudioSource.volume = 0f;
         nextAudioSource.Play();
         
         float elapsed = 0f;
-        float startVolume = currentAudioSource.volume;
+        float startVolume = _currentMusicGain;
         
         while (elapsed < crossfadeDuration)
         {
             elapsed += Time.unscaledDeltaTime;
             float t = elapsed / crossfadeDuration;
             
-            currentAudioSource.volume = Mathf.Lerp(startVolume, 0f, t);
-            nextAudioSource.volume = Mathf.Lerp(0f, volume, t);
+            _currentMusicGain = Mathf.Lerp(startVolume, 0f, t);
+            _nextMusicGain = Mathf.Lerp(0f, volume, t);
+            ApplyMusicGains();
             
             yield return null;
         }
         
+        _currentMusicGain = 0f;
         currentAudioSource.volume = 0f;
         currentAudioSource.Stop();
-        nextAudioSource.volume = volume;
+        _nextMusicGain = volume;
+        nextAudioSource.volume = volume * _radioGain;
         
         AudioSource temp = currentAudioSource;
         currentAudioSource = nextAudioSource;
         nextAudioSource = temp;
+        _currentMusicGain = volume;
+        _nextMusicGain = 0f;
         
         currentTrack = trackType;
         
@@ -237,13 +252,33 @@ public class BackgroundMusicManager : MonoBehaviour
         Debug.Log("[BackgroundMusicManager] Music resumed");
     }
     
+    public void SetRadioSpeaking(bool speaking)
+    {
+        _radioSpeaking = speaking;
+    }
+
+    private void LateUpdate()
+    {
+        float target = _radioSpeaking ? Mathf.Clamp01(_radioMusicMultiplier) : 1f;
+        float seconds = _radioSpeaking ? _radioDuckFadeSeconds : _radioRestoreFadeSeconds;
+        _radioGain = Mathf.MoveTowards(_radioGain, target, Time.unscaledDeltaTime / Mathf.Max(0.01f, seconds));
+        ApplyMusicGains();
+    }
+
+    private void ApplyMusicGains()
+    {
+        if (currentAudioSource != null) currentAudioSource.volume = _currentMusicGain * _radioGain;
+        if (nextAudioSource != null) nextAudioSource.volume = _nextMusicGain * _radioGain;
+    }
+
     public void SetVolume(float newVolume)
     {
         volume = Mathf.Clamp01(newVolume);
         
         if (currentAudioSource.isPlaying)
         {
-            currentAudioSource.volume = volume;
+            _currentMusicGain = volume;
+            ApplyMusicGains();
         }
         
         PlayerPrefs.SetFloat("MusicVolume", volume);

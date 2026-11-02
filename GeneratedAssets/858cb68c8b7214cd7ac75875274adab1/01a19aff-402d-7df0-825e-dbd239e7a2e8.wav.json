@@ -1,0 +1,15 @@
+{
+    "asset": "858cb68c8b7214cd7ac75875274adab1",
+    "fileName": "01a19aff-402d-7df0-825e-dbd239e7a2e8.wav",
+    "prompt": "Ah-BOO-jah, a greeting for the home bakers! Your first cake leaned to one side, but your family cheered anyway. They remember the effort as much as the taste. Try again, make notes, and leave room for a happy mistake.",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Sarah"
+}

@@ -1,0 +1,15 @@
+{
+    "asset": "7e9c458ca09e642668ab6ef706246842",
+    "fileName": "01a19ae4-3a40-709c-9197-8388c5317d3e.wav",
+    "prompt": "Lay-goss, salute to the repair shops! You brought a stubborn zip and left with your favourite bag working again. Small tools, plenty patience. No be everything we must replace. Sometimes a careful repair gives an old favourite another chapter.",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Chris"
+}

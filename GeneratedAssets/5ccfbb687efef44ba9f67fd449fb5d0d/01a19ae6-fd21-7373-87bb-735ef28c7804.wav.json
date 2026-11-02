@@ -1,0 +1,15 @@
+{
+    "asset": "5ccfbb687efef44ba9f67fd449fb5d0d",
+    "fileName": "01a19ae6-fd21-7373-87bb-735ef28c7804.wav",
+    "prompt": "Ningo Port Harcourt Radio! At a neighbourhood fish stall, a customer asks how best to prepare their choice. The seller has a careful tip and a friendly smile. Good questions can teach you plenty. Local experience deserves respect.",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Chris"
+}

@@ -1,0 +1,15 @@
+{
+    "asset": "e60a75f75203146b99c24a5caefbd5e3",
+    "fileName": "01a19ae1-b694-7d0b-b116-01ff141a2af6.wav",
+    "prompt": "Lay-goss gist! At the salon, you came for a fresh hairstyle and left with three film recommendations. Nobody spoiled the ending, thankfully! Now your weekend watch list is longer than your appointment. That one na bonus service!",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Sarah"
+}

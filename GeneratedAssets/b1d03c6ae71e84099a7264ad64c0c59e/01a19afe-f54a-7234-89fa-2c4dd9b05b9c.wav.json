@@ -1,0 +1,15 @@
+{
+    "asset": "b1d03c6ae71e84099a7264ad64c0c59e",
+    "fileName": "01a19afe-f54a-7234-89fa-2c4dd9b05b9c.wav",
+    "prompt": "Ah-BOO-jah, balcony birdwatchers, how you dey? You thought you knew every visitor until a different little bird appeared. A notebook and a patient eye can turn a familiar view into a discovery. Enjoy watching without disturbing our feathered neighbours.",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Chris"
+}

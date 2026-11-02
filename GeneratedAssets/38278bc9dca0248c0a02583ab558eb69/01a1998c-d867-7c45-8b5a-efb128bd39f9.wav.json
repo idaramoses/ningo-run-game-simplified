@@ -1,0 +1,15 @@
+{
+    "asset": "38278bc9dca0248c0a02583ab558eb69",
+    "fileName": "01a1998c-d867-7c45-8b5a-efb128bd39f9.wav",
+    "prompt": "Port Harcourt gist! That friend with an umbrella in every bag? Prepared for anything! This is not a weather report, just a salute to the organised people. You remember everybody's snacks too. We appreciate you!",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Chris"
+}

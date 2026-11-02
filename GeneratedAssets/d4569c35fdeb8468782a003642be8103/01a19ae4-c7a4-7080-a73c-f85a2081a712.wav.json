@@ -1,0 +1,15 @@
+{
+    "asset": "d4569c35fdeb8468782a003642be8103",
+    "fileName": "01a19ae4-c7a4-7080-a73c-f85a2081a712.wav",
+    "prompt": "Lay-goss photographers, we see you! A family says just one quick picture. Then somebody blinks, somebody laughs, and somebody wants another angle. The funniest photo might become the favourite. Not every beautiful memory needs a perfect pose.",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Sarah"
+}

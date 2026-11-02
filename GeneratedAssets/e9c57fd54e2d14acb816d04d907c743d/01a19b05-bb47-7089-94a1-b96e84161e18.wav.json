@@ -1,0 +1,15 @@
+{
+    "asset": "e9c57fd54e2d14acb816d04d907c743d",
+    "fileName": "01a19b05-bb47-7089-94a1-b96e84161e18.wav",
+    "prompt": "Garden City kite gist! A child decorates a paper kite with every favourite colour. The making is half the fun. Choose a safe open space with adult help, far from roads and wires. Colourful ideas deserve sensible plans!",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Sarah"
+}

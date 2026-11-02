@@ -1,0 +1,15 @@
+{
+    "asset": "4c255f3234a2146379a38dc91e75e3f5",
+    "fileName": "01a19ae4-43b0-7a9f-af3c-8a6e3908cd35.wav",
+    "prompt": "Lay-goss football gist! One neighbour supports one club, the next neighbour supports the rival. On match day, the friendly commentary travels across the fence. Keep the jokes kind, my people. Tomorrow you still need to borrow their ladder!",
+    "negativePrompt": "",
+    "model": "elevenlabs-multilingual-v2",
+    "modelName": "ElevenLabs Multilingual V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": "Chris"
+}
