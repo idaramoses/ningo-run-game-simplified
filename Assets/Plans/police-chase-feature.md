@@ -766,3 +766,216 @@ No new UI. Do not bend Canvas HUD, previews, counters or the radio indicator.
 - Performance: constant-size shader-global updates, no new steady-state managed allocations/materials, no realtime lights; compare actual Android frame/culling cost if device available. Do not claim device performance from Editor checks.
 - Deliverable: list exact files/Inspector tuning controls, show neutral/right/left gameplay views and distinguish static, Play Mode and Android verification actually completed.
 
+---
+
+# Current Extension: Full Babylon.js Web Rebuild with Unity Visual and Functional Parity
+This is the current requested scope. Earlier extensions are historical context, not instructions to rerun builders or introduce unimplemented features. The user selected Babylon.js, requires the same game design, functionality and UI, and explicitly selected **React overlay** and **faster startup**. Preserve the Unity project as the reference and existing Android deliverable. Append this extension to the existing plan rather than replace historical records.
+
+# Project Overview
+- Game Title: Ningo Run.
+- High-Level Concept: Rebuild the existing Nigerian-city 3D runner as a browser-native game, preserving its current artwork, screens, word-learning mechanics, progression and presentation. Remove the Unity runtime dependency from the web application, while preserving Unity as the comparison reference.
+- Players: Single player; preserve existing account and leaderboard features where verified and browser-compatible. No new multiplayer.
+- Inspiration / Reference Games: The actual current Ningo Run Unity build is authoritative; Subway Surfers/Temple Run are background references only, not permission to redesign.
+- Tone / Art Direction: Same stylized 3D Nigerian cities, characters, UI art, colours, fonts, spacing and animations. No AI-generated replacements or simplified generic roads/characters as final assets.
+- Target Platform: Browser-native web application, mobile-first Android Chrome and iOS Safari, with desktop keyboard/mouse support. PWA installation/caching is additive and browser-dependent; do not promise fully offline network features.
+- Screen Orientation / Resolution: Current Unity orientation is Portrait. Most child canvases use a 390x844 design reference; root/completion include 390x840. Match each canvas's measured scaling/anchors instead of globally assuming one resolution. Wide displays retain portrait composition with an appropriate surrounding background rather than redesigning the game landscape-first.
+- Render Pipeline: Source uses Unity Built-in, Unity 6000.4.6f1. Destination uses Babylon.js WebGL2 as the baseline, with no mandatory WebGPU dependency. Pin exact compatible Babylon/React/build-tool versions during implementation after verifying runtime/tooling requirements.
+
+## Scope and acceptance contract
+- Full migration is the final scope; a first vertical slice is a proof milestone, not permission to omit remaining screens/cities/functions.
+- Preserve all current user-visible functions and reachable states, including loading, empty/error, locked/unlocked, selected, muted and modal states. Distinguish reachable features from legacy scripts and unused assets.
+- User-approved exception: keep Splash/Welcome artwork and sequence, but advance based on readiness rather than reproduce intentional artificial waiting. Preserve gameplay countdowns, intro, jump/slide, radio and retry timing unless a specific deviation is separately approved.
+- Exact parity means measured visual/functional equivalence against approved Unity captures and test flows, not a claim of mathematically identical pixels across browser text rasterization and different renderers. Any visible rendering compromise must be recorded and reviewed, not silently accepted.
+- Do not add subtitles: the previous subtitle extension was cancelled. Only port subtitle functionality if current live discovery proves a later user-approved implementation exists.
+- Do not auto-fix historical Unity bugs or add missing monetization features under the label of parity. Record issues and preserve supported intended behaviour; any change needs explicit review.
+- Do not overwrite existing Unity scenes/prefabs/imported assets, modify package sources, change input/render settings, publish a site, spend money, provision services or migrate production data as part of local implementation approval.
+
+# Game Mechanics
+## Core Gameplay Loop
+Preserve Home/city/character/language/level selection -> intro/countdown -> three-lane running -> jump/slide/dodge -> collect coins, gems, letters and powerups -> word/level progression -> completion or fall/retry -> next level/home. Preserve tutorial gating, star/unlock/reward calculations, high scores and completed word translations. MDA rationale: maintain the existing challenge, competence and cultural atmosphere rather than trade fidelity for a superficially faster but different game.
+
+### Required systems
+- Player movement/animation, camera intro/follow/glider views, fall/knockback, invulnerability and skateboard protection.
+- Road spawning and obstacle density, city starters, authored scenery/housing, junction routes and other currently active vehicles, monkey interactions, birds and environmental animation.
+- Coin magnet, skateboard/double tap, glider/sky pickups, other verified upgrades and inventory effects. A UI label alone is not proof a powerup is implemented; follow its actual handlers.
+- Word dictionary/API, grapheme-sensitive collection, correct/wrong letter rules, category filtering, progression, translations and completion display.
+- Coins/gems, inventory, daily gifts, daily/weekly missions, level stars/unlocks, runner selection, settings and saved session/progress.
+- Music, SFX, city radio/transcripts/banks, shuffle/gaps, ducking, speaking equalizer, eligibility and mute/background gates.
+- Backend-bound auth, dictionary and leaderboard functions, with explicit integration adapters and availability/error states.
+
+## Controls and Input Methods
+- Verified source activeInputHandler=0 (Legacy Input Manager); use its actual control behaviour as reference, do not change Unity's input backend.
+- Destination: DOM Pointer Events/touch gestures and keyboard commands translated into game actions. Read actual source thresholds, key mappings and tutorial exceptions before implementation.
+- Match lane switch/jump/slide/double-tap actions and disable actions in equivalent locked/countdown/modal states.
+- Scope touch-action restrictions to the game surface, permit native scrolling in menus, support pointer cancellation, prevent duplicate touch/click processing, and avoid triggering tap-to-play through interactive controls.
+- Pause on visibility/focus loss, cap time deltas on resumption, preserve explicit resume-countdown behaviour and prevent background progress/expired timers.
+- Vibration/fullscreen/audio startup are browser-constrained: use feature detection, unlock audio on a user gesture and record unsupported behaviour. Do not fake successful browser haptics.
+
+# UI
+## Selected architecture and alternative
+- Selected: React + TypeScript DOM overlay over a Babylon canvas. Reuse exact sprite assets/fonts and measured Unity RectTransform/layout rules. Benefits: forms, scrolling, accessibility, and a lightweight splash/onboarding shell before engine download. Costs: translate anchors/pivots, layering, render-texture previews and input interception carefully.
+- Alternative considered: Babylon GUI for all screens. Benefits: one canvas coordinate/rendering system. Costs: engine-dependent menu startup and more work for native text input/accessibility. User selected React.
+- Avoid React state updates for per-frame 3D transforms. Use a presentation adapter with events and bounded HUD updates; animate progress/preview elements independently where appropriate.
+
+## Screen inventory discovered in Home
+1. Canvas_Home: TopPanel, side buttons, bottom buttons; same tap-to-play surface and city/character backdrop.
+2. Canvas_HUD: TopPanel, Countdown, toast/flying coins, magnet/glider/skateboard/monkey progress bars, RadioIndicator.
+3. Canvas_Pause: level/language pill, word slots/count, resume/restart/home, sound/music controls.
+4. Canvas_CompleteLevel: heading/stars, dancing preview, stats, word translations, next-level/bottom/audio controls, confetti.
+5. Canvas_Daily_Gift: gift scroll viewport, heading and back.
+6. Canvas_Fail: word progress/stats, language presentation, try again/home/audio controls.
+7. Canvas_Activate_Mystery_Box: existing activation overlay and double-tap behaviour.
+8. Canvas_Missions: daily/weekly tabs, mission cards, footer and scroll content.
+9. Canvas_Shop: coins/gems tabs/cards, confirm/processing/success/failure modals.
+10. Canvas_Activate_Rewards: existing activation overlay.
+11. Canvas_Leaderboard: scroll/podium/current-user/header/back, real/empty/error states.
+12. Canvas_Activate_Speedstar: existing activation overlay.
+13. Canvas_Characters: stage/animated previews, thumbnails, info/footer and selection/unlock flow.
+14. Canvas_PowerUps: currency header and magnet/shield/double-coin rows; inspect actual enabled effects.
+15. Canvas_Settings: sound/music/vibration/language/guest, how-to-play, support/privacy/terms and language/tutorial modals.
+16. Canvas_Level: city plaque, header, level map/nodes/scroll view and locked/unlocked/star states.
+17. Canvas_Retry: countdown ring, video availability, coin/gem continue cards, end run.
+- Additional reference scenes: Splash and UserInfo. UserInfoController currently describes login/guest/signup -> language -> welcome; inspect actual scene wiring before treating older username/age panels in UImanager as reachable onboarding.
+- Capture high-score/new-score and dynamically generated dialogs if discovered; the 17 canvases are not a guarantee of complete state coverage.
+
+## Reference composition (schematic only; measured Unity captures govern positions)
+```
+Splash/Welcome: [exact background / logo / welcome artwork / readiness bar]
+Onboarding:    [exact heading / login or guest] -> [language selection] -> [welcome]
+Home:          [profile / currencies / language]
+               [side menu] [same 3D street + idle runner] [side menu]
+               [same bottom controls / tap-to-play]
+Gameplay:      [pause / counters / word objective]
+               [same camera, curved road, hazards, runner]
+               [powerup bars / city radio at measured positions]
+Modal/menu:    [existing background / heading / back]
+               [same cards, tabs, text and scroll content]
+               [same footer and action buttons]
+```
+- Export all image states, colours/opacity, sprite rects/pivots/borders, sliced-image rules, font styles/weights/sizes/line spacing, alignment, transforms and active conditions.
+- Capture post-layout and runtime-mutated state, not YAML alone; persistent button events and runtime-added listeners both matter.
+- Match safe-area/masking/scroll physics where practical, z-order, overlay dismissal and transitions. Use native buttons/forms under identical styling; don't replace working interactions with flat screenshots.
+- Inspect raw font source licensing/web formats; TMP SDF atlases are not web fonts. Match actual glyph coverage/diacritics and fallback, avoiding generic-font substitution without review.
+- Preserve 3D character/celebration previews using Babylon cameras/render targets or a scoped viewport strategy; do not replace animated previews with static art in the final deliverable.
+
+# Key Asset & Context
+## Verified state and caveats
+- Three scene assets and enabled build scenes: Assets/Scene/Splash.unity, UserInfo.unity, Home.unity. Home contains gameplay as well as menus. Legacy SceneLoader refers to GameScene, which is not among those enabled scenes; do not port that stale flow blindly.
+- AssetDatabase recursive dependency counts inspected: Home=810, Splash=21, UserInfo=44. These are dependency counts, not network sizes or profiler findings.
+- Earlier project totals: 140 prefabs, 500 textures, 156 meshes and 122 audio clips; re-inventory shipping references, not everything under Assets/Recovery or examples.
+- Source player serialized settings inspected: speed=10, laneDistance=2.3, switchDuration=.25s, jumpForce=9, gravity=22, slideDuration=.8s, hitRadius=.5, collisionCheckInterval=2, magnetDuration=10s, magnetRadius=16, skateboardDuration=15s, gliderDuration=10s and gliderHeight=7.5. These are initial serialized baseline values, not proof of later runtime tuning or all runners' configurations.
+- CityManager has Lagos, Abuja, PortHarcourt, each with five serialized tile references including the junction twice. Preserve duplicate reference weighting rather than deduplicate the random selection distribution; inspect actual starters and runtime assignments.
+- CurvedWorldManager inspected with vertical strength .00047/onset15 and horizontal enabled, strength .00025/onset25/cycle40s/max4/transition2s. Preserve owned shader math and lifecycle after reading complete implementation.
+- WordManager matches grapheme clusters with tone marks, duplicate counts and any-order/in-order logic; it requires the API dictionary, not invented substitute words.
+- UserInfoController uses ningoafrica.app for native defaults and a same-origin web API option; preserve actual API contracts and test CORS/credentials on the eventual host.
+- LeaderboardController attempts UGS through UGSManager; current serialized identity configuration and browser API availability remain to be inspected. Do not assume custom login identity equals Unity anonymous identity.
+- NingoShopPanel supports real Unity IAP or simulation; useRealIAP is false by class default only. Confirm live scene configuration. ShopController also contains legacy TODO offers; follow actual button wiring.
+- ContinuePanelController exposes RewardedAdProvider; actual provider binding is unverified. Simulated ads/purchases may be reproduced in isolated parity tests but never silently treated as real release transactions/rewards.
+- Installed packages include glTFast 6.19.0, Addressables 2.7.4, Purchasing 5.4.4, uGUI 2.0.0, Test Framework 1.4.5. Installed importer does not establish a functioning GLB export pipeline; verify animation/skinning export capability before relying on it.
+- No existing web-app/package root appeared in the inspected project-root directory listing. Node/package-manager/browser execution and model export tooling must be checked before implementation; unavailable tools are explicit blockers, not fabricated builds.
+
+## Read-only Unity sources to trace fully
+- Scenes and their referenced assets, including nested/dynamic UI.
+- Assets/Script/Ui/{UImanager,UserInfoController,GameHUDController,NingoShopPanel,ContinuePanelController,CharactersController,SettingsController,DailyGiftController,MissionsController,LeaderboardController}.cs and all actual linked handlers.
+- Assets/Script/SimplePlayerController.cs, SimpleCameraFollow.cs, GameStateController.cs; player/RunnerManager.cs and active input scripts.
+- Assets/Script/Road/{RoadSpawner,RoadObstacleHider,...}.cs and all pickup/obstacle components; Assets/Script/Vehicles/ and Characters/Monkey/MonkeyThiefController.cs.
+- Assets/Script/City/CityManager.cs, Levels/ and Words/ including TextUtils/dictionary/letter spawning and level difficulty formulas.
+- Assets/Script/Environment/CurvedWorldManager.cs, Assets/Shaders/CurvedWorldBend.cginc and active curved shaders.
+- Assets/Script/Audio/, Assets/Audio/Radio/Banks/ and referenced clips; actual scheduler settings over historical notes.
+- Assets/Script/API/, UserSession.cs, SecureCredentials.cs, UGSManager.cs and IAP/IAPManager.cs. Never export secrets or local personal credentials into the web bundle.
+
+## Proposed destination files (new, isolated; finalized after tooling audit)
+- WebApp/ at project root, outside Unity Assets: package.json/lockfile, index.html, tsconfig.json, vite.config.ts, src/main.tsx, src/app/App.tsx.
+- WebApp/docs/{parity-matrix,reference-captures,asset-provenance,api-contracts,performance-baseline,migration-status}.md.
+- WebApp/src/content/: versioned schema, asset manifest, exported UI/layout/character/city/level/radio/game settings. Manifest maps Unity GUID + local fileID/object path to stable browser IDs.
+- WebApp/public/assets/{ui,fonts,models,textures,audio}/: licensed extracted/exported copies only, original sources untouched; split shared/city/character/radio payloads.
+- WebApp/src/ui/: layout/scale/safe-area bridge, screen router, exact-art reusable widgets and components for every inventoried screen/state.
+- WebApp/src/game/: EngineHost, AssetLoader, GameState, InputController, RunnerController, CollisionSystem, AnimationController, CameraRig, RoadSpawner, CityController, TrafficSystem, PickupSystem, WordSystem, TutorialSystem, CurvedWorld, PreviewRenderer.
+- WebApp/src/domain/: progression, level rules, missions, rewards, inventory, settings and currency transaction rules separated from rendering.
+- WebApp/src/audio/: music/SFX/radio scheduling and browser lifecycle/audio unlocking.
+- WebApp/src/services/: auth/dictionary/leaderboard/payment/ads adapters and versioned storage adapter; optional PWA/cache module.
+- WebApp/tests/{unit,integration,e2e,visual}/ and separate test fixtures. Fixtures never replace production content or pretend to be live services.
+- Only if required: new read-only-source export helpers under Assets/Editor/WebMigration/ and owned staging output under an explicitly named export location. Do not alter source scene/prefab/import settings to export. Check dependencies and reverse dependents via available dependency tooling or AssetDatabase before any existing-asset edit.
+
+# Implementation Steps
+1. **Freeze the actual reference, complete parity inventory and establish tooling.**
+   - Files: WebApp/docs/, inventory/schema definitions and optional isolated editor exporter.
+   - Verify Node/package manager, browser test tooling and glTF/skeletal-animation export; pin compatible versions and record commands. Inspect dependency/dependent impact before helper/config edits; no Unity package-source or project-setting changes.
+   - Read all linked runtime scripts and persistent/runtime UI listeners; inspect Splash/UserInfo without leaving scene changes or user progress mutations. Record all reachable flows, exact serialized and live settings, data formulas, enabled service flags and missing integrations.
+   - Capture every screen and key modal/error/selected state with identical fixture data; record font assets, sprites, coordinates, camera/render settings and animation timings. User reviews reference captures and parity matrix before broad UI replication.
+   - Benchmark current web build if supplied: transferred bytes, first visible UI, first interactive menu, first playable run, steady/p95 frame timing and memory on named devices/network settings. Missing build/device capture is reported, not extrapolated from Editor.
+   - Dependencies: approval of this extension; capture/export/tool capabilities verified.
+2. **Create the reproducible asset and data pipeline.**
+   - Files: content schemas/manifests, public/assets/, export helpers and provenance docs.
+   - Extract exact sprite subrects/9-slice metadata and licensed raw fonts. Export existing character skeletons/clips, models, prefabs, scene starter compositions and animation attachments to GLB plus JSON behavioural metadata. If export unavailable, request supported tooling/source exports; don't substitute generated characters.
+   - Preserve nested transforms, scales, coordinate handedness, camera FOV convention, collider shapes/offsets, layers/tags and spawn markers. Explicitly test skinned meshes, retargeted humanoid clips, root motion and bone attachment orientation.
+   - Export runtime-generated level rules as equivalent tested TypeScript/data, preserve tile weighting and stable IDs. Export actual active radio playlists, not every unused WAV. Keep API dictionaries governed by their real contract.
+   - Hash/version outputs, include provenance and validate missing references. Keep behavioural meshes/colliders separate from decorative geometry; don't bake moving traffic into static road assets.
+   - Dependencies: Step 1.
+3. **Build web shell and prove exact initial UI.**
+   - Files: app/tooling, layout bridge, Splash/Welcome/UserInfo/Home screens, service/storage interfaces and initial asset groups.
+   - Match reference scaling and sprite/fonts/transitions, native input fields, keyboard handling and safe areas. Implement user-approved readiness-driven splash/welcome; retain genuine progress/errors and don't show 100% before readiness.
+   - Lazy-import Babylon after the lightweight shell where possible; preload required selected-city/character content when useful without blocking basic forms. Home's final interactive 3D backdrop is an acceptance requirement, not permanently replaced by a screenshot.
+   - Establish canonical game/domain state and presentation events, versioned saves and test fixtures. No per-frame React transform updates.
+   - Compare Splash/onboarding/Home screenshots and button routes; fix before expanding all screens.
+   - Dependencies: Steps 1–2.
+4. **Implement one complete faithful gameplay slice.**
+   - Files: game/input/player/animation/collision/camera/road/word/pickup systems, HUD/Pause/Fail/Retry/Complete screens, test cases.
+   - Use one actual city, character and authored ordinary/junction content. Match movement integration, timing, collisions, animation transitions, camera intro and home tap-to-play rules. Build a timestep strategy matching the source behaviour; test varying frame rates instead of imposing a different feel.
+   - Implement data-driven word/letter rules including grapheme segmentation, normalization/case handling, tone marks, repeats, wrong-letter and tutorial exceptions. Prefer Intl.Segmenter with a verified fallback; compare with C# TextUtils fixtures.
+   - Implement coins/gems/magnet/skateboard/glider, ordinary hazards, pause/resume countdown, fall, currency continue, level completion, retry and clean reset. Swept/cached collision queries must preserve hit semantics without high-speed misses.
+   - Port curvature to Babylon shader material hooks with matching world-space displacement, transparent/skinned coverage and conservative displaced bounds. Preserve straight nearby collision geometry and no curved UI/previews.
+   - Benchmark actual exported assets on mobile and review side-by-side gameplay recordings. Exit gate: visible/functional slice accepted and performance measured before bulk migration.
+   - Dependencies: Steps 2–3 and reference settings/behaviour fixtures.
+5. **Complete all UI screens and domain systems.**
+   - Files: remaining screen components, domain modules, content/manifests, storage tests.
+   - Port every inventoried Home canvas and dynamic dialog: gifts/missions/shop/modals/leaderboard/characters/previews/upgrades/settings/level map/activation/high-score flows. No decorative nonworking buttons.
+   - Match costs, balances, defaults, timers, claim eligibility, locks/stars, upgrade effects, scroll/modal states and existing delays. Prevent duplicate claims/purchases from double taps or retries.
+   - Preserve language selection and word translation presentation. Validate authenticated/guest and empty/error state transitions.
+   - Use versioned browser saves for local prefs and dictionary caches. Browser storage cannot automatically read Android PlayerPrefs or another origin's Unity WebGL IndexedDB. Preserve existing progress only through verified same-origin/export/backend migration; request a separate reviewed migration if needed, never assume it is automatic.
+   - Dependencies: Steps 1–4; UI/domain parity gates.
+6. **Complete all cities, characters, dynamic environment and audio.**
+   - Files: all city/character manifests/models, traffic/monkey/bird/powerup modules, previews, audio/radio.
+   - Preserve Lagos/Abuja/PortHarcourt starters, weighted tiles, junction taxi routes/coordination, current active chase/traffic features and character accessories. Don't implement historical proposed police features if absent in the current game.
+   - Match active runner-specific animation settings, completion/high-score previews, world letters and environmental animation. Keep full current visual content; optimize copies with visual regression checks instead of deleting detail silently.
+   - Reuse current music/SFX and voiced radio; preserve actual playlists/gaps, shuffle, station label/equalizer, mute/ducking and focus/countdown/fail/city gates. No new TTS, radio content, or cancelled subtitles.
+   - Load selected assets progressively, unload/dispose unused resources on swaps, pool repeated content and share/instance compatible geometry/materials. Account for transparency, animated residents, compressed-texture support and shadow fidelity.
+   - Dependencies: Steps 2,4–5.
+7. **Connect and verify browser-compatible services.**
+   - Files: service adapters, api-contracts.md, env example with public configuration only, auth/integration tests.
+   - Verify existing custom API schemas, signup/login/guest/refresh/logout, dictionary endpoints and permissions; use same-origin routing or explicitly configured CORS. Do not make remote writes during discovery or ship admin/service-account credentials.
+   - Trace Unity identity/UGS leaderboard mapping and supported client/server APIs for exact installed/service versions. Browser integration must preserve player identity and leaderboard semantics; if a trusted server bridge is required, propose its deployment/security changes and obtain approval before provisioning.
+   - Confirm source real/simulated IAP and rewarded-ad states. Native Unity store billing is not portable to browser checkout. Production payments/ads require user-approved compatible providers, merchant credentials, server verification and confirmed entitlement/reward flow; do not silently add a provider or report simulation as completion.
+   - Match service failures/loading/availability UI. Keep test simulation explicitly labelled and excluded/disabled from release money/reward routes.
+   - Do not claim full live-service parity while a required provider or identity bridge remains blocked. Report blockers distinctly from completed local game parity.
+   - Dependencies: Steps 1,3,5; approved access/configuration and any additional deployment/provider decisions.
+8. **Optimize delivery, test full parity and prepare a local release build.**
+   - Files: asset pipeline, engine quality settings, lazy chunks/caching, tests, build config and docs.
+   - Measure before optimizing; use shared meshes/materials, compatible instancing/pooling, compressed GLBs/textures/audio and CDN-ready hashed paths. Compression decoders must be bundled/hosted correctly and measured; KTX2 support must be tested on target devices.
+   - Keep shell and selected city/runner boot separate from optional content. PWA caches versioned public assets and explicit safe content only; don't cache credentials/private API responses or promise account services offline. Handle updates, cache eviction/quota and missing assets.
+   - Retain fidelity-first defaults; any reduced effects/device tier with visible differences is shown for approval, not used to claim exact parity silently.
+   - Run full screen/flow matrix, compare current Unity and Babylon captures, and benchmark with the same devices/network/content. Initial performance goal: 60fps/16.7ms on the agreed representative device, with measured slower-device results; set first-play and transfer-byte budgets from real baseline, not unsupported guarantees.
+   - Produce local production build and hosting requirements. Actual hosting/domain/service deployments require explicit follow-up approval. Check public-base paths, compression/MIME/CORS/HTTPS and SPA routing in local staging.
+   - Dependencies: Steps 1–7; required service blockers resolved or explicitly documented as outstanding.
+
+# Verification & Testing
+## Automated
+- Proposed commands after tooling is available: npm ci, npm run typecheck, npm run test, npm run build, npm run test:e2e; configure package scripts and pin tools before claiming these commands ran. Use Vitest-equivalent pure/domain tests and Playwright-equivalent browser tests if environment supports them.
+- Export validation: all referenced assets/clip names/IDs resolve, skeletons and skin weights valid, transform/handedness/unit conversion correct, repeated tile weighting preserved, source files unchanged and no credential leakage.
+- Movement: lane-change/jump/slide/double-tap thresholds and trajectories under replayed inputs at 30/60/120fps and a hitch; collision boundaries, skateboard protection, glider height, magnet radius and fail order match reference.
+- Words: NFC/NFD forms per source normalization policy, combining tone marks, repeated graphemes, uppercase/language handling, in-order/any-order collection, wrong-letter/duplicate behaviour, missing dictionary and stale language loads. No stripping diacritics to make tests pass.
+- Domain: level/star/unlock formulas, coins/gems/reward/inventory deltas, daily rollover/claim/reset rules, default preferences and corrupt/versioned storage; duplicate action protection and clean logout/account switch.
+- State: Home -> intro/countdown -> playing -> pause/resume countdown -> fail/revive/retry/complete/home. Assert timers/audio/input gates, reset subscriptions, city/runner switches and no orphaned assets/taxis/listeners.
+- UI: screenshot matrix at 390x844 and measured additional phone aspects, consistent fixture data/animation phase, pixel-diff triage, safe-area/scroll/modal/tab/text states; all expected buttons tested. Initial static layout alignment target within about 2 CSS pixels at reference size; text antialiasing and 3D shading differences reviewed separately rather than hidden by huge diff tolerance.
+- Services: mocked tests are separate from live integration tests; auth expiry/network timeout/CORS/dictionary errors/leaderboard absence; no double rewards or fake payment success on release adapters.
+
+## Manual and device acceptance
+- Review every Unity reference screen against browser reproduction, including splash/login/language/welcome, all 17 canvases and discovered dynamic dialogs. Check exact art/font/glyphs, pressed/disabled states and animated previews, not only Home screenshots.
+- Compare synchronized gameplay video for each city and every selectable character: intro, lane/jump/slide, authored scenery, road seams/curvature, traffic/taxis, letters, monkey and every active powerup, death/completion/retry.
+- Listen to music/SFX/radio against source; test audio unlock, mute/ducking, pause/countdown, focus loss and city switching. Do not treat an AudioContext existing as proof of correct audible output.
+- Touch device tests: scrolling vs swiping, input fields/mobile keyboard, multitap, modal interception, tab background/restore, resizing/orientation, browser navigation and supported PWA installation/update.
+- Performance: named Android Chrome/iOS Safari devices, cold/warm cache and throttled network; record compressed transfer sizes, first UI/menu/gameplay timings, p50/p95 frame time/spawn hitches and supported memory/resource counts. Run extended gameplay and repeated city/character/retry cycles to detect leaks; report unsupported memory instrumentation honestly.
+- Existing-player saves/accounts: test only via approved fixtures or safe staging identity; no Android-to-browser save migration claim without demonstrated transport and mapping.
+- Release gate: parity matrix complete, user-reviewed visual deviations explicitly accepted, no missing/dummy final assets, no silent service substitutions, supported browser tests complete and blockers listed. A local slice, successful compilation or a screenshot is not evidence the entire game is migrated.
+- Final report per milestone: exact changed/new files, feature/state coverage, screenshots/video, actual commands/tests/devices used, measured performance and remaining blockers. Preserve Unity's working build throughout.
+

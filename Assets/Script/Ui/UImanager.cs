@@ -157,7 +157,9 @@ public class UImanager : MonoBehaviour
 
     void Awake()
     {
-        Application.targetFrameRate = frameRate;
+        // PerfTuner chooses a mobile frame budget before scenes initialize.
+        if (!Application.isMobilePlatform || Application.targetFrameRate <= 0)
+            Application.targetFrameRate = frameRate;
     }
 
     void Start()

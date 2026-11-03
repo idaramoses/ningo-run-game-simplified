@@ -11,31 +11,26 @@ public static class PerfTuner
     private static void Tune()
     {
 #if UNITY_ANDROID || UNITY_IOS
-        // Device tier detection
-        int mem = SystemInfo.systemMemorySize;        // MB
+        // GPU memory is not a reliable device-tier signal on shared-memory phones.
+        int mem = SystemInfo.systemMemorySize;        // MB; zero means unknown
         int cores = SystemInfo.processorCount;
-        int gpuMem = SystemInfo.graphicsMemorySize;   // MB
-        bool lowEnd = mem < 4096 || cores <= 4 || gpuMem < 1000;
-        bool veryLow = mem < 3072 || cores <= 2;
+        int gpuMem = SystemInfo.graphicsMemorySize;   // diagnostic only
+        bool lowEnd = (mem > 0 && mem < 4096) || (cores > 0 && cores <= 4);
+        bool veryLow = (mem > 0 && mem < 3072) || (cores > 0 && cores <= 2);
+
+        // Save on lighting, not resolution or distant-road texture clarity.
+        QualitySettings.globalTextureMipmapLimit = 0;
+        QualitySettings.anisotropicFiltering = AnisotropicFiltering.ForceEnable;
+        Application.targetFrameRate = 60;
 
         if (veryLow)
         {
-            // Weakest devices: maximum savings, still playable
             QualitySettings.shadows = ShadowQuality.Disable;
             QualitySettings.shadowDistance = 0f;
             QualitySettings.pixelLightCount = 0;
             QualitySettings.lodBias = 0.5f;
-            QualitySettings.globalTextureMipmapLimit = 1; // halve texture memory/bandwidth
-            QualitySettings.anisotropicFiltering = AnisotropicFiltering.Disable;
             Application.targetFrameRate = 30;
             Time.fixedDeltaTime = 1f / 30f; // match physics rate to frame rate
-
-            // Render at 75% resolution - biggest single GPU win on fill-rate
-            // limited phones; the frame gets upscaled slightly softer
-            Screen.SetResolution(
-                Mathf.RoundToInt(Screen.width * 0.75f),
-                Mathf.RoundToInt(Screen.height * 0.75f),
-                Screen.fullScreen);
         }
         else if (lowEnd)
         {
@@ -45,17 +40,9 @@ public static class PerfTuner
             QualitySettings.shadowCascades = 0;
             QualitySettings.pixelLightCount = 1;
             QualitySettings.lodBias = 0.7f;
-            QualitySettings.anisotropicFiltering = AnisotropicFiltering.Disable;
-            Application.targetFrameRate = 60;
-
-            Screen.SetResolution(
-                Mathf.RoundToInt(Screen.width * 0.85f),
-                Mathf.RoundToInt(Screen.height * 0.85f),
-                Screen.fullScreen);
         }
 
-        if (lowEnd)
-            Debug.Log($"[PerfTuner] Low-end device (mem={mem}MB cores={cores} gpu={gpuMem}MB) veryLow={veryLow} - reduced render cost");
+        Debug.Log($"[PerfTuner] mem={mem}MB cores={cores} gpu={gpuMem}MB lowEnd={lowEnd} veryLow={veryLow} quality={QualitySettings.names[QualitySettings.GetQualityLevel()]} resolution={Screen.width}x{Screen.height} textureLimit={QualitySettings.globalTextureMipmapLimit} filtering={QualitySettings.anisotropicFiltering} targetFPS={Application.targetFrameRate}");
 #endif
     }
 }
